@@ -1,0 +1,157 @@
+%----------------------------------------------------------
+% useful commands for abbreviations
+%----------------------------------------------------------
+\usepackage{xspace}
+\newcommand{\etal}[0]{\emph{et al.}\xspace} % 'et al. '
+\newcommand{\eg}[0]{\emph{e.g.}\xspace}    % 'e.g. '
+\newcommand{\ie}[0]{\emph{i.e.}\xspace}    % 'i.e. '
+\newcommand{\vs}[0]{\emph{vs.}\xspace}     % 'vs. '
+\newcommand{\cf}[0]{\emph{cf.}\xspace}     % 'cf. '
+\newcommand{\etc}[0]{\emph{etc.}\xspace}   % 'etc. '
+\newcommand{\wrt}[0]{\emph{w.r.t.}\xspace} % 'w.r.t. '
+
+% OpenCL iteration space definitions
+\newcommand{\lws}{\ensuremath{\Lambda}\xspace}       % local work size
+\newcommand{\lid}{\ensuremath{\lambda}\xspace}       % local-id
+\newcommand{\nwg}{\ensuremath{N}\xspace}             % number of work-groups
+\newcommand{\wgid}{\ensuremath{\nu}\xspace}          % work-group number
+\newcommand{\gws}{\ensuremath{\Gamma}\xspace}        % global work size
+\newcommand{\gidoffset}{\ensuremath{\Delta}\xspace}  % global-id offset
+\newcommand{\gid}{\ensuremath{\gamma}\xspace}        % global-id
+
+% Iteration mapping notation
+\newcommand{\ispace}{\ensuremath{I}\xspace}   % original iteration space
+\newcommand{\pspace}{\ensuremath{P}\xspace}   % partitioned iteration space
+\newcommand{\ipmap}{\ensuremath{f}}           % mapping of \ispace to \pspace
+\newcommand{\pimap}{\ensuremath{\ipmap^{-1}}} % mapping of \pspace to \ispace
+
+% Dependences
+\newcommand{\truedep}{\ensuremath{\xrightarrow{t}}} % true dependence
+\newcommand{\antidep}{\ensuremath{\xrightarrow{a}}} % anti dependence
+\newcommand{\outdep}{\ensuremath{\xrightarrow{o}}} % output dependence
+
+
+\newcommand{\rangein}{\;\ensuremath{{\bf in}}\;}  % In text in math mode
+\newcommand{\until}{\;\ensuremath{{\bf until}}\;} % In text in math mode
+\newcommand{\loopto}{\;ensuremath{{\bf to}}\;}    % In text in math mode
+\newcommand{\step}{\;\ensuremath{{\bf step}}\;}   % In text in math mode
+
+%----------------------------------------------------------
+% algorithms
+%----------------------------------------------------------
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{caption} % for \ContinuedFloat
+\usepackage{amsmath}
+\usepackage{syntax}
+\usepackage{multirow}
+
+
+%----------------------------------------------------------
+% listings
+%----------------------------------------------------------
+\usepackage{listings}
+\usepackage{times}
+
+\lstdefinelanguage[OpenCL]{C}[ANSI]{C}{morekeywords={%
+  __kernel,kernel,%
+  __private,private,%
+  __global,global,%
+  __local,local,%
+  TYPE,%for #defined types
+  VECTYPE,%for #defined types
+  __constant,constant,%
+  __read_only,read_only,%
+  __write_only,write_only,%
+  __read_write,read_write,%
+  void,size_t,%
+  char2,char3,char4,char8,char16,%
+  uchar2,uchar3,uchar4,uchar8,uchar16,%
+  short2,short3,short4,short8,short16,%
+  ushort2,ushort3,ushort4,ushort8,ushort16,%
+  int2,int3,int4,int8,int16,%
+  uint2,uint3,uint4,uint8,uint16,%
+  long2,long3,long4,long8,long16,%
+  ulong2,ulong3,ulong4,ulong8,ulong16,%
+  float2,float3,float4,float8,float16,%
+  double2,double3,double4,double8,double16,%
+  image2d_t,image3d_t,sampler_t,event_t,%
+  bool,bool2,bool3,bool4,bool8,bool16,%
+  half,half2,half3,half4,half8,half16,%
+  quad,quad2,quad3,quad4,quad8,quad16,%
+  complex,imaginary},%
+}
+
+\lstdefinelanguage[VOBLA]{C}[ANSI]{C}{morekeywords={%
+in,Index,Value,dim,sum,out,let,range}
+}
+
+\providecommand{\thelstlisting}{\arabic{lstlisting}}
+\renewcommand{\thelstlisting}{\arabic{lstlisting}}
+\newcommand{\inline}[1]{\lstset{morekeywords={sizeof}}\lstinline[mathescape]|#1|}
+
+\algnewcommand\algorithmicinput{\textbf{Input:}}
+\newcommand{\Input}{\item[\algorithmicinput]}
+
+\algnewcommand\algorithmiclocal{\textbf{Local:}}
+\newcommand{\Local}{\item[\algorithmiclocal]}
+
+\algnewcommand\algorithmicinoutput{\textbf{Input/Output:}}
+\newcommand{\InOutput}{\item[\algorithmicinoutput]}
+
+\algnewcommand\algorithmicoutput{\textbf{Output:}}
+\newcommand{\Output}{\item[\algorithmicoutput]}
+
+\algnewcommand\algorithmicclvar{\textbf{CLVar:}}
+\newcommand{\CLvar}{\item[\algorithmicclvar]}
+
+% define \Kernel, \EndKernel (similar to \Procedure and \Function)
+\algblock{Kernel}{EndKernel}
+\algnewcommand\algorithmickernel{\textbf{kernel}}
+\algnewcommand\algorithmicendkernel{\textbf{end\ kernel}}
+\algrenewtext{Kernel}[2]{\algorithmickernel\ \textproc{#1 (}#2{\textproc)}}
+\algrenewtext{EndKernel}{\algorithmicendkernel}
+
+%----------------------------------------------------------
+% listings, figures, sections, tables...
+%----------------------------------------------------------
+\newcommand{\secref}[1]{\S\ref{sec:#1}}
+\newcommand{\lstref}[1]{Listing~\ref{lst:#1}}
+\newcommand{\algoref}[1]{Algorithm~\ref{alg:#1}}
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\tabref}[1]{Table~\ref{tab:#1}}
+\newcommand{\eqnref}[1]{(\ref{eqn:#1})}
+
+\newcommand{\secsref}[2]{\S\ref{sec:#1} and \S\ref{sec:#2}}
+\newcommand{\algsref}[2]{Algorithms~\ref{alg:#1} and~\ref{alg:#2}}
+\newcommand{\figsref}[2]{Figures~\ref{fig:#1} and~\ref{fig:#2}}
+\newcommand{\tabsref}[2]{Tables~\ref{tab:#1} and~\ref{tab:#2}}
+\newcommand{\eqnsref}[2]{(\ref{eqn:#1}--\ref{eqn:#2})}
+
+
+%----------------------------------------------------------
+% comments and highlights
+%----------------------------------------------------------
+\newcommand{\comment}[1]{\marginpar{#1}}
+\newcommand{\highlight}[1]{\underline{#1}}
+
+
+%----------------------------------------------------------
+% math
+%----------------------------------------------------------
+\usepackage{amssymb}
+
+% "Divisible by" symbol
+\DeclareRobustCommand{\divby}{%
+  \mathrel{\vbox{\baselineskip.65ex\lineskiplimit0pt\hbox{.}\hbox{.}\hbox{.}}}%
+}
+
+%----------------------------------------------------------
+% URLs
+%----------------------------------------------------------
+\usepackage{url}
+
+%----------------------------------------------------------
+% Theoremes
+%----------------------------------------------------------
+\newtheorem{cdef}{Definition}
