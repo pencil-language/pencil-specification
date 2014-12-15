@@ -404,7 +404,7 @@ The following \C global definitions are allowed inside a \pencil program:
         are allowed in \pencil)
 \end{itemize}
 
-\subsection{Types}
+\subsection{Types\label{penciltypes}}
 Types are defined in \pencil in the same way as in \C but
 only the following \C types are allowed inside a \pencil program.
 \begin{itemize}
@@ -816,7 +816,6 @@ void foo_restricted(float a[static const restrict 42],
 
 A \pencil compiler is not supposed to perform interprocedural analysis or to
 apply transformations across function definitions.
-%TODO: explain why
 A description of the memory accesses of a function called from a \pencil
 region must be provided (Section~\ref{sec:mem-acces-info-for-functions}),
 unless the function is a \pencil function
@@ -1162,8 +1161,6 @@ void foo(int n, int A[static const restrict n],
 
 \subsection{Inline Description of Memory Accesses for Statement Blocks}
 \label{sec:inline-mem-access-info}
-
-%\todo{AC. This is a rough proposal, in response to Alexey and Anton's draft.}
 
 To simplify the annotation of short code regions, it is also possible to
 add a description of memory accesses to arbitrary statements/blocks of code.
@@ -1771,14 +1768,23 @@ assumptions match the effects of the \texttt{-fno-math-errno}
 \pencil-specific types, built-in functions and macros are declared in
 the \texttt{pencil.h}~\footnote{https://github.com/carpproject/}
 header file.
-Although a \pencil compiler is required to take benefit of the \pencil
-properties and extensions, it is still possible for compatibility reasons
-to compile a \pencil code with a standard C99 compiler (gcc, icc, \dots),
-yet such a compiler will not be able to take benefit of the \pencil extensions
-in performing advanced optimizations.
-The only \pencil extension that cannot be handled by standard C99 compilers
+
+To map a \pencil code to OpenCL and to take benefit of all the features
+of the \pencil langage, a \pencil compiler needs to be used.
+But it is still possible to compile a \pencil code with a standard C99
+compiler (gcc, icc, \dots) as if it was a C99 code (useful mainly for
+debugging).
+In that case all the \pencil extensions will be ignored by the C99
+compiler.  Such a behavior is totally safe.
+The only \pencil extension that is not safe to ignore by C99 compilers
 is the \lstinline!pencil_heap! type attribute defined in
 Section~\ref{sec:heap-attribute}.
+Ignoring such an attribute may lead to a program crash if the size of
+the arrays declared with \lstinline!pencil_heap! exceeds the stack size
+limit.
+A practical solution in this case will be to enlarge the stack size
+limit.
+
 
 \section{Embedding \pencil Code in C}
 \label{sec:pencil-as-c-ext}
@@ -1821,7 +1827,7 @@ Embedded \pencil code obeys the same rules as standalone \pencil code.
 \end{itemize}
 
 
-\section{Writing Efficient \pencil Code}
+\section{Recommendations for Writing Efficient \pencil Code}
 
 \begin{itemize}
 \item \pencil is not restricted to static (affine) control flow, but
@@ -1836,47 +1842,52 @@ Embedded \pencil code obeys the same rules as standalone \pencil code.
   accuracy.
 \end{itemize}
 
-\section{Passing a Scalar Function Argument by Reference}
+\section{Passing a Scalar by Reference to a Function}
 
-Scalar arguments that may be changed by a function (output arguments)
-should be declared as one-element arrays.
+A scalar argument that may be modified by a function (an output argument)
+should be declared as one-element array.
 
 \begin{lstlisting}[language=pencil]
 /* Valid in PENCIL. */
-void set_zero(int a[static const 1], int b[static const 1])
+void set_zero(int a[static const restrict 1])
 {
   a[0] = 0;
-  b[0] = 0;
 }
 
 /* Invalid in PENCIL. */
-void set_zero(int * a, int * b)
+void set_zero(int * a)
 {
   *a = 0;
-  *b = 0;
 }
 \end{lstlisting}  
 
-\section{Memory Allocation in \pencil}
+\section{Memory Allocation for Arrays in \pencil}
 
-All non-local memory buffers used in a \pencil code must be allocated
-outside \pencil code.
+It is possible to allocate a local array dynamically in \pencil code
+by declaring the array using the the C99 VLA syntax.
+An array is said to be local for a given \pencil region, if all the
+elements of the array are defined in that \pencil region and are not
+used outside that region.
+
+All non-local arrays used in a given \pencil region must be allocated
+outside that \pencil region.
 
 \begin{lstlisting}[language=pencil]
-struct num
+/* C code.  fact[] is allocated here.  */
+void foo(int N)
 {
-  int val;
-  int* fact;
-};
- 
-void factor(int N, struct num data[static const restrict N])
-{
-  for (int i=0; i<N; ++i)
-  {
-    data[i].fact = malloc(sizeof(int) * N);
-    compute_fact(data[i].val, data[i].fact);
-  }
+    int *fact = malloc(sizeof(int) * N);
+    set_array(N, fact, -1);
 }
+
+/* PENCIL code.  */
+void set_array(int N, int array[static const restrict N],
+                    int val)
+{
+    for (int i = 0; i < N; i++)
+        array[i] = val;
+}
+
 \end{lstlisting}
 
 
@@ -1890,51 +1901,57 @@ performs a breadth-first search.  The order in which the nodes are
 visited (BFS order) is stored in the array \lstinline!cost!.  The algorithm has
 two steps which repeat one after the other until all nodes have been explored.
 
-In the first step, each node which is on the frontier (array \lstinline!front!
-in the code) inspects its neighbours.  The neighbour, if not visited previously,
+In the first step, each node \emph{n} which is on the frontier (array \lstinline!front!
+in the code) inspects its neighbours.  The neighbour of \emph{n}, if not visited previously,
 is put on \lstinline!updating_front!, which is the set of nodes that will be on
-the next front.  The cost of the neigbour is the cost of this node plus one.
-Note that each node can perform this operation independently.  It is possible
-that two nodes, on the frontier, have an edge to the same neighbour.  In that
-case, both update the cost of the neighbour.  This is a hazard (race) but
-is a benign one since both will attempt to write the same value.
+the next front.  The cost of the neigbour is the cost of the node \emph{n} plus one.
+Each node can perform this operation independently.  It is possible
+that two nodes, on the frontier, have an edge to the same neighbour \emph{m}.  In that
+case, both update the cost of this neighbour \emph{m} (Line \ref{l:inc} in the example).
+This is a race (hazard) but is a benign one since both will attempt to
+write the same value.
 
 In the second step, the nodes which have been put on \lstinline!updating_front!
 are moved to the frontier (array \lstinline!front!).  Each node can perform
-this step independently from the others.  One must note that the \pencil code
-below is much easier to read and understand than the equivalent OpenCL code.
+this step independently from the others.
 
-\begin{lstlisting}[language=pencil]
+One must note that the \pencil code below is much easier to read and understand
+than the equivalent OpenCL code.
+
+
+\begin{lstlisting}[language=pencil,escapechar=@, numbers=left,numberstyle={\tiny\tt},numbersep=5pt]
 
 void parallel_version(int no_of_nodes,
-          int edge_start_no[const restrict static no_of_nodes],
-          int edge_count[const restrict static no_of_nodes],
+          int edge_start_no[static const restrict no_of_nodes],
+          int edge_count[static const restrict no_of_nodes],
           int no_of_edges,
-          int dst_node_index[const restrict static no_of_edges],
-          int cost[const restrict static no_of_edges],
-          char front[const restrict static no_of_nodes],
-          char updating_front[const restrict static no_of_nodes],
-          char visited[const restrict static no_of_nodes],
+          int dst_node_index[static const restrict no_of_edges],
+          int cost[static const restrict no_of_edges],
+          char front[static const restrict no_of_nodes],
+          char updating_front[static const restrict no_of_nodes],
+          char visited[static const restrict no_of_nodes],
           int src_index, int quiet)
-{ 
-  unsigned int carry_on = 1; 
+{
+  unsigned int carry_on = 1;
 
-  for(int i=0; i<no_of_nodes; i++) {
-    front[i]= 0 ;
-    updating_front[i] = 0; 
+  for(int i=0; i<no_of_nodes; i++)
+  {
+    front[i]= 0;
+    updating_front[i] = 0;
     visited[i] = 0;
     cost[i] = -1;
   }
 
   front[src_index] = 1;
-  visited[src_index] = 1; 
-  cost[src_index] = 0; 
+  visited[src_index] = 1;
+  cost[src_index] = 0;
 
-  while(carry_on == 1) {
-    carry_on = 0;
-
-    #pragma pencil region
+  #pragma pencil region
+  {
+    while(carry_on == 1)
     {
+      carry_on = 0;
+
       #pragma pencil independent
       for( int i=0; i<no_of_nodes; i++) {
         if(front[i] == 1) {
@@ -1943,14 +1960,13 @@ void parallel_version(int no_of_nodes,
               j < (edge_start_no[i] + edge_count[i]); j++) {
             int dst_node = dst_node_index[j];
             if(visited[dst_node] == 0) {
-              cost[dst_node] = cost[i] + 1;
+              cost[dst_node] = cost[i] + 1;@\label{l:inc}@
               updating_front[dst_node] = 1;
             }
           }
         }
       }
 
-      #pragma pencil independent
       for(int i=0; i<no_of_nodes; i++) {
         if(updating_front[i] == 1) {
           front[i] = 1;
@@ -1958,15 +1974,25 @@ void parallel_version(int no_of_nodes,
           carry_on = 1;
           updating_front[i] = 0;
         }
-      }
-    } //#pragma pencil region
-  } //while.
+      }  
+    } //while.
+  } //#pragma pencil region
 }
 \end{lstlisting}
 
 \section{Examples of non-\pencil Code}
 
 \subsection{Recursive Data Structures and Recursive Function Calls}
+
+The following code is not a valid \pencil code.  The problems in this
+code are the following.
+\begin{itemize}
+  \item \pencil does not allow recursive function calls;
+  \item pointer dereferencing is not allowed in \pencil (except
+        in few cases cited in Section~\ref{penciltypes});
+  \item in \pencil, the return statement should be used only at
+        the end of the function.
+\end{itemize}
 
 \begin{lstlisting}[language=pencil]
  struct node
@@ -1989,50 +2015,9 @@ void parallel_version(int no_of_nodes,
  }
 \end{lstlisting}
 
-\subsubsection{Problems in the Code}
-\begin{itemize}
-  \item \pencil forbids recursive function calls.
-  \item In \pencil, the return statement should be used only at
-  the end of the function.
-  \item The code uses pointer dereferencing, which is forbidden
-  in \pencil.
-\end{itemize}
-
 
 \bibliographystyle{abbrv}
 \bibliography{CARP-ENS-RP-004}
 
 \end{document}
 
-%TODO list:
-% - Anton suggested that we add a special attribute to distinguish a summary
-%   function.
-% - PENCIL compiler defines __PENCIL__, generated code needs to include
-%   pencil_opencl.h
-% - Define pencil_attributes in this document and in pencil.h:
-%    \item Arrays must be declared using the C99 variable-length array
-%    syntax \cite{c99}, array function arguments must be declared using
-%    \lstinline!pencil_attributes!, a macro expanding to the
-%    \lstinline!restrict! and the \lstinline!const! C99 type qualifiers
-%    and to the \lstinline!static! C99 keyword. 
-% - Say that header files that contain non-\pencil code (including many
-%   standard C header files) are not supported in PENCIL.
-% - Although for many practical examples PENCIL enables unassisted
-%   generation of sufficiently optimized OpenCL code using polyhedral
-%   compilation, there will inevitably be cases where a developer wishes
-%   to hand optimize a specific piece of functionality, or exploit
-%   non-standard, target-specific features of a particular platform (e.g.,
-%   through the use of inline PTX assembly in OpenCL when targeting Nvidia
-%   GPUs). To make \pencil more flexible for expert developers and
-%   domain-specific optimizers, the language allows to call
-%   target-specific (e.g.., OpenCL) functions within the generated
-%   code. Such functions are provided to the compiler as a text file and
-%   are then included into the automatically generated OpenCL functions.
-% - Add _Bool, _Complex data types.
-% - Look for a formal definition of ivdep.
-% - Look for a formal definition of reduction clause.
-
-% - Justifications:
-%   - Why did we chose cray semantics over the IBM semantics for ivdep ?
-%   - Explain why our restrictions on pointers eliminate any possible
-%   aliasing problem.  Why can't we allow more pointer patterns ?
