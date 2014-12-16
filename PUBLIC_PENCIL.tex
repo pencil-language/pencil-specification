@@ -757,11 +757,10 @@ void baz ()
   It allows the compiler to know if array
   arguments are aliased, which enables the compiler to
   perform more precise dependence analysis.
+  Usage of this qualifier is mandatory.
   
-  Usage of this qualifier is \emph{not} mandatory.
-  Making the use of \lstinline!restrict! mandatory would require
-  upstream versioning of functions which increases the effort
-  for writing and generating \pencil code.
+  Note that making the use of \lstinline!restrict! mandatory requires
+  upstream versioning of functions.
   For modularity and reuse, it is more interesting to let \pencil
   front-end(s) handle the versioning and specialization themselves.
   E.g., from a generic \lstinline!memcpy! function, create two versions
