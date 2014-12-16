@@ -632,7 +632,7 @@ in~\ref{sec:Annotations-and-directives}
 \begin{itemize}
 \item \lstinline!#pragma pencil independent [OPT[reduction(operator: scalar_1, $\ldots$, scalar_n)*]OPT]!
 \item \lstinline!#pragma pencil ivdep!
-\item \lstinline!#pragma pencil access!
+%\item \lstinline!#pragma pencil access!
 \item \lstinline!#pragma pencil region!
 \end{itemize}
 
@@ -1158,62 +1158,62 @@ void foo(int n, int A[static const restrict n],
   from $10$ to $n-1$. 
 \end{description}
 
-\subsection{Inline Description of Memory Accesses for Statement Blocks}
-\label{sec:inline-mem-access-info}
-
-To simplify the annotation of short code regions, it is also possible to
-add a description of memory accesses to arbitrary statements/blocks of code.
-The syntax is the same as above, but with summary code inlined
-directly into the \lstinline!#pragma pencil access! directive.
-
-\begin{lstlisting}[language=pencil]
-//Data access specified for the whole loop.
-#pragma pencil access \
-  { for (int i=0; i<N; i++) {USE(A[i]); DEF(B[i]);} }
-for (int i = 0; i < N; ++i)
-{
-   /* Alternatively, the same data information can be specified
-      for a single iteration. */
-   #pragma pencil access { USE(A[i]); DEF(B[i]); }
-   {
-     B[i] = A[i] * 2;
-   }
-}
-
-/* Alternative, the same previous information can be provided
-   with a summary function, and short array
-   notation. */
-void summary1(int i, int n, float A[static const restrict n],
-              float B[static const restrict n])
-{
-  USE(A[i]);
-  DEF(B[i]);
-}
-
-//Data access specified for the whole loop.
-#pragma pencil access { USE(A); DEF(B); }
-for (int i = 0; i < N; ++i)
-{
-   /* Alternatively, the same data information can be specified
-      for a single iteration. */
-   #pragma pencil access { summary1(i, N, A, B); }
-   {
-     B[i] = A[i] * 2;
-   }
-}
-\end{lstlisting}
-
-In the examples above for both cases memory access information has been
-specified twice - on the loop level and on the iteration level, although it is
-sufficient to specify it only once.
-
-One technical problem is that it is currently impossible to translate
-such directives into attributes attached to a statement/block. GNU C,
-as implemented in GCC and Clang, does not support it, and neither does
-GIMPLE or LLVM IR.
-
-% It may be possible to apply some outlining
-% automatically, but the impact is not yet well understood.
+%\subsection{Inline Description of Memory Accesses for Statement Blocks}
+%\label{sec:inline-mem-access-info}
+%
+%To simplify the annotation of short code regions, it is also possible to
+%add a description of memory accesses to arbitrary statements/blocks of code.
+%The syntax is the same as above, but with summary code inlined
+%directly into the \lstinline!#pragma pencil access! directive.
+%
+%\begin{lstlisting}[language=pencil]
+%//Data access specified for the whole loop.
+%#pragma pencil access \
+%  { for (int i=0; i<N; i++) {USE(A[i]); DEF(B[i]);} }
+%for (int i = 0; i < N; ++i)
+%{
+%   /* Alternatively, the same data information can be specified
+%      for a single iteration. */
+%   #pragma pencil access { USE(A[i]); DEF(B[i]); }
+%   {
+%     B[i] = A[i] * 2;
+%   }
+%}
+%
+%/* Alternative, the same previous information can be provided
+%   with a summary function, and short array
+%   notation. */
+%void summary1(int i, int n, float A[static const restrict n],
+%              float B[static const restrict n])
+%{
+%  USE(A[i]);
+%  DEF(B[i]);
+%}
+%
+%//Data access specified for the whole loop.
+%#pragma pencil access { USE(A); DEF(B); }
+%for (int i = 0; i < N; ++i)
+%{
+%   /* Alternatively, the same data information can be specified
+%      for a single iteration. */
+%   #pragma pencil access { summary1(i, N, A, B); }
+%   {
+%     B[i] = A[i] * 2;
+%   }
+%}
+%\end{lstlisting}
+%
+%In the examples above for both cases memory access information has been
+%specified twice - on the loop level and on the iteration level, although it is
+%sufficient to specify it only once.
+%
+%One technical problem is that it is currently impossible to translate
+%such directives into attributes attached to a statement/block. GNU C,
+%as implemented in GCC and Clang, does not support it, and neither does
+%GIMPLE or LLVM IR.
+%
+%% It may be possible to apply some outlining
+%% automatically, but the impact is not yet well understood.
 
 \section{Pragma Directives}
 
@@ -1498,15 +1498,15 @@ The following reduction operators are supported:
   loop-carried dependences for the store into \lstinline!a[]!.
 \end{description}
 %-------------------------------------------------
-\subsection{Other Directives}
-
-\pencil defines also two other directives.
-\begin{itemize}
- \item \lstinline!#pragma pencil access! described in
- section~\ref{sec:inline-mem-access-info}.
- \item \lstinline!#pragma pencil region! described in
- section~\ref{sec:pencil-as-c-ext}.
-\end{itemize}
+%\subsection{Other Directives}
+%
+%\pencil also defines another directive.
+%\begin{itemize}
+% \item \lstinline!#pragma pencil access! described in
+% section~\ref{sec:inline-mem-access-info}.
+% \item \lstinline!#pragma pencil region! described in
+% section~\ref{sec:pencil-as-c-ext}.
+%\end{itemize}
 
 \section{Built-in Functions}
 
