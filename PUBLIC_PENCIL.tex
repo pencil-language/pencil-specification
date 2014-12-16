@@ -644,11 +644,11 @@ in~\ref{sec:Annotations-and-directives}
   \item \lstinline!static!
 \end{description}
 
-\subsection*{Type Attributes}
-
-\begin{description}
-  \item \lstinline!__attribute__((pencil_heap))!
-\end{description}
+%\subsection*{Type Attributes}
+%
+%\begin{description}
+%  \item \lstinline!__attribute__((pencil_heap))!
+%\end{description}
 
 \subsection*{Function Attributes}
 
@@ -787,29 +787,29 @@ void foo_restricted(float a[static const restrict 42],
   An old revision (svn r552) of this document has an example, but the
   details are still in the works.}
 
-\subsection{\lstinline!pencil\_heap! Type Attribute}
-\label{sec:heap-attribute}
- 
-\begin{description}
-\item[Usage] The \lstinline!pencil_heap! attribute
-  (\lstinline!__attribute__((pencil_heap))!) can be used when declaring
-  an array using the C99 VLA syntax within a \pencil code
-  \footnote{The C99 VLA syntax is the only syntax that can be used
-    to declare arrays in \pencil.}.
-  It should not be used for array arguments.
-  
-\item[Description] This attribute forces the compiler to allocate
-  heap memory for the array being declared.
-
-\item[Abbreviation] The \lstinline!HEAP! macro abbreviates
-  \lstinline!__attribute__((pencil_heap))!.
-  
-\item[Example]~
-  \begin{lstlisting}[language=pencil]
-    // array is allocated on the heap
-    int array[10000] HEAP;
-  \end{lstlisting}
-\end{description}
+%\subsection{\lstinline!pencil\_heap! Type Attribute}
+%\label{sec:heap-attribute}
+%
+%\begin{description}
+%\item[Usage] The \lstinline!pencil_heap! attribute
+%  (\lstinline!__attribute__((pencil_heap))!) can be used when declaring
+%  an array using the C99 VLA syntax within a \pencil code
+%  \footnote{The C99 VLA syntax is the only syntax that can be used
+%    to declare arrays in \pencil.}.
+%  It should not be used for array arguments.
+%
+%\item[Description] This attribute forces the compiler to allocate
+%  heap memory for the array being declared.
+%
+%\item[Abbreviation] The \lstinline!HEAP! macro abbreviates
+%  \lstinline!__attribute__((pencil_heap))!.
+%
+%\item[Example]~
+%  \begin{lstlisting}[language=pencil]
+%    // array is allocated on the heap
+%    int array[10000] HEAP;
+%  \end{lstlisting}
+%\end{description}
 
 \section{Function Attributes}
 
@@ -1775,15 +1775,15 @@ compiler (gcc, icc, \dots) as if it was a C99 code (useful mainly for
 debugging).
 In that case all the \pencil extensions will be ignored by the C99
 compiler.  Such a behavior is totally safe.
-The only \pencil extension that is not safe to ignore by C99 compilers
-is the \lstinline!pencil_heap! type attribute defined in
-Section~\ref{sec:heap-attribute}.
-Ignoring such an attribute may lead to a program crash if the size of
-the arrays declared with \lstinline!pencil_heap! exceeds the stack size
-limit.
-A practical solution in this case will be to enlarge the stack size
-limit.
 
+%The only \pencil extension that is not safe to ignore by C99 compilers
+%is the \lstinline!pencil_heap! type attribute defined in
+%Section~\ref{sec:heap-attribute}.
+%Ignoring such an attribute may lead to a program crash if the size of
+%the arrays declared with \lstinline!pencil_heap! exceeds the stack size
+%limit.
+%A practical solution in this case will be to enlarge the stack size
+%limit.
 
 \section{Embedding \pencil Code in C}
 \label{sec:pencil-as-c-ext}
