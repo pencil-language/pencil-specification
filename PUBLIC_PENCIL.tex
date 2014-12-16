@@ -718,7 +718,7 @@ Here is a correct \pencil function declaration and call.
 
 \begin{lstlisting}[language=pencil]
 /* PENCIL code.  */
-void foo(int n, float a[static const n]);
+void foo(int n, float a[static const restrict n]);
 
 void bar()
 {
@@ -761,18 +761,9 @@ void baz ()
   
   Note that making the use of \lstinline!restrict! mandatory requires
   upstream versioning of functions.
-  For modularity and reuse, it is more interesting to let \pencil
-  front-end(s) handle the versioning and specialization themselves.
-  E.g., from a generic \lstinline!memcpy! function, create two versions
-  for the aliased and unaliased cases.
 
 \item[Example]~
   \begin{lstlisting}[language=pencil]
-// a and b may be the same array (or partially overlap)
-// in foo_alias
-void foo_alias(float a[const static 42],
-                 float b[const static 42]);
-
 // a and b are restricted arrays (analogous to restricted
 // pointers in C99)
 void foo_restricted(float a[static const restrict 42],
