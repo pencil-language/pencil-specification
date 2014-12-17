@@ -601,7 +601,7 @@ constants and $c$ is either a constant or a loop parameter.
 It is recommended to use quasi-affine expressions for
 array subscript, loop bounds, conditional expressions,
 and to specify memory access information (described in
-section \ref{sec:mem-acces-info}).
+section \ref{sec:mem-acces-info-for-functions}).
 
 \begin{lstlisting}[language=pencil]
 for (int i=1; i<n; i++) {
@@ -824,13 +824,7 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   \lstinline!__attribute__((const))!.
 \end{description}
   
-\section{Description of Memory Accesses}
-\label{sec:mem-acces-info}
-We first show the annotation used to represent memory access information
-of functions, then we show the equivalent inline annotation that can be used
-for statements and blocks.
-
-\subsection{Description of Memory Accesses for Functions}
+\section{Description of the Memory Accesses of Functions}
 \label{sec:mem-acces-info-for-functions}
 
 % Note: Semantics (albert):
