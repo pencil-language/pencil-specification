@@ -57,7 +57,7 @@
                                     | \pkeyword{unsigned}
   \\
 
-  \pgrammar{variable declaration} & \gets & \pgrammar{base type} \pgrammar{declarator} \pgrammar{attribute}
+  \pgrammar{variable declaration} & \gets & \pgrammar{base type} \pgrammar{declarator}
   \\
 
   \pgrammar{init expression} & \gets & \pgrammar{expression} | \pgrammar{array init expression} \\
@@ -81,18 +81,12 @@
 
   \pgrammar{attr} & \gets & \pkeyword{const} 
                           | \pkeyword{pencil} 
-                          | \pkeyword{pencil\_heap}
                           |\pkeyword{pencil\_access} \plexer{(} \pgrammar{name} \plexer{)}
 \\
 
   \pgrammar{function args} & \gets & | \pgrammar{variable declaration} (\plexer{,} \pgrammar{variable declaration})*\\
 
-  \pgrammar{block} & \gets & \plexer{\{} \pgrammar{annotated statement} \plexer{\}}\\
-
-  \pgrammar{annotated statement} & \gets & \pgrammar{statement access pragma}? \pgrammar{labeled statement}\\
-  \pgrammar{statement access pragma} & \gets & \plexer{\#} \pkeyword{pragma} ~ \pkeyword{pencil} ~ \pkeyword{access} \pgrammar{block}\\
-
-  \pgrammar{labeled statement} & \gets & (\pgrammar{name} \plexer{:})?\pgrammar{statement}\\
+  \pgrammar{block} & \gets & \plexer{\{} \pgrammar{statement} * \plexer{\}}\\
 
   \pgrammar{statement} & \gets & \pgrammar{assignment} \plexer{;}
                                | \pgrammar{for}
