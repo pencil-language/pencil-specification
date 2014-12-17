@@ -1756,8 +1756,9 @@ assumptions match the effects of the \texttt{-fno-math-errno}
 
 \section{Compiling \pencil with \pencil Compilers}
 \begin{itemize}
+ \item \pencil code must include \lstinline!pencil.h!;
  \item all \pencil compilers define the \lstinline!__PENCIL__! macro;
- \item \pencil compilers should include \lstinline!pencil_opencl.h!
+ \item \pencil compilers must include \lstinline!pencil_opencl.h!
         in the kernel generated code, this header file defines \pencil
         macros;
  \item header files that contain non-\pencil code (including many
