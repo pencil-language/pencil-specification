@@ -1447,7 +1447,7 @@ The following reduction operators are supported:
   \end{lstlisting}
 \item [Description] It allows the
   compiler to ignore all the loop-carried dependences in the loop marked with
-  the directive from one statement to a textually earlier one (Cray semantics).
+  the directive from one statement to a textually earlier one (Cray semantics for ivdep).
   This is generally sufficient to enable the vectorization
   of loops when the compiler is taking conservative assumptions.
 
