@@ -1412,7 +1412,8 @@ for (int i=0; i<N; i++) {
   the loop carried dependences induced by the reduction scalars.  This
   information allows the compiler to parallelize the loop.  The syntax
   of this directive is equivalent to the syntax of the reduction clause
-  defined in OpenMP. Example:
+  defined in OpenMP.  As in OpenMP, the reduction variable should not
+  be used anywhere outside the reduction statement.  Example:
   \begin{lstlisting}[language=pencil]
 #pragma pencil independent reduction(+: result)
 for (i=0; i<n; i++) {
@@ -1753,6 +1754,17 @@ assumptions match the effects of the \texttt{-fno-math-errno}
 
 \chapter{Practical \pencil Programming}
 
+\section{Compiling \pencil with \pencil Compilers}
+\begin{itemize}
+ \item all \pencil compilers define the \lstinline!__PENCIL__! macro;
+ \item \pencil compilers should include \lstinline!pencil_opencl.h!
+        in the kernel generated code, this header file defines \pencil
+        macros;
+ \item header files that contain non-\pencil code (including many
+       standard C header files) are not supported in PENCIL.
+\end{itemize}
+
+
 \section{Compiling \pencil with C99 Compilers}
 
 \pencil-specific types, built-in functions and macros are declared in
@@ -1969,6 +1981,167 @@ void parallel_version(int no_of_nodes,
   } //#pragma pencil region
 }
 \end{lstlisting}
+
+\subsection{Image Resizing Example}
+
+The following example implements an image resizing kernel,
+a common image processing kernel.
+
+\begin{lstlisting}[language=pencil,escapechar=@]
+#include <pencil.h>
+
+#define bilinear(A00, A01, A11, A10, r, c) \
+          ((1-c) * ((1-r) * A00 + r*A10) + c*((1-r)*A01 + r*A11))
+
+static void resize(const int original_rows,
+                   const int original_cols,
+                   const int original_step,
+                   const unsigned char original[static const restrict original_rows][original_step],
+                   const int resampled_rows,
+                   const int resampled_cols,
+                   const int resampled_step,
+                   unsigned char resampled[static const restrict resampled_rows][resampled_step])
+{
+    __pencil_assume(original_rows  >  0);
+    __pencil_assume(original_cols  >  0);
+    __pencil_assume(original_step  >= original_cols);
+    __pencil_assume(resampled_rows >  0);
+    __pencil_assume(resampled_cols >  0);
+    __pencil_assume(resampled_step >= resampled_cols);
+
+    __pencil_kill(resampled);
+
+    int o_h = original_rows;
+    int o_w = original_cols;
+    int n_h = resampled_rows;
+    int n_w = resampled_cols;
+
+    #pragma pencil independent
+    for (int n_r = 0; n_r < resampled_rows; n_r++)
+    {
+      #pragma pencil independent
+      for (int n_c = 0; n_c < resampled_cols; n_c++)
+      {
+        float o_r = (n_r + 0.5) * (o_h) / (n_h) - 0.5;
+        float o_c = (n_c + 0.5) * (o_w) / (n_w) - 0.5;
+
+        float r = o_r - floor(o_r);
+        float c = o_c - floor(o_c);
+
+        int coord_00_r = clamp((int) floor(o_r), 0, o_h - 1);
+        int coord_00_c = clamp((int) floor(o_c), 0, o_w - 1);
+
+        int coord_01_r = coord_00_r;
+        int coord_01_c = clamp(coord_00_c + 1, 0, o_w - 1);
+
+        int coord_10_r = clamp(coord_00_r + 1, 0, o_h - 1);
+        int coord_10_c = coord_00_c;
+
+        int coord_11_r = clamp(coord_00_r + 1, 0, o_h - 1);
+        int coord_11_c = clamp(coord_00_c + 1, 0, o_w - 1);
+
+        unsigned char A00 = original[coord_00_r][coord_00_c];
+        unsigned char A10 = original[coord_10_r][coord_10_c];
+        unsigned char A01 = original[coord_01_r][coord_01_c];
+        unsigned char A11 = original[coord_11_r][coord_11_c];
+
+        resampled[n_r][n_c] = bilinear(A00, A01, A11, A10, r, c);
+      }
+    }
+    __pencil_kill(original);
+}
+\end{lstlisting}
+
+
+\subsection{Gaussian Filter Example}
+
+The following example implements a gaussian filter,
+a common image processing kernel.
+
+\begin{lstlisting}[language=pencil,escapechar=@]
+#include <pencil.h>
+
+static void gaussian(const int rows,
+                     const int cols,
+                     const int step,
+                     const float src[static const restrict rows][step],
+                     const int kernelX_rows,
+                     const int kernelX_cols,
+                     const int kernelX_step,
+                     const float kernelX[static const restrict kernelX_rows][kernelX_step],
+                     const int kernelY_rows,
+                     const int kernelY_cols,
+                     const int kernelY_step,
+                     const float kernelY[static const restrict kernelY_rows][kernelY_step],
+                     float conv[static const restrict rows][step])
+{
+    __pencil_assume(rows         >  0);
+    __pencil_assume(cols         >  0);
+    __pencil_assume(step         >= cols);
+    __pencil_assume(kernelX_rows >  0);
+    __pencil_assume(kernelX_cols >  0);
+    __pencil_assume(kernelX_step >= kernelX_cols);
+    __pencil_assume(kernelY_rows >  0);
+    __pencil_assume(kernelY_cols >  0);
+    __pencil_assume(kernelY_step >= kernelY_cols);
+    __pencil_assume(kernelX_rows <= 2);
+    __pencil_assume(kernelX_cols <= 128);
+    __pencil_assume(kernelY_rows <= 128);
+    __pencil_assume(kernelY_cols <= 2);
+
+    __pencil_kill(conv);
+
+    float temp[rows][step];
+
+    #pragma pencil independent
+    for (int q = 0; q < rows; q++)
+    {
+      #pragma pencil independent
+      for (int w = 0; w < cols; w++)
+      {
+        float prod = 0.;
+
+        for (int e = 0; e < kernelX_rows; e++)
+        {
+          for (int r = 0; r < kernelX_cols; r++)
+          {
+            int row = clamp(q + e - kernelX_rows / 2, 0, rows-1);
+            int col = clamp(w + r - kernelX_cols / 2, 0, cols-1);
+            prod += src[row][col] * kernelX[e][r];
+          }
+        }
+        temp[q][w] = prod;
+      }
+    }
+    
+    #pragma pencil independent
+    for (int q = 0; q < rows; q++)
+    {
+      #pragma pencil independent
+      for (int w = 0; w < cols; w++)
+      {
+        float prod = 0.;
+
+        for (int e = 0; e < kernelY_rows; e++)
+        {
+          for (int r = 0; r < kernelY_cols; r++)
+          {
+            int row = clamp(q + e - kernelY_rows / 2, 0, rows-1);
+            int col = clamp(w + r - kernelY_cols / 2, 0, cols-1);
+
+            prod += temp[row][col] * kernelY[e][r];
+          }
+        }
+        conv[q][w] = prod;
+      }
+    }
+
+    __pencil_kill(kernelY);
+    __pencil_kill(kernelX);
+    __pencil_kill(src);
+}
+\end{lstlisting}
+
 
 \section{Examples of non-\pencil Code}
 
