@@ -148,7 +148,7 @@ Project Manager & A.F.\ Donaldson & ICL & 2013-05-06 \nl
   keywords={[4],__attribute__,%
     pencil_access,__pencil_kill,KILL,__pencil_assume,ASSUME,__pencil_assert,%
     __pencil_maybe,MAYBE,__pencil_use,USE,__pencil_def,DEF,MAY_DEF,%
-    PENCIL,__pencil_access,ACCESS,CONST,pencil_heap,HEAP,const,restrict,static},
+    PENCIL,__pencil_access,ACCESS,CONST,pencil_heap,HEAP,const,restrict,static, pencil_array},
   %emph={main,producer,consumer,master,selector,compute,hscan,sync_av},
   %% List of abbreviations
   % literate={<=}{{$\leq$}}1 {>=}{{$\geq$}}1 {!=}{{$\neq$}}1 {*}{{$\times$}}1,
@@ -418,7 +418,8 @@ only the following \C types are allowed inside a \pencil program.
       must be declared using the \lstinline!restrict! and
       the \lstinline!const! type qualifiers, and the \lstinline!static! keyword
       described in sections~\ref{sec:restrict},~\ref{sec:const}
-      and~\ref{sec:static}.
+      and~\ref{sec:static} (the macro \lstinline!pencil_array! can be used to
+      abbreviate \lstinline!static const restrict!).
     \item Array accesses should not be linearized, as this tends to
       obfuscate affine subscript expressions.  Multidimensional C99 arrays
       should be used instead even for function arguments (variable-length arrays
@@ -802,6 +803,18 @@ void foo_restricted(float a[static const restrict 42],
 %  \end{lstlisting}
 %\end{description}
 
+\subsection{\lstinline!pencil\_array! Macro}
+\begin{description}
+\item[Description] \lstinline!pencil_array! is a macro that abbreviates
+  \lstinline!static const restrict!.
+
+\item[Example]~
+  \begin{lstlisting}[language=pencil]
+void foo(float a[pencil_array 42],
+            float b[pencil_array 42]);
+  \end{lstlisting}
+\end{description}
+
 \section{Function Attributes}
 
 A \pencil compiler is not supposed to perform interprocedural analysis or to
@@ -878,13 +891,13 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   Example:
   \begin{lstlisting}[language=pencil]
     /* This is the summary function of foo().  */
-    void foo_summary(int N, int A[static const restrict N])
+    void foo_summary(int N, int A[pencil_array N])
     {
       /* The contents of summary functions will be presented
       later in this section.  */
     }
 
-    void foo(int N, int A[static const restrict N])
+    void foo(int N, int A[pencil_array N])
       __attribute__((pencil_access(foo_summary)))
       {
         for (int i = 0; i < N; i ++)
@@ -950,16 +963,16 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   that corresponding calls are present on the original function:
 
   \begin{lstlisting}[language=pencil]
-    void foo(int N, int A[static const restrict N]);
+    void foo(int N, int A[pencil_array N]);
 
-    void bar_summary(int N, int A[static const restrict N])
+    void bar_summary(int N, int A[pencil_array N])
     {
       foo(N, A);
       USE(A);
       DEF(A);
     }
 
-    void bar(int N, int A[static const restrict N])
+    void bar(int N, int A[pencil_array N])
       __attribute__((pencil_access(bar_summary)))
       {
         foo(N, A);
@@ -1000,8 +1013,8 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 %   The following example shows a function (\lstinline!bar!)
 %   and its summary (\lstinline!bar_summary!).
 %    \begin{lstlisting}[language=pencil]
-% void bar_summary(int n, int A[static const restrict n],
-%                        int B[static const restrict n])
+% void bar_summary(int n, int A[pencil_array n],
+%                        int B[pencil_array n])
 % {
 %   for (int i=0; i<n; i++) {
 %     USE(B[i]);
@@ -1020,8 +1033,8 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 %   MAY_DEF(B);
 % }
 % 
-% void bar(int n, int A[static const restrict n],
-%             int B[static const restrict n])
+% void bar(int n, int A[pencil_array n],
+%             int B[pencil_array n])
 %             ACCESS(bar_summary(n,A,B))
 % {
 %   int i;
@@ -1097,8 +1110,8 @@ struct complex {
 
 typedef struct complex Cplx;
 
-void foo_summary(int n, int A[static const restrict n],
-                       Cplx d[static const restrict n])
+void foo_summary(int n, int A[pencil_array n],
+                       Cplx d[pencil_array n])
 {
   for (int i=0; i<n; i++)
     USE(A[i]);
@@ -1110,8 +1123,8 @@ void foo_summary(int n, int A[static const restrict n],
   DEF(A[15]);
 }
 
-void foo(int n, int A[static const restrict n],
-            Cplx d[static const restrict n])
+void foo(int n, int A[pencil_array n],
+            Cplx d[pencil_array n])
             ACCESS(foo_summary(n,A,Cplx))
 {
   int i, t;
@@ -1168,8 +1181,8 @@ void foo(int n, int A[static const restrict n],
 %/* Alternative, the same previous information can be provided
 %   with a summary function, and short array
 %   notation. */
-%void summary1(int i, int n, float A[static const restrict n],
-%              float B[static const restrict n])
+%void summary1(int i, int n, float A[pencil_array n],
+%              float B[pencil_array n])
 %{
 %  USE(A[i]);
 %  DEF(B[i]);
@@ -1288,10 +1301,10 @@ void inc_summary(float A[256], int c)
   }
 }
 
-void inc(float A[static const restrict 256],
+void inc(float A[pencil_array 256],
             int c) ACCESS(inc_summary);
 
-void foo(int N, float A[static const restrict N], int c)
+void foo(int N, float A[pencil_array N], int c)
 {
   #pragma pencil independent
   for (int i=0; i<N; i++)
@@ -1655,7 +1668,7 @@ for (int q = 0; q < rows; q++)
   
 \item [{Example 2}]:
   \begin{lstlisting}[language=pencil]
-void foo(int n, int m, int S, int D[static const restrict S])
+void foo(int n, int m, int S, int D[pencil_array S])
 {
         __pencil_assume(m > n);
         for (int i = 0; i < n; i++) {
@@ -1675,7 +1688,7 @@ An alternative solution in this particular case is to explicitly
 mark the loop as independent.
 
   \begin{lstlisting}[language=pencil]
-void foo(int n, int m, int S, int D[static const restrict S])
+void foo(int n, int m, int S, int D[pencil_array S])
 {
         #pragma pencil independent
         for (int i = 0; i < n; i++) {
@@ -1796,7 +1809,7 @@ Embedded \pencil code obeys the same rules as standalone \pencil code.
       }
 
       //PENCIL function.
-      int foo_pencil(int a[static const restrict 10])
+      int foo_pencil(int a[pencil_array 10])
          __attribute__((pencil))
          {
          }
@@ -1843,7 +1856,7 @@ should be declared as one-element array.
 
 \begin{lstlisting}[language=pencil]
 /* Valid in PENCIL. */
-void set_zero(int a[static const restrict 1])
+void set_zero(int a[pencil_array 1])
 {
   a[0] = 0;
 }
@@ -1875,7 +1888,7 @@ void foo(int N)
 }
 
 /* PENCIL code.  */
-void set_array(int N, int array[static const restrict N],
+void set_array(int N, int array[pencil_array N],
                     int val)
 {
     for (int i = 0; i < N; i++)
@@ -1916,14 +1929,14 @@ than the equivalent OpenCL code.
 \begin{lstlisting}[language=pencil,escapechar=@, numbers=left,numberstyle={\tiny\tt},numbersep=5pt]
 
 void parallel_version(int no_of_nodes,
-          int edge_start_no[static const restrict no_of_nodes],
-          int edge_count[static const restrict no_of_nodes],
+          int edge_start_no[pencil_array no_of_nodes],
+          int edge_count[pencil_array no_of_nodes],
           int no_of_edges,
-          int dst_node_index[static const restrict no_of_edges],
-          int cost[static const restrict no_of_edges],
-          char front[static const restrict no_of_nodes],
-          char updating_front[static const restrict no_of_nodes],
-          char visited[static const restrict no_of_nodes],
+          int dst_node_index[pencil_array no_of_edges],
+          int cost[pencil_array no_of_edges],
+          char front[pencil_array no_of_nodes],
+          char updating_front[pencil_array no_of_nodes],
+          char visited[pencil_array no_of_nodes],
           int src_index, int quiet)
 {
   unsigned int carry_on = 1;
@@ -1988,11 +2001,11 @@ a common image processing kernel.
 static void resize(const int original_rows,
                    const int original_cols,
                    const int original_step,
-                   const unsigned char original[static const restrict original_rows][original_step],
+                   const unsigned char original[pencil_array original_rows][original_step],
                    const int resampled_rows,
                    const int resampled_cols,
                    const int resampled_step,
-                   unsigned char resampled[static const restrict resampled_rows][resampled_step])
+                   unsigned char resampled[pencil_array resampled_rows][resampled_step])
 {
     __pencil_assume(original_rows  >  0);
     __pencil_assume(original_cols  >  0);
@@ -2056,16 +2069,16 @@ a common image processing kernel.
 static void gaussian(const int rows,
                      const int cols,
                      const int step,
-                     const float src[static const restrict rows][step],
+                     const float src[pencil_array rows][step],
                      const int kernelX_rows,
                      const int kernelX_cols,
                      const int kernelX_step,
-                     const float kernelX[static const restrict kernelX_rows][kernelX_step],
+                     const float kernelX[pencil_array kernelX_rows][kernelX_step],
                      const int kernelY_rows,
                      const int kernelY_cols,
                      const int kernelY_step,
-                     const float kernelY[static const restrict kernelY_rows][kernelY_step],
-                     float conv[static const restrict rows][step])
+                     const float kernelY[pencil_array kernelY_rows][kernelY_step],
+                     float conv[pencil_array rows][step])
 {
     __pencil_assume(rows         >  0);
     __pencil_assume(cols         >  0);
