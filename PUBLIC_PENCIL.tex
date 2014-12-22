@@ -410,9 +410,9 @@ The naming and the scope of identifiers in \pencil follow the same rules as
 in \C.
 
 \subsection{Types\label{penciltypes}}
-Types are defined in \pencil in the same way as in \C but
-only the following \C types are allowed inside a \pencil program.
-\begin{itemize}
+\begin{description}
+ \item [\pencil Types] The following \C types are allowed in a \pencil program.
+ \begin{itemize}
   \item Scalar types (same as in \C)
       \footnote{half float type (\lstinline!half!) in \pencil is an optional
       type, \pencil compilers are not required to support it.}
@@ -450,8 +450,18 @@ only the following \C types are allowed inside a \pencil program.
     different address spaces of hardware accelerators, as it essentially
     eliminates aliasing problems.
   \end{itemize}    
-\end{itemize}
-Unlike \C, unions and bitfields are not supported in \pencil.
+ \end{itemize}
+ Unlike \C, unions and bitfields are not supported in \pencil.
+
+ \item [Scalar Type Conversion] Scalar type conversion in \pencil follows the
+   same rules as in \C.
+
+ \item [Type Definition] Type definition in \pencil (through \lstinline!typedef!)
+   follows the same rules as in \C.
+
+ \item [Type Qualifiers] The \lstinline!const! and the \lstinline!restrict!
+   \C type qualifiers are supported in \pencil.
+\end{description}
 
 \subsection{Functions}
 Function definition and declaration in \pencil are identical to function
