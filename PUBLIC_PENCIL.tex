@@ -436,17 +436,45 @@ in \C.
   \item Structural types (same as in \C)
   \item Pointer types
   \begin{itemize}
-    \item Pointer declaration and definition are allowed in
-      \pencil to allow the use of non-\pencil libraries (since the header files
-      of non-\pencil libraries may contain pointer declarations).
-    \item Pointer manipulation (including array arithmetic and reading or
+    \item The declaration of pointers is allowed in \pencil.
+      The main motivation is to provide \pencil users with the ability
+      of using non-\pencil libraries in a \pencil code.
+      Forbidding pointer declarations makes the use of non-\pencil libraries
+      difficult since the header files of such libraries may contain pointer
+      declarations.
+
+    \item Pointer manipulation (including pointer arithmetic and reading or
       writing to a pointer) is not allowed.  There is one exception to this
       restriction, reading an array reference is allowed when the reference is
       passed in a function call (\eg \lstinline!mat_add(C, A, B)!).
+      
+      The main motivation is to guarantee that the following property is
+      preserved:
+      throughout the life of a \pencil program, separate array references
+      never alias and remain constant.
+      The main motivation is to avoid the need for an advanced pointer
+      analysis.
+      Passing an array reference to a function does not violate the previous
+      property because function arguments in \pencil are required to be
+      qualified with \lstinline!restrict! and \lstinline!const!:
+      if two separate arrays are passed to a function and if the two
+      function arguments (for those arrays) are qualified with the
+      \lstinline!restrict! type qualifier then the two arrays are guaranteed
+      not to alias withing that function.
+      Moreover, the \lstinline!const! type qualifier guarantees
+      that those array reference remain constant within that function.
+
     \item Pointer dereferencing is not allowed.  The only exception to
       this is accessing arrays using array subscripts
       (\eg \lstinline!A[i][j]!).
-    The restricted use of pointers is important for moving data between
+
+      Forbidding pointer arithmetic and forbidding pointer dereferencing
+      (except dereferencing through array subscripts) makes the use of
+      array subscripts to access an array element the unique way to do so
+      which simplifies compiler analyses.
+
+    The restricted use of pointers is important for dependence analysis and
+    for moving data between
     different address spaces of hardware accelerators, as it essentially
     eliminates aliasing problems.
   \end{itemize}    
