@@ -205,6 +205,9 @@ Project Manager & A.F.\ Donaldson & ICL & 2013-05-06 \nl
 \newcommand\carp{\textsc{Carp}}
 \newcommand{\C}{C99\xspace}
 
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
 \usepackage{arm/carp}
 
 \begin{document}
@@ -217,7 +220,7 @@ systems-on-chip -- benefit from using special-purpose
 processors in terms of energy efficiency as well as in terms of
 execution speed.
 Software for such systems, however, is currently written using
-low-level APIs, such as OpenCL and CUDA, which increases the cost of
+low-level APIs, such as OpenCL~\cite{stoneopencl} and CUDA~\cite{cudaref}, which increases the cost of
 its development and maintenance.
 A natural alternative would be to write high level code using a Domain
 Specific Language (DSL) and to lower that code through an optimizing
@@ -235,7 +238,7 @@ number of target platforms (\eg accelerated by NVIDIA GPUs), thus
 compromising on performance portability.  Moreover, the implementers
 of different DSLs will likely spend their efforts on implementing an
 overlapping set of techniques.
-The existence of common intermediate language serving as a target
+The existence of a common intermediate language serving as a target
 for DSL compilers would reduce considerably the development costs.
 
 To some extent, the design of such an intermediate
@@ -272,7 +275,6 @@ and loop nest optimizations, \pencil is carefully designed to
 incorporate a combination of analysis-friendly restrictions (on
 pointers and interprocedural data flow) and analysis-enhancing
 properties (assume predicates, side-effect summaries for functions).
-Section~\ref{pencil-overview} provides a more detailed overview of \pencil.
 
 
 \chapter{\pencil Language}
@@ -312,7 +314,7 @@ The design of \pencil is guided by the following considerations:
   \pencil, to ease the work of \pencil programmers, and to avoid committing
   early on target-specific patterns of parallelism.
 
-\item \pencil should simplify static code analysis.  For example, the
+\item \pencil should simplify static code analysis for the optimizing compiler.  For example, the
   use of pointers is disallowed, except in specific cases.
 
 \item \pencil should provide facilities that allow a DSL-to-\pencil
@@ -325,7 +327,7 @@ The design of \pencil is guided by the following considerations:
 
 \item For compatibility reasons, a standard C99 compiler that supports
   GNU C attributes should be able to compile \pencil, this allows for
-  greater portability and makes debugging \pencil easier.
+  greater portability and makes the debugging of \pencil code easier.
 
 \item The subset of C99 that constitutes \pencil should not be very
   small.  A very small and restrictive subset will limit the reuse and
@@ -368,6 +370,30 @@ combination of the two pieces of code is then optimized and
 parallelized (using a polyhedral framework).  Finally, highly
 specialized OpenCL code is generated.
 
+The design of the extensions to C99 that are a part of \pencil went
+through two steps.
+First numerous DSLs (and benchmarks) were analyzed, and based on this
+analysis,  a list of the properties that are expressed in these DSLs
+was created.
+This list was then filtered and only few properties were kept to be a
+part of \pencil.
+Deciding which property was supposed to be a part of \pencil was guided by
+the following design choice:
+all domain-specific optimizations should be performed at the DSL compiler
+level, while the \pencil compiler should be responsible only for parallelization,
+data locality optimization, loop nest transformations, and mapping to OpenCL.
+This separation meant that, in \pencil, only the properties that are necessary
+to enhance static-analysis and enable mapping to GPU are needed.
+Any domain-specific property that is not necessary for the \pencil compiler
+does not have to be conveyed through \pencil and thus should not be a part
+of the \pencil language.
+This choice has the advantage of keeping \pencil general-purpose,
+sequential and lightweight.
+Moreover, the evaluation of \pencil showed that this choice and that the
+current set of extensions is sufficient for achieving the main goal from
+having \pencil: enabling automatic parallelization, loop nest transformations
+and mapping to OpenCL.
+
 In this document, we only deal with the source-level \pencil syntax.
 We are putting a strong emphasis on the definition of constraints and
 extensions that may be easily
@@ -381,16 +407,13 @@ that \lstinline!CLAUSE! is optional.
 
 Section~\ref{pencil-c99-subset} presents the subset of C99 that
 defines the core of \pencil, while Section~\ref{pencil-extension-short}
-presents the extensions that are a part of \pencil.
+presents the extensions to C99 that are a part of \pencil.
 
 \section{\pencil Definition as a Subset of C99}
 \label{pencil-c99-subset}
 The language syntax is defined in \figref{pencil-syntax} as an EBNF (Extended
 Backus-Naur Form) grammar~\cite{wirth1996EBNF}.
 The reserved words are in bold.
-\pencil-specific types, built-in functions and macros are declared in
-the \texttt{pencil.h}~\footnote{https://github.com/carpproject/}
-header file.
 
 \input{arm/pencil.tex}
 
@@ -401,8 +424,10 @@ The following \C~\cite{c99} global definitions and declarations are allowed insi
   \item Type definition;
   \item Function declaration;
   \item Function definition;
-  \item Global constants definition (unlike \C, only constant global variables
-        are allowed in \pencil)
+  \item Global constants definition: unlike \C, only constant global variables
+        are allowed in \pencil.  This restriction enables \pencil compilers to
+        assume that \pencil code does not have any side effect on global
+        variables.
 \end{itemize}
 
 \subsection{Identifiers}
@@ -410,35 +435,41 @@ The naming and the scope of identifiers in \pencil follow the same rules as
 in \C.
 
 \subsection{Types\label{penciltypes}}
-\begin{description}
- \item [\pencil Types] The following \C types are allowed in a \pencil program.
+
+\subsubsection{\pencil Types (Scalars, Structures, Arrays and Pointers)}
+Unlike \C, unions and bitfields are not supported in \pencil.
+Only the following \C types are allowed.
+
  \begin{itemize}
   \item Scalar types (same as in \C)
       \footnote{half float type (\lstinline!half!) in \pencil is an optional
       type, \pencil compilers are not required to support it.}
+  \item Structural types (same as in \C)
   \item Array types
   \begin{itemize}
-    \item Arrays must be declared using the C99
-      variable-length array syntax~\cite{c99}, array function arguments
-      must be declared using the \lstinline!restrict! and
-      the \lstinline!const! type qualifiers, and the \lstinline!static! keyword
-      described in sections~\ref{sec:restrict},~\ref{sec:const}
-      and~\ref{sec:static} (the macro \lstinline!pencil_array! can be used to
-      abbreviate \lstinline!static const restrict!).
+    \item Arrays (including array function arguments) must be declared using the C99
+      variable-length array syntax~\cite{c99}.
+    \item Array function arguments
+      must be declared using the \lstinline!static! keyword and
+      the \lstinline!const! and \lstinline!restrict! type qualifiers,
+      described in sections~\ref{sec:static},~\ref{sec:const},
+      and~\ref{sec:restrict}
+      (the macro \lstinline!pencil_array! can be used to
+      abbreviate \lstinline!static! \lstinline!const! \lstinline!restrict!).
     \item Array accesses should not be linearized, as this tends to
-      obfuscate affine subscript expressions.  Multidimensional C99 arrays
-      should be used instead even for function arguments (variable-length arrays
-      C99 syntax).
+      obfuscate affine subscript expressions and may reduce the quality of
+      the data dependence analysis.
+      Multidimensional C99 arrays (C99 variable-length arrays syntax)
+      should be used instead.
     \item In order to have a precise dependence analysis, it is recommended
       to use quasi-affine array subscripts (Section~\ref{sec:quasi-affine})
       whenever this is possible.
   \end{itemize}
-  \item Structural types (same as in \C)
   \item Pointer types
   \begin{itemize}
     \item The declaration of pointers is allowed in \pencil.
       The main motivation is to provide \pencil users with the ability
-      of using non-\pencil libraries in a \pencil code.
+      to use non-\pencil libraries in a \pencil code.
       Forbidding pointer declarations makes the use of non-\pencil libraries
       difficult since the header files of such libraries may contain pointer
       declarations.
@@ -452,10 +483,11 @@ in \C.
       preserved:
       throughout the life of a \pencil program, separate array references
       never alias and remain constant.
-      The main motivation is to avoid the need for an advanced pointer
-      analysis.
-      Passing an array reference to a function does not violate the previous
-      property because function arguments in \pencil are required to be
+      Preserving this property is necessary to avoid the need for an
+      advanced pointer
+      analysis in \pencil compilers.
+      Passing an array reference to a function is allowed in \pencil as it does not violate the previous
+      property.  The property is not violated because function arguments in \pencil are required to be
       qualified with \lstinline!restrict! and \lstinline!const!:
       if two separate arrays are passed to a function and if the two
       function arguments (for those arrays) are qualified with the
@@ -472,33 +504,33 @@ in \C.
       (except dereferencing through array subscripts) makes the use of
       array subscripts to access an array element the unique way to do so
       which simplifies compiler analyses.
-
+  \end{itemize}
     The restricted use of pointers is important for dependence analysis and
     for moving data between
     different address spaces of hardware accelerators, as it essentially
     eliminates aliasing problems.
-  \end{itemize}    
  \end{itemize}
- Unlike \C, unions and bitfields are not supported in \pencil.
 
- \item [Scalar Type Conversion] Scalar type conversion in \pencil follows the
-   same rules as in \C.
+\subsubsection{Scalar Type Conversion}
+Scalar type conversion in \pencil follows the same rules as in \C.
 
- \item [Type Definition] Type definition in \pencil (through \lstinline!typedef!)
-   follows the same rules as in \C.
+\subsubsection{Type Definition}
+Type definition in \pencil (through \lstinline!typedef!) follows the same
+rules as in \C.
 
- \item [Type Qualifiers] The \lstinline!const! and the \lstinline!restrict!
-   \C type qualifiers are supported in \pencil.
-\end{description}
+\subsubsection{Type Qualifiers}
+The \lstinline!const! and the \lstinline!restrict! \C type qualifiers are
+supported in \pencil.
 
 \subsection{Functions}
-Function definition and declaration in \pencil are identical to function
-definition and declaration in \C.
-Function overloading and recursion are not allowed (note that OpenCL does
-not support recursion anyway).
-\pencil provides additional
-function annotations covered later in the document. \pencil functions can
-be called from \C programs.
+Function definition and declaration in \pencil follow the same
+rules as in \C.
+\pencil defines additional function attributes covered
+in Section~\ref{sec:const-attribute}.
+Function recursion is not allowed in \pencil since OpenCL does
+not support recursion.  Following the \C standard, function overloading
+is also not allowed.
+\pencil functions can be called from a \C program.
 
 \subsection{Statements}
 The following \C statements are allowed inside a \pencil function definition:
@@ -510,13 +542,13 @@ The following \C statements are allowed inside a \pencil function definition:
   \item Compound statement;
   \item Break statement;
   \item Continue statement;
-  \item Return statement (should be used only at the end of a function);
+  \item Return statement;
   \item Call statement.
 \end{itemize}
-Unlike \C, \lstinline!goto! Statements are not allowed in \pencil.
+Unlike \C, \lstinline!goto! statements are not allowed in \pencil.
 See detailed descriptions below.
 
-\subsubsection{Assignment}
+\subsubsection{Assignment Statement}
 \label{sec:assignments}
 The following \C assignment statements are supported:
 \begin{itemize}
@@ -526,8 +558,10 @@ The following \C assignment statements are supported:
 
 Unlike in \C, the \pencil assignment does not return any value (\ie
 it is a statement, not an operator).
-The goal is mainly to simplify the development of \pencil tool chains.
-For example, the following case is illegal in \pencil:
+The motivation of this restriction is to simplify the development of
+\pencil tool chains.
+
+Example:
 \begin{lstlisting}[language=pencil]
   int i = 2; //OK.
   int j = i += 2; //OK in C99, illegal in PENCIL.
@@ -555,7 +589,7 @@ the loop body.
     //Body
   }
 \end{lstlisting}
-The iteration variable is not visible outside the loop and cannot be modified
+The iteration variable is not visible (not defined) outside the loop and cannot be modified
 inside the loop body.
 
 By precisely specifying the loop format, we avoid the need for
@@ -565,7 +599,8 @@ importantly results in compiler analyses to succeed or fail under
 conditions unpredictable to the user.
 
 In order to have a precise dependence analysis, it is recommended
-to use quasi-affine loop bounds (Section~\ref{sec:quasi-affine}).
+to use quasi-affine loop bounds (Section~\ref{sec:quasi-affine})
+whenever this is possible.
 
 A for loop can be annotated with additional directives
 (see Section~\ref{sec:for-directives}).
@@ -583,11 +618,16 @@ The same as in \C.
 \subsubsection{Return Statement}
 The same as in \C except that it can be used only at the end of a function
 (\ie as the last statement in a function body).
+This allows \pencil compilers to assume that they work on SESE
+(Single-Entry Single-Exit) regions of the control flow which is easier.
+
 \subsubsection{Call Statement}
 The same as in \C except that
 \begin{itemize}
  \item Calling a non-\pencil function from \pencil
- is allowed only if its summary functions is provided.
+   is allowed only if its summary function is provided
+   (details about summary functions are presented in
+    Section~\ref{sec:mem-acces-info-for-functions}).
  \item Recursive function calls are not allowed.
 \end{itemize}
 
@@ -606,7 +646,7 @@ The same as in \C except that
   \item C function call (when the summary function is provided).
 \end{itemize}
 
-Unlike C, where any expression can be used as a statement, in
+Unlike \C, where any expression can be used as a statement, in
 order to simplify the development of \pencil tool chains, \pencil
 restricts the set of expressions that can be used as statements
 to the following list:
@@ -642,11 +682,6 @@ required to be piece-wise constant expression. An example of a
 quasi-affine expression is: $a*i+b*j+c$, where $a$ and $b$ are
 constants and $c$ is either a constant or a loop parameter.
 
-It is recommended to use quasi-affine expressions for
-array subscript, loop bounds, conditional expressions,
-and to specify memory access information (described in
-section \ref{sec:mem-acces-info-for-functions}).
-
 \begin{lstlisting}[language=pencil]
 for (int i=1; i<n; i++) {
   A[10*i+20] = 0;	// Quasi-affine
@@ -657,13 +692,17 @@ for (int i=1; i<n; i++) {
 }
 \end{lstlisting}
 
-In presence of non quasi-affine subscripts, it is highly recommended
-to use the \lstinline!independent! or \lstinline!ivdep! directives to
-enable parallelization and loop optimizations, or to hide these
-accesses in (possibly \lstinline!inline!) functions annotated with
-memory access information.
+It is recommended to use quasi-affine expressions for array subscripts,
+loop bounds and conditional expressions whenever this is possible.
 
-\subsubsection{Declarations and Initialization}
+In presence of non quasi-affine subscripts, it is highly recommended
+to use the \lstinline!independent! or \lstinline!ivdep! directives 
+(described in Sections~\ref{sec:independent} and~\ref{sec:ivdep})
+in order to enable parallelization and loop optimizations, or to hide these
+accesses in functions annotated with summary functions
+(Section~\ref{sec:mem-acces-info-for-functions}).
+
+\subsection{Declarations and Initialization}
 Identifier declaration and initialization in \pencil follows the same
 rules as in \C.
 
@@ -672,19 +711,19 @@ rules as in \C.
 
 This section provides a list of \pencil extensions, the detailed
 description of these extensions is provided
-in~\ref{sec:Annotations-and-directives}
+in Section~\ref{sec:Annotations-and-directives}.
 
 \subsection*{Directives}
 \label{sec:for-directives}
 
 \begin{itemize}
-\item \lstinline!#pragma pencil independent [OPT[reduction(operator: scalar_1, $\ldots$, scalar_n)*]OPT]!
+\item \lstinline!#pragma pencil independent [OPT[reduction(op: scal_1, $\ldots$, scal_n)]OPT]*!
 \item \lstinline!#pragma pencil ivdep!
 %\item \lstinline!#pragma pencil access!
 \item \lstinline!#pragma pencil region!
 \end{itemize}
 
-\subsection*{Keywords and Type Qualifiers for Array Arguments}
+\subsection*{Keywords and Type Qualifiers for Array Function Arguments}
 
 \begin{description}
   \item \lstinline!const!
@@ -714,7 +753,8 @@ in~\ref{sec:Annotations-and-directives}
 \item \lstinline!__pencil_def!;
 \item \lstinline!__pencil_maybe!;
 \item \lstinline!__pencil_assume!;
-\item \lstinline!__pencil_assert!.
+\item \lstinline!__pencil_assert!;
+\item \pencil math, common and integer built-in functions.
 \end{itemize}
 
 \chapter{Detailed Description of the Extensions to C99}
@@ -756,9 +796,6 @@ expression.  This rule eliminates the risk of inducing array aliasing
 through the assignment of an arbitrary base address to an array
 argument.
 \end{description}
-
-All array arguments in a \pencil function must be
-qualified by \lstinline!static const!.
 
 \subsection*{Examples}
 
@@ -802,12 +839,14 @@ void baz ()
 
 \item[Description] This qualifier has the same syntax and semantics
   as in C99.
-  It allows the compiler to know if array
-  arguments are aliased, which enables the compiler to
+  All array arguments of a \pencil function
+  must be declared using the \lstinline!restrict! type qualifier.
+  The use of \lstinline!restrict! guarantees that the array
+  arguments of the function do not alias.
+  This allows \pencil compilers to
   perform more precise dependence analysis.
-  Usage of this qualifier is mandatory.
   
-  Note that making the use of \lstinline!restrict! mandatory requires
+  Note that making the use of \lstinline!restrict! mandatory in \pencil requires
   upstream versioning of functions.
 
 \item[Example]~
@@ -1265,7 +1304,7 @@ void foo(int n, int A[pencil_array n],
 \pencil defines several directives inspired by OpenMP and OpenACC
 and commonly found in advanced vectorizing compilers.
 
-\subsection{\lstinline!pencil independent! Directive}
+\subsection{\lstinline!pencil independent! Directive\label{sec:independent}}
 
 \begin{description}
 \item [Usage] Used to annotate loops.
@@ -1494,7 +1533,7 @@ The following reduction operators are supported:
 % Does the benefit from the conditional clause deserve adding it.
 \end{description}
 %--------------------------------------------------------------------------------
-\subsection{\lstinline!pencil ivdep! Directive}
+\subsection{\lstinline!pencil ivdep! Directive\label{sec:ivdep}}
 
 \begin{description}
 \item [Usage] Used to annotate innermost loops that are candidates
@@ -1810,7 +1849,8 @@ assumptions match the effects of the \texttt{-fno-math-errno}
 
 \section{Compiling \pencil with \pencil Compilers}
 \begin{itemize}
- \item \pencil code must include \texttt{pencil.h};
+ \item \pencil code must include
+   \texttt{pencil.h}~\footnote{https://github.com/carpproject/};
  \item all \pencil compilers define the \lstinline!__PENCIL__! macro;
  \item header files that contain non-\pencil code (including many
        standard C header files) are not supported in PENCIL.
@@ -1819,9 +1859,7 @@ assumptions match the effects of the \texttt{-fno-math-errno}
 
 \section{Compiling \pencil with C99 Compilers}
 
-\pencil-specific types, built-in functions and macros are declared in
-the \texttt{pencil.h}~\footnote{https://github.com/carpproject/}
-header file.
+\pencil code compiled with C99 Compilers must include \texttt{pencil.h}.
 
 To map a \pencil code to OpenCL and to take benefit of all the features
 of the \pencil langage, a \pencil compiler needs to be used.
