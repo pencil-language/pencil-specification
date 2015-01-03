@@ -1500,12 +1500,35 @@ for (int i=0; i<N; i++) {
   \subsubsection{\lstinline!reduction! Clause}
   \label{reduction-clause}
 
-  When the reduction clause is used, the compiler
-  considers that the loop does not have any loop carried dependence except
-  the loop carried dependences induced by the reduction scalars.  This
-  information allows the compiler to parallelize the loop.  The syntax
-  of this directive is equivalent to the syntax of the reduction clause
-  defined in OpenMP.  As in OpenMP, the reduction variable should not
+  Adding the \lstinline!reduction! clause to the \lstinline!independent!
+  directive restricts the execution order of data accesses with respect
+  to \lstinline!independent! alone: considering 
+  the execution order of data accesses to the reduction variables
+  (\lstinline!scal_1, $\ldots$, scal_n!), the compiler must preserve
+  the atomicity of side effects on these variables within a given
+  loop iteration.
+  This in turns widens the applicability of the directive, compared to
+  \lstinline!independent! alone.
+  The reduction operator (\lstinline!op!) itself is only useful to
+  indicate how partial results on a reduction variable resulting from
+  any interleaving should be consolidated.
+
+  Aside from extending the applicability of the independent directive, one
+  motivation for introducing the \lstinline!reduction!
+  clause in \pencil is to eliminate the need for having a sophisticated
+  analysis to detect reductions in \pencil compilers.
+
+  In order to simplify code generation for \pencil compilers, only scalar
+  variables can be used as reduction variables.
+  % Additional reason: we also prefer to keep PENCIL in sync with PPCG.
+  % Support for scalar variables is relatively easier to add in PPCG than
+  % support for array elements.
+  % Thus we prefer not to claim that we can support reductions on array
+  % elements to avoid making the gap between the PENCIL spec and PPCG
+  % smaller.  In practice, reductions on array elements are rare.
+  Multiple reduction clauses can be used for different reduction operators.
+  The syntax of this clause is equivalent to the syntax of the reduction clause
+  defined in OpenMP.  As in OpenMP, the reduction variables should not
   be used anywhere outside the reduction statement.  Example:
   \begin{lstlisting}[language=pencil]
 #pragma pencil independent reduction(+: result)
