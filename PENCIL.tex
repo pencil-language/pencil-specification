@@ -1823,15 +1823,15 @@ than the equivalent OpenCL code.
 \begin{lstlisting}[language=pencil,escapechar=@, numbers=left,numberstyle={\tiny\tt},numbersep=5pt]
 
 void parallel_version(int no_of_nodes,
-          int edge_start_no[pencil_array no_of_nodes],
-          int edge_count[pencil_array no_of_nodes],
-          int no_of_edges,
-          int dst_node_index[pencil_array no_of_edges],
-          int cost[pencil_array no_of_edges],
-          char front[pencil_array no_of_nodes],
-          char updating_front[pencil_array no_of_nodes],
-          char visited[pencil_array no_of_nodes],
-          int src_index, int quiet)
+  int edge_start_no[pencil_array no_of_nodes],
+  int edge_count[pencil_array no_of_nodes],
+  int no_of_edges,
+  int dst_node_index[pencil_array no_of_edges],
+  int cost[pencil_array no_of_edges],
+  char front[pencil_array no_of_nodes],
+  char updating_front[pencil_array no_of_nodes],
+  char visited[pencil_array no_of_nodes],
+  int src_index, int quiet)
 {
   unsigned int carry_on = 1;
 
@@ -1886,40 +1886,40 @@ void parallel_version(int no_of_nodes,
 The following example implements an image resizing kernel,
 a common image processing kernel.
 
-\begin{lstlisting}[language=pencil,escapechar=@]
+\begin{lstlisting}[language=pencil,escapechar=@, numbers=left,numberstyle={\tiny\tt},numbersep=5pt]
 #include <pencil.h>
 
 #define bilinear(A00, A01, A11, A10, r, c) \
-          ((1-c) * ((1-r) * A00 + r*A10) + c*((1-r)*A01 + r*A11))
+  ((1-c) * ((1-r) * A00 + r*A10) + c*((1-r)*A01 + r*A11))
 
-static void resize(const int original_rows,
-                   const int original_cols,
-                   const int original_step,
-                   const unsigned char original[pencil_array original_rows][original_step],
-                   const int resampled_rows,
-                   const int resampled_cols,
-                   const int resampled_step,
-                   unsigned char resampled[pencil_array resampled_rows][resampled_step])
+static void resize(const int rows,
+  const int cols,
+  const int step,
+  const unsigned char original[pencil_array rows][step],
+  const int r_rows,
+  const int r_cols,
+  const int r_step,
+  unsigned char resampled[pencil_array r_rows][r_step])
 {
-    __pencil_assume(original_rows  >  0);
-    __pencil_assume(original_cols  >  0);
-    __pencil_assume(original_step  >= original_cols);
-    __pencil_assume(resampled_rows >  0);
-    __pencil_assume(resampled_cols >  0);
-    __pencil_assume(resampled_step >= resampled_cols);
+    __pencil_assume(rows  >  0);
+    __pencil_assume(cols  >  0);
+    __pencil_assume(step  >= cols);
+    __pencil_assume(r_rows >  0);
+    __pencil_assume(r_cols >  0);
+    __pencil_assume(r_step >= r_cols);
 
     __pencil_kill(resampled);
 
-    int o_h = original_rows;
-    int o_w = original_cols;
-    int n_h = resampled_rows;
-    int n_w = resampled_cols;
+    int o_h = rows;
+    int o_w = cols;
+    int n_h = r_rows;
+    int n_w = r_cols;
 
     #pragma pencil independent
-    for (int n_r = 0; n_r < resampled_rows; n_r++)
+    for (int n_r = 0; n_r < r_rows; n_r++)
     {
       #pragma pencil independent
-      for (int n_c = 0; n_c < resampled_cols; n_c++)
+      for (int n_c = 0; n_c < r_cols; n_c++)
       {
         float o_r = (n_r + 0.5) * (o_h) / (n_h) - 0.5;
         float o_c = (n_c + 0.5) * (o_w) / (n_w) - 0.5;
@@ -1957,22 +1957,22 @@ static void resize(const int original_rows,
 The following example implements a gaussian filter,
 a common image processing kernel.
 
-\begin{lstlisting}[language=pencil,escapechar=@]
+\begin{lstlisting}[language=pencil,escapechar=@, numbers=left,numberstyle={\tiny\tt},numbersep=5pt]
 #include <pencil.h>
 
 static void gaussian(const int rows,
-                     const int cols,
-                     const int step,
-                     const float src[pencil_array rows][step],
-                     const int kernelX_rows,
-                     const int kernelX_cols,
-                     const int kernelX_step,
-                     const float kernelX[pencil_array kernelX_rows][kernelX_step],
-                     const int kernelY_rows,
-                     const int kernelY_cols,
-                     const int kernelY_step,
-                     const float kernelY[pencil_array kernelY_rows][kernelY_step],
-                     float conv[pencil_array rows][step])
+  const int cols,
+  const int step,
+  const float src[pencil_array rows][step],
+  const int kernelX_rows,
+  const int kernelX_cols,
+  const int kernelX_step,
+  const float kernelX[pencil_array kernelX_rows][kernelX_step],
+  const int kernelY_rows,
+  const int kernelY_cols,
+  const int kernelY_step,
+  const float kernelY[pencil_array kernelY_rows][kernelY_step],
+  float conv[pencil_array rows][step])
 {
     __pencil_assume(rows         >  0);
     __pencil_assume(cols         >  0);
@@ -2056,7 +2056,7 @@ code are the following.
         the end of the function.
 \end{itemize}
 
-\begin{lstlisting}[language=pencil]
+\begin{lstlisting}[language=pencil,escapechar=@, numbers=left,numberstyle={\tiny\tt},numbersep=5pt]
  struct node
  {
    int value;
