@@ -1656,19 +1656,15 @@ assumptions match the effects of the \texttt{-fno-math-errno}
 
 \chapter{Practical \pencil Programming}
 
-\section{Compiling \pencil with \pencil Compilers}
-\begin{itemize}
- \item \pencil code must include
-   \texttt{pencil.h}~\footnote{https://github.com/carpproject/};
- \item all \pencil compilers define the \lstinline!__PENCIL__! macro;
- \item header files that contain non-\pencil code (including many
-       standard C header files) are not supported in PENCIL.
-\end{itemize}
+\section{Header Files}
+\pencil code must always include
+the \texttt{pencil.h}~\footnote{https://github.com/carpproject/} header file
+which defines all the \pencil built-in functions and macros.
+Header files that contain non-\pencil code (including many standard C header
+files) are not supported in PENCIL.
 
 
 \section{Compiling \pencil with C99 Compilers}
-
-\pencil code compiled with C99 Compilers must include \texttt{pencil.h}.
 
 To map a \pencil code to OpenCL and to take benefit of all the features
 of the \pencil langage, a \pencil compiler needs to be used.
@@ -1677,6 +1673,9 @@ compiler (gcc, icc, \dots) as if it was a C99 code (useful mainly for
 debugging).
 In that case all the \pencil extensions will be ignored by the C99
 compiler.  Such a behavior is totally safe.
+
+Note that \pencil compilers define the \lstinline!__PENCIL__! macro
+which can be used when compiling \pencil code using a C99 compiler.
 
 %The only \pencil extension that is not safe to ignore by C99 compilers
 %is the \lstinline!pencil_heap! type attribute defined in
