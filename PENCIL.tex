@@ -314,6 +314,7 @@ Function definition and declaration in \pencil follow the same
 rules as in C99.
 \pencil defines additional function attributes covered
 in Section~\ref{sec:const-attribute}.
+
 Function recursion is not allowed in \pencil since OpenCL does
 not support recursion.  Following the C99 standard, function overloading
 is also not allowed.
@@ -333,11 +334,11 @@ The following C99 statements are allowed inside a \pencil function definition:
   \item Call statement.
 \end{itemize}
 Unlike C99, \lstinline!goto! statements are not allowed in \pencil.
-See detailed descriptions below.
+See a detailed description for these statements below.
 
 \paragraph{Assignment Statement}
 \label{sec:assignments}
-The following C99 assignment statements are supported:
+The following C99 assignment statements are supported in \pencil:
 \begin{itemize}
   \item Basic assignment: \lstinline!=!
   \item Compound assignment: \lstinline{+=, -=, *=, /=, %=, |=, &=, ^=, <<=, >>=}
@@ -553,36 +554,56 @@ in Section~\ref{sec:Annotations-and-directives}.
 \subsubsection{\lstinline!static! Keyword}
 \label{sec:static}
 
-\begin{description}
-\item [Usage] Used when declaring an array argument of a \pencil function.
-\item [Description] The \lstinline!static! keyword in \pencil
+
+The \lstinline!static! keyword is used when declaring an array argument of a \pencil function.
+It
 has the same semantics as the \lstinline!static! keyword in C99.
 All array arguments of a \pencil function
-must be declared using the \lstinline!static! keyword.
+must be declared using this keyword.
 The use of this type qualifier is
 important to implement array expansion or data transfers when
 subscripts are not affine.%
 \footnote{An array expansion maps an array to a larger array, typically
 by adding extra dimensions.  The mapping may depend on the statement
 instance and can be used to remove some memory reuse.}
-\end{description}
+
 
 \subsubsection{\lstinline!const! Type Qualifier}
 \label{sec:const}
 
-\begin{description}
-\item [Usage] Used when declaring an array argument of a \pencil function.
-\item [Description] The \lstinline!const! type qualifier in \pencil
+The \lstinline!const! type qualifier is used when declaring an array argument of a \pencil function.
+It
 has the same semantics as the \lstinline!const! type qualifier in C99.
 All array arguments of a \pencil function
-must be declared using the \lstinline!const! type qualifier.
+must be declared using this type qualifier.
 It is used to make sure that array arguments behave as closely as possible to
 array variables, and to forbid that array arguments (the base
 pointer, not individual elements) occur at the left-hand side of an
 expression.  This rule eliminates the risk of inducing array aliasing
 through the assignment of an arbitrary base address to an array
 argument.
-\end{description}
+
+\subsubsection{\lstinline!restrict! Type Qualifier}
+\label{sec:restrict}
+
+% A discussion about whether the restrict keyword should be kept in PENCIL
+% or not.  The advantage of keeping restrict is to be compatible with the
+% C programming style where safety is not the default, and safety (restrict)
+% is indicated using a keyword.
+
+
+The \lstinline!restrict! type qualifier is used when declaring an array argument of a \pencil function.
+  It has the same syntax and semantics
+  as in C99.
+  All array arguments of a \pencil function
+  must be declared using this type qualifier.
+  The use of \lstinline!restrict! guarantees that the array
+  arguments of the function do not alias.
+  This allows \pencil compilers to
+  perform more precise dependence analysis.
+  
+  Note that making the use of \lstinline!restrict! mandatory in \pencil requires
+  upstream versioning of functions.
 
 \subsubsection*{Examples}
 
@@ -612,38 +633,15 @@ void baz ()
 }
 \end{lstlisting}
 
-\subsubsection{\lstinline!restrict! Type Qualifier}
-\label{sec:restrict}
+Another example.
 
-% A discussion about whether the restrict keyword should be kept in PENCIL
-% or not.  The advantage of keeping restrict is to be compatible with the
-% C programming style where safety is not the default, and safety (restrict)
-% is indicated using a keyword.
-
-\begin{description}
-
-\item[Usage] Used when declaring an array argument of a \pencil function.
-
-\item[Description] This qualifier has the same syntax and semantics
-  as in C99.
-  All array arguments of a \pencil function
-  must be declared using the \lstinline!restrict! type qualifier.
-  The use of \lstinline!restrict! guarantees that the array
-  arguments of the function do not alias.
-  This allows \pencil compilers to
-  perform more precise dependence analysis.
-  
-  Note that making the use of \lstinline!restrict! mandatory in \pencil requires
-  upstream versioning of functions.
-
-\item[Example]~
   \begin{lstlisting}[language=pencil]
 // a and b are restricted arrays (analogous to restricted
 // pointers in C99)
 void foo_restricted(float a[static const restrict 42],
                      float b[static const restrict 42]);
   \end{lstlisting}
-\end{description}
+
 
 \todo{Perhaps we should make an exception for
   dynamic memory allocation.  In that case, the allocated address
@@ -677,16 +675,14 @@ void foo_restricted(float a[static const restrict 42],
 %\end{description}
 
 \subsubsection{\lstinline!pencil\_array! Macro}
-\begin{description}
-\item[Description] \lstinline!pencil_array! is a macro that abbreviates
+
+\lstinline!pencil_array! is a macro that abbreviates
   \lstinline!static const restrict!.
 
-\item[Example]~
   \begin{lstlisting}[language=pencil]
 void foo(float a[pencil_array 42],
             float b[pencil_array 42]);
   \end{lstlisting}
-\end{description}
 
 \subsection{Function Attributes}
 
@@ -700,15 +696,13 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 \subsubsection{\lstinline!const! Function Attribute}
 \label{sec:const-attribute}
 
-\begin{description}
-\item[Description] The \lstinline!const! attribute of GCC is allowed in
+
+  The \lstinline!const! attribute of GCC is allowed in
   \pencil for compatibility with existing \lstinline!const!-annotated
   library functions (e.g., \lstinline!cos!, \lstinline!sin!, \lstinline!min!,
   \lstinline!max!, etc.).
 
-\item[Abbreviation] The \lstinline!CONST! macro abbreviates
-  \lstinline!__attribute__((const))!.
-\end{description}
+  The macro \lstinline!__attribute__((const))! is abbreviated with \lstinline!CONST!.
   
 \subsection{Description of the Memory Accesses of Functions}
 \label{sec:mem-acces-info-for-functions}
@@ -720,11 +714,10 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 %   no side effect, it is pure;
 % - calls to other summaries are allowed.
 
-\begin{description}
-  \item [Usage] The name of a summary function is indicated through
-  the \lstinline!pencil_access! function attribute.
 
-  \item [Description] The goal is to describe how the arguments of a given
+  The name of a summary function is indicated through
+  the \lstinline!pencil_access! function attribute.
+  The goal is to describe how the arguments of a given
   function are accessed.
   For each array (or scalar) passed to the function,
   a description of the memory accesses to that array is provided.
@@ -757,7 +750,13 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   precise static analysis.
 
   To indicate the summary function of a function \lstinline!foo!,
-  one should use the attribute \lstinline!pencil_access(summary)! where
+  one should use the attribute
+  
+  \begin{lstlisting}[language=pencil]
+    pencil_access(summary) 
+  \end{lstlisting}
+
+  where
   \lstinline!summary! is the name of the summary function  that describes
   the memory accesses in \lstinline!foo!.
   
@@ -856,7 +855,7 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
       }
   \end{lstlisting}
 
-  \item[Abbreviation] The attribute \lstinline!pencil_access! is
+  The attribute \lstinline!pencil_access! is
   abbreviated with the \lstinline!ACCESS! macro.
   
   The summary function does not need to preserve information about
@@ -928,7 +927,7 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 %   $0$ to $n-1$.
 
   
-\item[Example 1]~
+\paragraph{Example 1}
   \begin{lstlisting}[language=pencil]
   __attribute__((pencil_access(summary_fft32)))
   void fft32(int i, int j, int n,
@@ -974,7 +973,7 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   nest.
 
   
-  \item[Example 2]~
+\paragraph{Example 2}
   \begin{lstlisting}[language=pencil]
 struct complex {
   int image;
@@ -1027,7 +1026,6 @@ void foo(int n, int A[pencil_array n],
   from $0$ to $n-1$ and writes to \lstinline!A[15]!.
   \lstinline!foo! may write to \lstinline!d[i].real! for $i$
   from $10$ to $n-1$. 
-\end{description}
 
 %\subsection{Inline Description of Memory Accesses for Statement Blocks}
 %\label{sec:inline-mem-access-info}
@@ -1093,14 +1091,14 @@ and commonly found in advanced vectorizing compilers.
 
 \subsubsection{\lstinline!pencil independent! Directive\label{sec:independent}}
 
-\begin{description}
-\item [Usage] Used to annotate loops.
+
+The \lstinline!independent! directive is used to annotate loops.
 It has the following form:
 \begin{lstlisting}[language=pencil]
 #pragma pencil independent [OPT[reduction(op: scal_1, $\ldots$, scal_n)]OPT]*
 \end{lstlisting}
 
-\item [Description]
+
 % It indicates that for a given execution of the marked loop, if two
 % distinct iterations access the same memory element of a shared
 % variable, then both accesses are read accesses A variable is
@@ -1153,12 +1151,12 @@ undefined semantics (C11, OpenCL 2.0).
 The \lstinline!independent! directive has an effect only on the marked loop
 and does not have an effect on any other loop in the loop nest.
 
-\item [Note]~
+\paragraph{Note}
 The independent directive currently has informal semantics only. There
 are plans for more formal versions, or for the complete deprecation of
 the directive, in future revisions of PENCIL.
 
-\item [Example 1]~
+\paragraph{Example 1}
 
   The following example illustrates the usage of the directive in a
   typical context where the code executed in the loop body executes
@@ -1209,7 +1207,7 @@ void inc(float A[256], int c)
   parallelize the loop, but also provide valuable
   information for other loop transformations.
 
-\item [Example 2]~
+\paragraph{Example 2}
   In the following example, the writes to \lstinline!t! induce loop carried
   dependences and thus the use of \lstinline!independent! is incorrect because
   there are at least two iterations that may write different values to
@@ -1244,7 +1242,7 @@ for (int i=0; i<N; i++) {
   is marked as independent or not) can be assumed to be free of loop-carried
   dependences (i.e., these variables do not induce any loop carried dependence).
 
-\item [Example 3]~
+\paragraph{Example 3}
   The following example shows a code fragment of a \pencil
   implementation of the breadth-first search algorithm.
   This algorithm computes the minimal distance from a given source node to
@@ -1341,12 +1339,11 @@ The following reduction operators are supported:
 % An equivalent conditional clause is supported by the IBM compiler.
 % http://publib.boulder.ibm.com/infocenter/comphelp/v8v101/index.jsp?topic=%2Fcom.ibm.xlcpp8a.doc%2Fcompiler%2Fref%2Fruprpdir.htm
 % Does the benefit from the conditional clause deserve adding it.
-\end{description}
+
 %--------------------------------------------------------------------------------
 \subsubsection{\lstinline!pencil ivdep! Directive\label{sec:ivdep}}
 
-\begin{description}
-\item [Usage] Used to annotate innermost loops that are candidates
+The \lstinline!ivdep! directive is used to annotate innermost loops that are candidates
   for vectorization.  If applied on a loop nest, it is effective only on
   the innermost loops of the nest.
 
@@ -1354,7 +1351,8 @@ The following reduction operators are supported:
   \begin{lstlisting}
   #pragma pencil ivdep
   \end{lstlisting}
-\item [Description] It allows the
+  
+  It allows the
   compiler to ignore all the loop-carried dependences in the loop marked with
   the directive from one statement to a textually earlier one (Cray semantics for ivdep).
   This is generally sufficient to enable the vectorization
@@ -1366,7 +1364,7 @@ The following reduction operators are supported:
   synchronization barrier in between every pair of statements in the loop
   body).
   
-  \item [Example]~
+  \paragraph{Example}
 
   \begin{lstlisting}[language=pencil]
   #pragma pencil ivdep
@@ -1380,7 +1378,9 @@ The following reduction operators are supported:
   \lstinline!ivdep! directive allows the compiler to ignore the assumed
   loop carried dependences that may exist if $k < 0$. \footnote{Ignore
   possible out-of-bound errors in this example.}
-  \item [Example]~
+  
+  \paragraph{Example}
+  
   \begin{lstlisting}[language=pencil]
   #pragma pencil ivdep
   for (int i = 0; i < m; i++)
@@ -1391,7 +1391,7 @@ The following reduction operators are supported:
   \end{lstlisting}
   In this example, the compiler will ignore textually backward
   loop-carried dependences for the store into \lstinline!a[]!.
-\end{description}
+
 %-------------------------------------------------
 %\subsection{Other Directives}
 %
@@ -1408,53 +1408,62 @@ The following reduction operators are supported:
 In this section, \lstinline!T! represents any valid \pencil type.
 
 \subsubsection{\lstinline!\_\_pencil\_use! Function}
-\begin{description}
-\item [Usage] It can be used in summary functions.
-\item [Prototype] \lstinline!void __pencil_use(T location);!
-\item [Description] \lstinline!__pencil_use! is
-  a polymorphic built-in function to mark a use (read access) of
+
+  The \lstinline!__pencil_use! function is
+  a polymorphic built-in function used to mark a use (read access) of
   its argument (a variable or an array element)
   (details in section~\ref{sec:mem-acces-info-for-functions}).
-\item [Abbreviation] \lstinline!USE! is a macro that abbreviates
-  \lstinline!__pencil_use!.
-\end{description}
+
+  It can be used in summary functions.
+  It has the following prototype
+  
+  \lstinline!void __pencil_use(T location);!
+  
+  and can be abbreviated with the
+  \lstinline!USE! macro.
+
 
 \subsubsection{\lstinline!\_\_pencil\_def! Function}
-\begin{description}
-\item [Usage] It can be used in summary functions.
-\item [Prototype] \lstinline!void __pencil_def(T location);!
-\item [Description] \lstinline!__pencil_def! is a polymorphic
-  built-in function to mark a definition (clobbering, must-execute write
+
+  The \lstinline!__pencil_def! function is a polymorphic
+  built-in function used to mark a definition (clobbering, must-execute write
   access) of its argument (details in
   section~\ref{sec:mem-acces-info-for-functions}).
-\item [Abbreviation] \lstinline!DEF! is a macro that abbreviates
-  \lstinline!__pencil_def!.
-\end{description}
+  
+  It can be used in summary functions.
+  It has the following prototype
+  
+  \lstinline!void __pencil_def(T location);!
+  
+  and can be abbreviated with the
+  \lstinline!DEF! macro.
 
 \subsubsection{\lstinline!\_\_pencil\_maybe! Function}
-\begin{description}
-\item [Usage] It can be used in summary functions.
-\item [Prototype] \lstinline!int __pencil_maybe();!
-\item [Description] \lstinline!__pencil_maybe! is
+
+  The \lstinline!__pencil_maybe! function is
   a built-in function used to capture statically unknown conditions
   (details in section~\ref{sec:mem-acces-info-for-functions}).
-\item [Abbreviation] \lstinline!MAYBE! is a macro that abbreviates
-  \lstinline!__pencil_maybe!.
-\end{description}
+
+  It can be used in summary functions.
+  It has the following prototype
+  
+  \lstinline!int __pencil_maybe();!
+  
+  and can be abbreviated with the \lstinline!MAYBE! macro.
 
 \subsubsection{\lstinline!\_\_pencil\_kill! Function}
 %Anton requested an example where this may be usefull: actually it's usefull
 % for GPU, and the idea is that when you know some information, you just add
 % that information hopping that this information will help the compiler
 % optimize the code better.
-\begin{description}
-\item [Usage] The \lstinline!__pencil_kill! built-in can be
-  inserted anywhere in the code.
-\item [Prototype] \lstinline!void __pencil_kill(T location);!
-\item [Description]  \pencil allows the user to refine dataflow information
-  within and across any control flow region in the program using the
-  \lstinline!__pencil_kill! built-in function.
-  This is a polymorphic function that signifies that its argument
+  
+The \lstinline!__pencil_kill! built-in function has the following prototype
+
+  \lstinline!void __pencil_kill(T location);!
+
+  It allows the user to refine dataflow information
+  within and across any control flow region in the program.
+  It is a polymorphic function that signifies that its argument
   (a variable or an array element) is dead at the program point
   where \lstinline!__pencil_kill! is inserted, meaning that no data
   flows from any statement instance executed before the kill to any
@@ -1482,10 +1491,9 @@ In this section, \lstinline!T! represents any valid \pencil type.
          the compiler using \lstinline!__pencil_kill!.
   \end{itemize}
 
-\item [Abbreviation] \lstinline!KILL! is a macro that abbreviates
-  \lstinline!__pencil_kill!.
+  \lstinline!__pencil_kill! is abbreviated with the \lstinline!KILL! macro.
 
-\item [{Example}]:
+\paragraph{Example}
   In the following code, the elements of \lstinline!A!
   may be written inside the loop.  This means that if the loop
   is mapped to a device kernel, then this array needs to be copied
@@ -1502,14 +1510,15 @@ for (int i=0; i<n; i++) {
     A[i] = B[i];
 }
 \end{lstlisting}
-\end{description}
 
 \subsubsection{\lstinline!\_\_pencil\_assume! Function}
-\begin{description}
-\item [Usage] It can be inserted anywhere in the code.
-\item [Prototype] \lstinline!void __pencil_assume(int expression);!
-\item [Description] \lstinline!__pencil_assume! is a built-in function
-  which indicates that its argument (which is a logical expression) is true at
+
+
+The \lstinline!__pencil_assume! built-in function has the following prototype
+
+  \lstinline!void __pencil_assume(int expression);!
+
+  It indicates that its argument (which is a logical expression) is true at
   the program point where \lstinline!__pencil_assume! is inserted.
   \lstinline!__pencil_assume(exp)! does not instruct the compiler to check at
   run time whether \lstinline!exp! is actually true or not.
@@ -1518,12 +1527,11 @@ for (int i=0; i<n; i++) {
   DSL-to-\pencil compiler to communicate high level facts in the generated
   code.
 
-\item [Abbreviation] \lstinline!ASSUME! is a macro that abbreviates
-  \lstinline!__pencil_assume!.
+  \lstinline!__pencil_assume! is abbreviated with the \lstinline!ASSUME! macro.
   
-\item [{Example 1}]:
+\paragraph{Example 1}
 The following code (a general 2D convolution)  is a
-good example where \lstinline!__pencil_assume! can be used.  It is an image
+good example where the assume built-in can be used.  It is an image
 processing kernel that calculates the weighted sum of the area around each
 pixel using a kernel matrix for weights.
 In this code, it is sufficient to consider that the size of the array
@@ -1562,7 +1570,7 @@ for (int q = 0; q < rows; q++)
   }
 \end{lstlisting}
   
-\item [{Example 2}]:
+\paragraph{Example 2}
   \begin{lstlisting}[language=pencil]
 void foo(int n, int m, int S, int D[pencil_array S])
 {
@@ -1592,24 +1600,23 @@ void foo(int n, int m, int S, int D[pencil_array S])
         }
 }
   \end{lstlisting}
-\end{description}
 
 
 \subsubsection{\lstinline!\_\_pencil\_assert! Function}
-\begin{description}
-\item [Usage] It can be inserted anywhere in a \pencil code.
-\item [Prototype] \lstinline!void __pencil_assert(int expression);!
-\item [Description] \lstinline!__pencil_assert! is a built-in function
-  instructing the compiler to insert a run-time check of whether its argument
+
+The \lstinline!__pencil_assert! built-in function has the following prototype
+
+\lstinline!void __pencil_assert(int expression);!
+
+  It instructs the compiler to insert a run-time check of whether its argument
   (which is a boolean expression) is true at the program point where
   \lstinline!__pencil_assert! is inserted.
   \lstinline!__pencil_assert(exp)! does not automatically imply
   \lstinline!__pencil_assume(exp)!: static analyses in a \pencil compiler may
-  ignore \lstinline!__pencil_assert! while relying on
-  \lstinline!__pencil_assume! for enhanced analyses accuracy or speed.  If the
-  target architecture does not support \lstinline!__pencil_assert! (OpenCL for
+  ignore the assert built-in while relying on
+  the assume built-in for enhanced analyses accuracy or speed.  If the
+  target architecture does not support the assert built-in (OpenCL for
   example), the \pencil compiler should emit a warning message.
-\end{description}
 
 \subsubsection{\pencil Math, Common and Integer Built-in Functions}
 
