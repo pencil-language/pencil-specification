@@ -1914,10 +1914,8 @@ static void resize(const int rows,
     int n_h = r_rows;
     int n_w = r_cols;
 
-    #pragma pencil independent
     for (int n_r = 0; n_r < r_rows; n_r++)
     {
-      #pragma pencil independent
       for (int n_c = 0; n_c < r_cols; n_c++)
       {
         float o_r = (n_r + 0.5) * (o_h) / (n_h) - 0.5;
@@ -1991,10 +1989,8 @@ static void gaussian(const int rows,
 
     float temp[rows][step];
 
-    #pragma pencil independent
     for (int q = 0; q < rows; q++)
     {
-      #pragma pencil independent
       for (int w = 0; w < cols; w++)
       {
         float prod = 0.;
@@ -2012,10 +2008,8 @@ static void gaussian(const int rows,
       }
     }
     
-    #pragma pencil independent
     for (int q = 0; q < rows; q++)
     {
-      #pragma pencil independent
       for (int w = 0; w < cols; w++)
       {
         float prod = 0.;
