@@ -1,4 +1,4 @@
-\chapter{Introduction}
+\section{Introduction}
 
 Many systems -- from supercomputer installations to embedded
 systems-on-chip -- benefit from using special-purpose
@@ -63,9 +63,9 @@ pointers and interprocedural data flow) and analysis-enhancing
 properties (assume predicates, side-effect summaries for functions).
 
 
-\chapter{\pencil Language}
+\section{\pencil Language}
 
-\section{Overview of PENCIL \label{pencil-overview}}
+\subsection{Overview of PENCIL \label{pencil-overview}}
 
 \pencil is a carefully designed subset of the C99~\cite{c99} language
 designed to capture static properties essential to the implementation
@@ -195,7 +195,7 @@ Section~\ref{pencil-c99-subset} presents the subset of C99 that
 defines the core of \pencil, while Section~\ref{pencil-extension-short}
 presents the extensions to C99 that are a part of \pencil.
 
-\section{\pencil Definition as a Subset of C99}
+\subsection{\pencil Definition as a Subset of C99}
 \label{pencil-c99-subset}
 The language syntax is defined in \figref{pencil-syntax} as an EBNF (Extended
 Backus-Naur Form) grammar~\cite{wirth1996EBNF}.
@@ -203,7 +203,7 @@ The reserved words are in bold.
 
 \input{arm/pencil.tex}
 
-\subsection{Program Scope}
+\subsubsection{Program Scope}
 The following C99~\cite{c99} global definitions and declarations are allowed inside a
 \pencil program:
 \begin{itemize}
@@ -216,13 +216,14 @@ The following C99~\cite{c99} global definitions and declarations are allowed ins
         variables.
 \end{itemize}
 
-\subsection{Identifiers}
+\subsubsection{Identifiers}
 The naming and the scope of identifiers in \pencil follow the same rules as
 in C99.
 
-\subsection{Types\label{penciltypes}}
+\subsubsection{Types \label{penciltypes}}
 
-\subsubsection{\pencil Types (Scalars, Structures, Arrays and Pointers)}
+\paragraph{Scalars, Structures, Arrays and Pointers}
+
 Unlike C99, unions and bitfields are not supported in \pencil.
 Only the following C99 types are allowed.
 
@@ -297,18 +298,18 @@ Only the following C99 types are allowed.
     eliminates aliasing problems.
  \end{itemize}
 
-\subsubsection{Scalar Type Conversion}
+\paragraph{Scalar Type Conversion}
 Scalar type conversion in \pencil follows the same rules as in C99.
 
-\subsubsection{Type Definition}
+\paragraph{Type Definition}
 Type definition in \pencil (through \lstinline!typedef!) follows the same
 rules as in C99.
 
-\subsubsection{Type Qualifiers}
+\paragraph{Type Qualifiers}
 The \lstinline!const! and the \lstinline!restrict! C99 type qualifiers are
 supported in \pencil.
 
-\subsection{Functions}
+\subsubsection{Functions}
 Function definition and declaration in \pencil follow the same
 rules as in C99.
 \pencil defines additional function attributes covered
@@ -318,7 +319,7 @@ not support recursion.  Following the C99 standard, function overloading
 is also not allowed.
 \pencil functions can be called from a C99 program.
 
-\subsection{Statements}
+\subsubsection{Statements}
 The following C99 statements are allowed inside a \pencil function definition:
 \begin{itemize}
   \item Assignment;
@@ -334,7 +335,7 @@ The following C99 statements are allowed inside a \pencil function definition:
 Unlike C99, \lstinline!goto! statements are not allowed in \pencil.
 See detailed descriptions below.
 
-\subsubsection{Assignment Statement}
+\paragraph{Assignment Statement}
 \label{sec:assignments}
 The following C99 assignment statements are supported:
 \begin{itemize}
@@ -362,7 +363,7 @@ above these constructions are statements without any return value:
   i++; // Legal in C99 and in PENCIL.
 \end{lstlisting}
 
-\subsubsection{For Loop}
+\paragraph{For Loop}
 
 A \pencil for loop must have a single iterator, an invariant start
 value, an invariant stop value and a literal constant increment (step).
@@ -390,24 +391,24 @@ whenever this is possible.
 
 A for loop can be annotated with additional directives
 (see Section~\ref{sec:for-directives}).
-\subsubsection{While Loop}
+\paragraph{While Loop}
 The same as in C99.
-\subsubsection{If Statement}
+\paragraph{If Statement}
 The same as in C99.
 In order to have a precise dependence analysis, it is recommended
 to use quasi-affine conditional expressions (Section~\ref{sec:quasi-affine})
 whenever this is possible.
-\subsubsection{Break Statement}
+\paragraph{Break Statement}
 The same as in C99.
-\subsubsection{Continue Statement}
+\paragraph{Continue Statement}
 The same as in C99.
-\subsubsection{Return Statement}
+\paragraph{Return Statement}
 The same as in C99 except that it can be used only at the end of a function
 (\ie as the last statement in a function body).
 This allows \pencil compilers to assume that they work on SESE
 (Single-Entry Single-Exit) regions of the control flow which is easier.
 
-\subsubsection{Call Statement}
+\paragraph{Call Statement}
 The same as in C99 except that
 \begin{itemize}
  \item Calling a non-\pencil function from \pencil
@@ -417,7 +418,7 @@ The same as in C99 except that
  \item Recursive function calls are not allowed.
 \end{itemize}
 
-\subsection{Expressions}
+\subsubsection{Expressions}
 \pencil supports a strict subset of C99 expressions:
 \begin{itemize}
   \item Arithmetical operations: \lstinline!+,-,*,/,%!
@@ -452,7 +453,7 @@ to the following list:
 \end{itemize}
 
 
-\subsection{Quasi-affine Expressions}
+\subsubsection{Quasi-affine Expressions}
 \label{sec:quasi-affine}
 
 A quasi-affine expression is any expression over integer values and
@@ -488,18 +489,18 @@ in order to enable parallelization and loop optimizations, or to hide these
 accesses in functions annotated with summary functions
 (Section~\ref{sec:mem-acces-info-for-functions}).
 
-\subsection{Declarations and Initialization}
+\subsubsection{Declarations and Initialization}
 Identifier declaration and initialization in \pencil follows the same
 rules as in C99.
 
-\section{\pencil Extensions to C99}
+\subsection{\pencil Extensions to C99}
 \label{pencil-extension-short}
 
 This section provides a list of \pencil extensions, the detailed
 description of these extensions is provided
 in Section~\ref{sec:Annotations-and-directives}.
 
-\subsection*{Directives}
+\subsubsection*{Directives}
 \label{sec:for-directives}
 
 \begin{itemize}
@@ -509,7 +510,7 @@ in Section~\ref{sec:Annotations-and-directives}.
 \item \lstinline!#pragma pencil region!
 \end{itemize}
 
-\subsection*{Keywords and Type Qualifiers for Array Function Arguments}
+\subsubsection*{Keywords and Type Qualifiers for Array Function Arguments}
 
 \begin{description}
   \item \lstinline!const!
@@ -523,7 +524,7 @@ in Section~\ref{sec:Annotations-and-directives}.
 %  \item \lstinline!__attribute__((pencil_heap))!
 %\end{description}
 
-\subsection*{Function Attributes}
+\subsubsection*{Function Attributes}
 
 \begin{description}
   \item \lstinline!__attribute__((pencil_access()))!
@@ -531,7 +532,7 @@ in Section~\ref{sec:Annotations-and-directives}.
   \item \lstinline!__attribute__((pencil))!
 \end{description}
 
-\subsection*{Built-in Functions}
+\subsubsection*{Built-in Functions}
 
 \begin{itemize}
 \item \lstinline!__pencil_kill!;
@@ -543,13 +544,13 @@ in Section~\ref{sec:Annotations-and-directives}.
 \item \pencil math, common and integer built-in functions.
 \end{itemize}
 
-\chapter{Detailed Description of the Extensions to C99}
+\section{Detailed Description of the Extensions to C99}
 \label{sec:Annotations-and-directives}
 
-\section{Keywords, Type Qualifiers and Type Attributes for Array Declaration}
+\subsection{Keywords, Type Qualifiers and Type Attributes for Array Declaration}
 \label{sec:array-type-qualifiers-section}
 
-\subsection{\lstinline!static! Keyword}
+\subsubsection{\lstinline!static! Keyword}
 \label{sec:static}
 
 \begin{description}
@@ -566,7 +567,7 @@ by adding extra dimensions.  The mapping may depend on the statement
 instance and can be used to remove some memory reuse.}
 \end{description}
 
-\subsection{\lstinline!const! Type Qualifier}
+\subsubsection{\lstinline!const! Type Qualifier}
 \label{sec:const}
 
 \begin{description}
@@ -583,7 +584,7 @@ through the assignment of an arbitrary base address to an array
 argument.
 \end{description}
 
-\subsection*{Examples}
+\subsubsection*{Examples}
 
 Here is a correct \pencil function declaration and call.
 
@@ -611,7 +612,7 @@ void baz ()
 }
 \end{lstlisting}
 
-\subsection{\lstinline!restrict! Type Qualifier}
+\subsubsection{\lstinline!restrict! Type Qualifier}
 \label{sec:restrict}
 
 % A discussion about whether the restrict keyword should be kept in PENCIL
@@ -675,7 +676,7 @@ void foo_restricted(float a[static const restrict 42],
 %  \end{lstlisting}
 %\end{description}
 
-\subsection{\lstinline!pencil\_array! Macro}
+\subsubsection{\lstinline!pencil\_array! Macro}
 \begin{description}
 \item[Description] \lstinline!pencil_array! is a macro that abbreviates
   \lstinline!static const restrict!.
@@ -687,7 +688,7 @@ void foo(float a[pencil_array 42],
   \end{lstlisting}
 \end{description}
 
-\section{Function Attributes}
+\subsection{Function Attributes}
 
 A \pencil compiler is not supposed to perform interprocedural analysis or to
 apply transformations across function definitions.
@@ -696,7 +697,7 @@ region must be provided (Section~\ref{sec:mem-acces-info-for-functions}),
 unless the function is a \pencil function
 or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 
-\subsection{\lstinline!const! Function Attribute}
+\subsubsection{\lstinline!const! Function Attribute}
 \label{sec:const-attribute}
 
 \begin{description}
@@ -709,7 +710,7 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   \lstinline!__attribute__((const))!.
 \end{description}
   
-\section{Description of the Memory Accesses of Functions}
+\subsection{Description of the Memory Accesses of Functions}
 \label{sec:mem-acces-info-for-functions}
 
 % Note: Semantics (albert):
@@ -1085,12 +1086,12 @@ void foo(int n, int A[pencil_array n],
 %% It may be possible to apply some outlining
 %% automatically, but the impact is not yet well understood.
 
-\section{Pragma Directives}
+\subsection{Pragma Directives}
 
 \pencil defines several directives inspired by OpenMP and OpenACC
 and commonly found in advanced vectorizing compilers.
 
-\subsection{\lstinline!pencil independent! Directive\label{sec:independent}}
+\subsubsection{\lstinline!pencil independent! Directive\label{sec:independent}}
 
 \begin{description}
 \item [Usage] Used to annotate loops.
@@ -1283,7 +1284,7 @@ for (int i=0; i<N; i++) {
   }
   \end{lstlisting}
   
-  \subsubsection{\lstinline!reduction! Clause}
+  \paragraph{\lstinline!reduction! Clause}
   \label{reduction-clause}
 
   Adding the \lstinline!reduction! clause to the \lstinline!independent!
@@ -1342,7 +1343,7 @@ The following reduction operators are supported:
 % Does the benefit from the conditional clause deserve adding it.
 \end{description}
 %--------------------------------------------------------------------------------
-\subsection{\lstinline!pencil ivdep! Directive\label{sec:ivdep}}
+\subsubsection{\lstinline!pencil ivdep! Directive\label{sec:ivdep}}
 
 \begin{description}
 \item [Usage] Used to annotate innermost loops that are candidates
@@ -1402,11 +1403,11 @@ The following reduction operators are supported:
 % section~\ref{sec:pencil-as-c-ext}.
 %\end{itemize}
 
-\section{Built-in Functions}
+\subsection{Built-in Functions}
 
 In this section, \lstinline!T! represents any valid \pencil type.
 
-\subsection{\lstinline!\_\_pencil\_use! Function}
+\subsubsection{\lstinline!\_\_pencil\_use! Function}
 \begin{description}
 \item [Usage] It can be used in summary functions.
 \item [Prototype] \lstinline!void __pencil_use(T location);!
@@ -1418,7 +1419,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   \lstinline!__pencil_use!.
 \end{description}
 
-\subsection{\lstinline!\_\_pencil\_def! Function}
+\subsubsection{\lstinline!\_\_pencil\_def! Function}
 \begin{description}
 \item [Usage] It can be used in summary functions.
 \item [Prototype] \lstinline!void __pencil_def(T location);!
@@ -1430,7 +1431,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   \lstinline!__pencil_def!.
 \end{description}
 
-\subsection{\lstinline!\_\_pencil\_maybe! Function}
+\subsubsection{\lstinline!\_\_pencil\_maybe! Function}
 \begin{description}
 \item [Usage] It can be used in summary functions.
 \item [Prototype] \lstinline!int __pencil_maybe();!
@@ -1441,7 +1442,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   \lstinline!__pencil_maybe!.
 \end{description}
 
-\subsection{\lstinline!\_\_pencil\_kill! Function}
+\subsubsection{\lstinline!\_\_pencil\_kill! Function}
 %Anton requested an example where this may be usefull: actually it's usefull
 % for GPU, and the idea is that when you know some information, you just add
 % that information hopping that this information will help the compiler
@@ -1503,7 +1504,7 @@ for (int i=0; i<n; i++) {
 \end{lstlisting}
 \end{description}
 
-\subsection{\lstinline!\_\_pencil\_assume! Function}
+\subsubsection{\lstinline!\_\_pencil\_assume! Function}
 \begin{description}
 \item [Usage] It can be inserted anywhere in the code.
 \item [Prototype] \lstinline!void __pencil_assume(int expression);!
@@ -1594,7 +1595,7 @@ void foo(int n, int m, int S, int D[pencil_array S])
 \end{description}
 
 
-\subsection{\lstinline!\_\_pencil\_assert! Function}
+\subsubsection{\lstinline!\_\_pencil\_assert! Function}
 \begin{description}
 \item [Usage] It can be inserted anywhere in a \pencil code.
 \item [Prototype] \lstinline!void __pencil_assert(int expression);!
@@ -1610,7 +1611,7 @@ void foo(int n, int m, int S, int D[pencil_array S])
   example), the \pencil compiler should emit a warning message.
 \end{description}
 
-\subsection{\pencil Math, Common and Integer Built-in Functions}
+\subsubsection{\pencil Math, Common and Integer Built-in Functions}
 
 \pencil supports a set of the OpenCL built-in functions:
 \begin{itemize}
@@ -1654,9 +1655,9 @@ and floating point operations do not trigger exceptions (note that these
 assumptions match the effects of the \texttt{-fno-math-errno}
 \texttt{-fno-signaling-nans} GCC flags).
 
-\chapter{Practical \pencil Programming}
+\section{Practical \pencil Programming}
 
-\section{Header Files}
+\subsection{Header Files}
 \pencil code must always include
 the \texttt{pencil.h}~\footnote{https://github.com/carpproject/} header file
 which defines all the \pencil built-in functions and macros.
@@ -1664,7 +1665,7 @@ Header files that contain non-\pencil code (including many standard C header
 files) are not supported in PENCIL.
 
 
-\section{Compiling \pencil with C99 Compilers}
+\subsection{Compiling \pencil with C99 Compilers}
 
 To map a \pencil code to OpenCL and to take benefit of all the features
 of the \pencil langage, a \pencil compiler needs to be used.
@@ -1686,7 +1687,7 @@ which can be used when compiling \pencil code using a C99 compiler.
 %A practical solution in this case will be to enlarge the stack size
 %limit.
 
-\section{Embedding \pencil Code in C}
+\subsection{Embedding \pencil Code in C}
 \label{sec:pencil-as-c-ext}
 
 \pencil code can be embedded in C code.
@@ -1727,7 +1728,7 @@ Embedded \pencil code obeys the same rules as standalone \pencil code.
 \end{itemize}
 
 
-\section{Recommendations for Writing Efficient \pencil Code}
+\subsection{Recommendations for Writing Efficient \pencil Code}
 
 \begin{itemize}
 \item \pencil is not restricted to static (affine) control flow, but
@@ -1742,7 +1743,7 @@ Embedded \pencil code obeys the same rules as standalone \pencil code.
   accuracy.
 \end{itemize}
 
-\section{Passing a Scalar by Reference to a Function}
+\subsection{Passing a Scalar by Reference to a Function}
 
 A scalar argument that may be modified by a function (an output argument)
 should be declared as one-element array.
@@ -1761,7 +1762,7 @@ void set_zero(int * a)
 }
 \end{lstlisting}  
 
-\section{Memory Allocation for Arrays in \pencil}
+\subsection{Memory Allocation for Arrays in \pencil}
 
 It is possible to allocate a local array dynamically in \pencil code
 by declaring the array using the the C99 VLA syntax.
@@ -1791,9 +1792,9 @@ void set_array(int N, int array[pencil_array N],
 \end{lstlisting}
 
 
-\section{Examples of \pencil Code}
+\subsection{Examples of \pencil Code}
 
-\subsection{BFS Example}
+\subsubsection{BFS Example}
 
 The following example is a parallel breadth-first search implementation
 in \pencil.  The program takes as input a graph and a start node and
@@ -1880,7 +1881,7 @@ void parallel_version(int no_of_nodes,
 }
 \end{lstlisting}
 
-\subsection{Image Resizing Example}
+\subsubsection{Image Resizing Example}
 
 The following example implements an image resizing kernel,
 a common image processing kernel.
@@ -1949,7 +1950,7 @@ static void resize(const int rows,
 \end{lstlisting}
 
 
-\subsection{Gaussian Filter Example}
+\subsubsection{Gaussian Filter Example}
 
 The following example implements a gaussian filter,
 a common image processing kernel.
@@ -2035,9 +2036,9 @@ static void gaussian(const int rows,
 \end{lstlisting}
 
 
-\section{Examples of non-\pencil Code}
+\subsection{Examples of non-\pencil Code}
 
-\subsection{Recursive Data Structures and Recursive Function Calls}
+\subsubsection{Recursive Data Structures and Recursive Function Calls}
 
 The following code is not a valid \pencil code.  The problems in this
 code are the following.
