@@ -6,10 +6,14 @@ systems-on-chip -- benefit from using special-purpose
 processors in terms of energy efficiency as well as in terms of
 execution speed.
 Software for such systems, however, is currently written using
-low-level APIs, such as OpenCL~\cite{stoneopencl} and CUDA~\cite{cudaref}, which increases the cost of
+low-level APIs \nomenclature{APIs}{Application Program Interface},
+such as OpenCL (Open Computing Language)\nomenclature{OpenCL}{Open Computing Language}~\cite{stoneopencl} and
+CUDA (Compute Unified Device Architecture)\nomenclature{CUDA}{Compute Unified Device Architecture}~\cite{cudaref},
+which increases the cost of
 its development and maintenance.
 A natural alternative would be to write high level code using a Domain
-Specific Language (DSL) and to lower that code through an optimizing
+Specific Language (DSL) \nomenclature{DSL}{Domain Specific Language} and to
+lower that code through an optimizing
 compiler.
 In fact, in many application domains for which accelerators show
 promise, such as image processing and computational fluid dynamics, it
@@ -20,7 +24,7 @@ advisable.  For example, to target accelerated platforms effectively
 the DSL implementers must develop sophisticated code generation and
 optimization techniques.  Given typical budget constraints, they will
 likely limit their efforts to a set of techniques useful for a small
-number of target platforms (\eg accelerated by NVIDIA GPUs), thus
+number of target platforms, thus
 compromising on performance portability.  Moreover, the implementers
 of different DSLs will likely spend their efforts on implementing an
 overlapping set of techniques.
@@ -68,6 +72,7 @@ properties (assume predicates, side-effect summaries for functions).
 \subsection{Overview of PENCIL \label{pencil-overview}}
 
 \pencil is a carefully designed subset of the C99~\cite{c99} language
+\nomenclature{C99}{C Standard 1999}
 designed to capture static properties essential to the implementation
 of advanced loop nest transformations.
 It provides a set of language constructs that helps parallelizing
@@ -81,7 +86,7 @@ The language is not designed for a particular type of
 parallelizing compiler, but it has been validated using a polyhedral
 compilation flow.
 Where necessary, \pencil exploits the flexibility of non-C99 GNU
-C extensions such as type attributes, and pragmas when no alternative
+C extensions~\cite{gccguide} such as type attributes, and exploits pragmas when no alternative
 was available.
 The latter have been inspired from standard pragmas used as annotations
 for vectorization and thread-level parallelism, but retain a strictly
@@ -109,10 +114,10 @@ The design of \pencil is guided by the following considerations:
   compiler to perform better optimizations.  For example, \pencil
   should allow the user to indicate that the size of an array does not
   exceed a specific size to enable the compiler to place
-  that array in the shared memory of a GPU.
+  that array in the shared memory of a GPU (Graphics Processing Unit).
 
 \item For compatibility reasons, a standard C99 compiler that supports
-  GNU C attributes should be able to compile \pencil, this allows for
+  GNU C attributes~\cite{gccguide} should be able to compile \pencil, this allows for
   greater portability and makes the debugging of \pencil code easier.
 
 \item The subset of C99 that constitutes \pencil should not be very
@@ -169,7 +174,7 @@ all domain-specific optimizations should be performed at the DSL compiler
 level, while the \pencil compiler should be responsible only for parallelization,
 data locality optimization, loop nest transformations, and mapping to OpenCL.
 This separation meant that, in \pencil, only the properties that are necessary
-to enhance static-analysis and enable mapping to GPU are needed.
+to enhance static-analysis and enable mapping to GPU \nomenclature{GPU}{graphics processing unit} are needed.
 Any domain-specific property that is not necessary for the \pencil compiler
 does not have to be conveyed through \pencil and thus should not be a part
 of the \pencil language.
@@ -180,7 +185,7 @@ current set of extensions is sufficient for achieving the main goal from
 having \pencil: enabling automatic parallelization, loop nest transformations
 and mapping to OpenCL.
 
-In this document, we only deal with the source-level \pencil syntax.
+We only deal with the source-level \pencil syntax.
 We are putting a strong emphasis on the definition of constraints and
 extensions that may be easily
 lowered to compiler intermediate representations using attributes and built-in
@@ -188,7 +193,7 @@ functions.
 
 \paragraph*{Notation}
 
-Throughout this document, the notation \lstinline![OPT[CLAUSE]OPT]! indicates
+Throughout the description of \pencil, the notation \lstinline![OPT[CLAUSE]OPT]! indicates
 that \lstinline!CLAUSE! is optional.
 
 Section~\ref{pencil-c99-subset} presents the subset of C99 that
@@ -199,6 +204,7 @@ presents the extensions to C99 that are a part of \pencil.
 \label{pencil-c99-subset}
 The language syntax is defined in \figref{pencil-syntax} as an EBNF (Extended
 Backus-Naur Form) grammar~\cite{wirth1996EBNF}.
+\nomenclature{EBNF}{Extended Backus-Naur Form}
 The reserved words are in bold.
 
 \input{arm/pencil.tex}
@@ -327,7 +333,7 @@ The following C99 statements are allowed inside a \pencil function definition:
   \item For loop;
   \item While loop;
   \item If statement;
-  \item Compound statement;
+  \item Compound statement (block);
   \item Break statement;
   \item Continue statement;
   \item Return statement;
@@ -408,6 +414,7 @@ The same as in C99 except that it can be used only at the end of a function
 (\ie as the last statement in a function body).
 This allows \pencil compilers to assume that they work on SESE
 (Single-Entry Single-Exit) regions of the control flow which is easier.
+\nomenclature{SESE}{Single-Entry Single-Exit}
 
 \paragraph{Call Statement}
 The same as in C99 except that
@@ -415,7 +422,7 @@ The same as in C99 except that
  \item Calling a non-\pencil function from \pencil
    is allowed only if its summary function is provided
    (details about summary functions are presented in
-    Section~\ref{sec:mem-acces-info-for-functions}).
+    Section~\ref{sec:summaries}).
  \item Recursive function calls are not allowed.
 \end{itemize}
 
@@ -488,7 +495,7 @@ to use the \lstinline!independent! or \lstinline!ivdep! directives
 (described in Sections~\ref{sec:independent} and~\ref{sec:ivdep})
 in order to enable parallelization and loop optimizations, or to hide these
 accesses in functions annotated with summary functions
-(Section~\ref{sec:mem-acces-info-for-functions}).
+(Section~\ref{sec:summaries}).
 
 \subsubsection{Declarations and Initialization}
 Identifier declaration and initialization in \pencil follows the same
@@ -694,7 +701,7 @@ void foo(float a[pencil_array 42],
 A \pencil compiler is not supposed to perform interprocedural analysis or to
 apply transformations across function definitions.
 A description of the memory accesses of a function called from a \pencil
-region must be provided (Section~\ref{sec:mem-acces-info-for-functions}),
+region must be provided (Section~\ref{sec:summaries}),
 unless the function is a \pencil function
 or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 
@@ -710,7 +717,7 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   The macro \lstinline!__attribute__((const))! is abbreviated with \lstinline!CONST!.
   
 \subsection{Description of the Memory Accesses of Functions}
-\label{sec:mem-acces-info-for-functions}
+\label{sec:summaries}
 
 % Note: Semantics (albert):
 % - it is plain C code with some restrictions that the only non-scalar
@@ -961,7 +968,8 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   \end{lstlisting}
   
   This example shows a loop nest extracted from
-  \emph{ABF} (Adaptive Beamformer), a signal processing kernel used in radar
+  \emph{ABF} (Adaptive Beamformer) \nomenclature{ABF}{Adaptive Beamformer},
+  a signal processing kernel used in radar
   systems.
   The code calls the function \lstinline!fft32! (Fast Fourier Transform)
   which only reads and modifies (in place) 32 elements of its input
@@ -1091,8 +1099,10 @@ void foo(int n, int A[pencil_array n],
 
 \subsection{Pragma Directives}
 
-\pencil defines several directives inspired by OpenMP and OpenACC
+\pencil defines several directives inspired by OpenMP~\cite{openmp08} and OpenACC~\cite{openacc11}
 and commonly found in advanced vectorizing compilers.
+\nomenclature{OpenMP}{Open Multi-Processing}
+\nomenclature{OpenACC}{Open Accelerators}
 
 \subsubsection{\lstinline!pencil independent! Directive\label{sec:independent}}
 
@@ -1125,8 +1135,9 @@ ignored through the usage of the \lstinline!independent! directive,
 in which case the correct execution order may have to be guaranteed
 using specific synchronization constructs.
 Reductions implemented as atomic regions in the generated code are one
-typical example. Low-level atomics in C11 or OpenCL 2.0 are another one
+typical example. Low-level atomics in C11~\cite{c11} or OpenCL 2.0 are another one
 (e.g., to give semantics to benign races).
+\nomenclature{C11}{C Standard 2011}
 
 Indeed, external non-PENCIL functions called from the annotated loops
 may employ target-dependent constructs to protect the atomicity of
@@ -1359,7 +1370,7 @@ The \lstinline!ivdep! directive is used to annotate innermost loops that are can
   
   It allows the
   compiler to ignore all the loop-carried dependences in the loop marked with
-  the directive from one statement to a textually earlier one (Cray semantics for ivdep).
+  the directive from one statement to a textually earlier one (Cray semantics for ivdep~\cite{cray}).
   This is generally sufficient to enable the vectorization
   of loops when the compiler is taking conservative assumptions.
 
@@ -1417,7 +1428,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   The \lstinline!__pencil_use! function is
   a polymorphic built-in function used to mark a use (read access) of
   its argument (a variable or an array element)
-  (details in section~\ref{sec:mem-acces-info-for-functions}).
+  (details in section~\ref{sec:summaries}).
 
   It can be used in summary functions.
   It has the following prototype
@@ -1433,7 +1444,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   The \lstinline!__pencil_def! function is a polymorphic
   built-in function used to mark a definition (clobbering, must-execute write
   access) of its argument (details in
-  section~\ref{sec:mem-acces-info-for-functions}).
+  section~\ref{sec:summaries}).
   
   It can be used in summary functions.
   It has the following prototype
@@ -1447,7 +1458,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
 
   The \lstinline!__pencil_maybe! function is
   a built-in function used to capture statically unknown conditions
-  (details in section~\ref{sec:mem-acces-info-for-functions}).
+  (details in section~\ref{sec:summaries}).
 
   It can be used in summary functions.
   It has the following prototype
@@ -1456,7 +1467,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   
   and can be abbreviated with the \lstinline!MAYBE! macro.
 
-\subsubsection{\lstinline!\_\_pencil\_kill! Function}
+\subsubsection{\label{sec:kill}\lstinline!\_\_pencil\_kill! Function}
 %Anton requested an example where this may be usefull: actually it's usefull
 % for GPU, and the idea is that when you know some information, you just add
 % that information hopping that this information will help the compiler
@@ -1535,7 +1546,7 @@ The \lstinline!__pencil_assume! built-in function has the following prototype
   \lstinline!__pencil_assume! is abbreviated with the \lstinline!ASSUME! macro.
   
 \paragraph{Example 1}
-The following code (a general 2D convolution)  is a
+The code in Figure~\ref{fig:2D-convolution} (a general 2D convolution)  is a
 good example where the assume built-in can be used.  It is an image
 processing kernel that calculates the weighted sum of the area around each
 pixel using a kernel matrix for weights.
@@ -1555,25 +1566,30 @@ The use of \lstinline!__pencil_assume! in this case tells the compiler
 about the limits on the size of the array allowing it to store
 the whole array in shared memory.
 
-\begin{lstlisting}[language=pencil]
+\begin{figure}[t]
+\begin{lstlisting}[stepnumber=1,numbers=left,numberstyle={\tiny\tt},numbersep=5pt,escapechar=@,language=pencil]
 #define clampi(val, min, max) \
   (val < min) ? (min) : (val > max ) ? (max):(val)
 
-__pencil_assume(ker_mat_rows <= 15);
-__pencil_assume(ker_mat_cols <= 15);
+__pencil_assume(ker_mat_rows <= 15);@\label{fig:2D-convolution:assume1}@
+__pencil_assume(ker_mat_cols <= 15);@\label{fig:2D-convolution:assume2}@
 
-for (int q = 0; q < rows; q++)
-  for (int w = 0; w < cols; w++) {
-    float prod = 0.;
+for (int i = 0; i < rows; i++)
+  for (int j = 0; j < cols; j++) {
+    float prod = 0.;@\label{fig:2D-convolution:declaration}@
     for (int e = 0; e < ker_mat_rows; e++)
       for (int r = 0; r < ker_mat_cols; r++) {
-        row = clampi(q+e-ker_mat_rows/2, 0, rows-1);
-        col = clampi(w+r-ker_mat_cols/2, 0, cols-1);
+        row = clampi(i+e-ker_mat_rows/2, 0, rows-1);
+        col = clampi(j+r-ker_mat_cols/2, 0, cols-1);
         prod += src[row][col] * kern_mat[e][r];
       }
-    conv[q][w] = prod;
+    conv[i][j] = prod;
   }
 \end{lstlisting}
+\caption{General 2D convolution}
+\label{fig:2D-convolution}
+\vskip-0.5cm
+\end{figure}
   
 \paragraph{Example 2}
   \begin{lstlisting}[language=pencil]
@@ -1662,10 +1678,13 @@ functions and rely on the polyhedral tools to generate a vectorized
 version of these functions.
 
 Floating point operations are considered associative by default in \pencil.
-\pencil built-in functions do not have side-effects (on \texttt{errno})
+\pencil built-in functions do not have side-effects (on \texttt{errno}
+\footnote{\texttt{errno} is an integer variable set by system calls and
+some library functions in case of an error to indicate what went wrong.})
 and floating point operations do not trigger exceptions (note that these
 assumptions match the effects of the \texttt{-fno-math-errno}
-\texttt{-fno-signaling-nans} GCC flags).
+\texttt{-fno-signaling-nans} GCC flags~\cite{gccguide}).
+\nomenclature{GCC}{GNU Compiler Collection}
 
 \section{Practical \pencil Programming}
 
@@ -1684,6 +1703,7 @@ of the \pencil langage, a \pencil compiler needs to be used.
 But it is still possible to compile a \pencil code with a standard C99
 compiler (gcc, icc, \dots) as if it was a C99 code (useful mainly for
 debugging).
+\nomenclature{icc}{Intel C++ Compiler}
 In that case all the \pencil extensions will be ignored by the C99
 compiler.  Such a behavior is totally safe.
 
@@ -1777,7 +1797,8 @@ void set_zero(int * a)
 \subsection{Memory Allocation for Arrays in \pencil}
 
 It is possible to allocate a local array dynamically in \pencil code
-by declaring the array using the the C99 VLA syntax.
+by declaring the array using the the C99 VLA syntax (C99 Variable Length
+Array syntax)~\cite{c99}. \nomenclature{VLA}{Variable Length Array}
 An array is said to be local for a given \pencil region, if all the
 elements of the array are defined in that \pencil region and are not
 used outside that region.
@@ -1804,9 +1825,27 @@ void set_array(int N, int array[pencil_array N],
 \end{lstlisting}
 
 
+\subsection{Providing the OpenCL Implementation of a \pencil Function}
+Although for many practical examples \pencil enables unassisted
+generation of sufficiently optimized OpenCL code,
+there will inevitably be cases where a developer wishes
+to hand optimize a specific piece of functionality, or exploit
+non-standard, target-specific features of a particular platform (e.g.,
+through the use of inline PTX assembly in OpenCL when targeting Nvidia
+GPUs).
+To make \pencil more flexible for expert developers and
+domain-specific optimizers, the language allows the call of
+target-specific functions within the generated code.
+Such functions are provided by the user to the \pencil compiler
+in a separate source file and are then included by the compiler
+into the automatically generated OpenCL code.
+
+
 \subsection{Examples of \pencil Code}
 
 \subsubsection{BFS Example}
+
+\nomenclature{BFS}{Breadth-First Search}
 
 The following example is a parallel breadth-first search implementation
 in \pencil.  The program takes as input a graph and a start node and
