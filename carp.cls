@@ -119,9 +119,8 @@ CARP Documents]
   \changetext{0pt}{-2cm}{}{}{}
   \thesecondpage
   \clearpage
-  \printRevision
-  \clearpage
   \tableofcontents
+  \lfoot{PENCIL\theversionnumber}
   \clearpage
 }
 
@@ -197,8 +196,9 @@ $^3$This code is constructed as described in the Project Handbook.
   \begin{center}
   \vspace{7.6cm}
   \textbf{\LARGE \thetitle} \\[2cm]
-  \textbf{\theauthor} \\[0.4cm]
-  \theaddress \\[0.6cm]
+  \textbf{\theauthor} \\[1cm]
+  \theaddress \\[4cm]
+  \text{Revision \RevisionNumber{}} \\[2.5mm]
   \end{center}
   \newpage
 }
@@ -317,6 +317,8 @@ $^3$This code is constructed as described in the Project Handbook.
 
 \newcommand{\changetextwidth}{\setlength{\textwidth}{14.5cm}}
 
+\newcommand{\VersionNumber}[1]{Revision #1}
+
 % Print abstract (with lines etc)
 \newcommand{\printRevision}{
 \ifthenelse{\PublicDocument}
@@ -370,7 +372,6 @@ $^3$This code is constructed as described in the Project Handbook.
 \renewcommand{\headheight}{33pt}
 \setlength{\headwidth}{\textwidth}
 \setlength{\fancyfootoffset}{0cm}
-\ifthenelse{\PublicDocument}{}{\lfoot{CARP-\theepartner-\thedocumentcode-\thelocalnumber-\theversionnumber}}
 \cfoot{\thepage}
 \rfoot{\theecdate}
 }
