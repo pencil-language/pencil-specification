@@ -11,16 +11,28 @@ such as OpenCL (Open Computing Language)\nomenclature{OpenCL}{Open Computing Lan
 CUDA (Compute Unified Device Architecture)\nomenclature{CUDA}{Compute Unified Device Architecture}~\cite{cudaref},
 which increases the cost of
 its development and maintenance.
-A natural alternative would be to write high level code using a Domain
-Specific Language (DSL) \nomenclature{DSL}{Domain Specific Language} and to
-lower that code through an optimizing
-compiler.
-In fact, in many application domains for which accelerators show
-promise, such as image processing and computational fluid dynamics, it
-is common to program in domain-specific languages (DSLs).
+A compelling alternative for developers is to work with higher-level
+programming languages, and to leverage compilation technology to automatically
+generate efficient low level code.
+For general-purpose languages in the C family, this approach is hindered
+by the difficulty of static analysis in the presence of pointer aliasing.
+The possibility of aliasing often forces a parallelizing compiler
+to assume that it is \emph{not} safe to parallelize a region of source
+code, even though aliasing might not actually
+occur at runtime.
+%
+Domain-specific languages (DSLs) can circumvent this problem: it is often
+clear how parallelism can be exploited given
+high-level knowledge about standard operations in a given domain, such as
+linear algebra~\cite{vobla_2014},
+image processing~\cite{DBLP:conf/pldi/Ragan-KelleyBAPDA13}
+or partial differential equations~\cite{DBLP:journals/toms/AlnaesLORW14}.
+The drawback of the DSL approach is the significant effort required to
+lower code all the way from the DSL level to highly optimized OpenCL or CUDA.
+The effort involved is even more significant if optimization is required
+for multiple platforms.
 
-Compiling DSLs directly into OpenCL or CUDA is possible but not
-advisable.  For example, to target accelerated platforms effectively
+For example, to target accelerated platforms effectively
 the DSL implementers must develop sophisticated code generation and
 optimization techniques.  Given typical budget constraints, they will
 likely limit their efforts to a set of techniques useful for a small
@@ -31,25 +43,25 @@ overlapping set of techniques.
 The existence of a common intermediate language serving as a target
 for DSL compilers would reduce considerably the development costs.
 
-To some extent, the design of such an intermediate
-language obeys the same motivations that led to the design of compiler
-middle-ends that support a common set of analyses and optimizations
-for a variety of programming languages and target instruction
-sets. However, the technical context is very different, involving
-code generation for complex memory hierarchies and massively parallel
-hardware accelerators. This involves program analyses and
-transformations on multidimensional iteration spaces and arrays,
-dealing with mapping, scheduling, and automatic data transfers in a
-massively concurrent context.
-
-Beside enhancing productivity, DSLs have the advantage of using high level
-constructs that have rich semantics.  These constructs provide a wealth of
-information that enable the compiler to optimize and parallelize
-the code even for algorithms that are considered to be irregular
-when expressed in languages like C (e.g., operations on lists, like map).
-%
-DSL compilers maintain a tight control over the generated code, eliminating
-many of the problems faced by general-purpose optimizing compilers.
+% To some extent, the design of such an intermediate
+% language obeys the same motivations that led to the design of compiler
+% middle-ends that support a common set of analyses and optimizations
+% for a variety of programming languages and target instruction
+% sets. However, the technical context is very different, involving
+% code generation for complex memory hierarchies and massively parallel
+% hardware accelerators. This involves program analyses and
+% transformations on multidimensional iteration spaces and arrays,
+% dealing with mapping, scheduling, and automatic data transfers in a
+% massively concurrent context.
+% 
+% Beside enhancing productivity, DSLs have the advantage of using high level
+% constructs that have rich semantics.  These constructs provide a wealth of
+% information that enable the compiler to optimize and parallelize
+% the code even for algorithms that are considered to be irregular
+% when expressed in languages like C (e.g., operations on lists, like map).
+% %
+% DSL compilers maintain a tight control over the generated code, eliminating
+% many of the problems faced by general-purpose optimizing compilers.
 
 In this document, we present \pencil, a platform-neutral compute intermediate
 language intended as a target for DSL compilers and to be used by domain
@@ -139,7 +151,7 @@ Two possible scenarios of using \pencil are possible:
 \item \pencil code is written by an expert programmer.
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{figure}[ht]
 {
  \centering
  \includegraphics[scale=0.65]{./figures/CARPHighLevelOverview.pdf}
