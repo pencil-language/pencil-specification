@@ -1,223 +1,30 @@
-\newcommand{\PublicDocument}{\equal{1}{1}}
-
-% Sample file using carp.cls
 \documentclass{carp}
 
-\usepackage[english]{babel}
+\include{includes}
 
-\usepackage{amsmath}
-\usepackage{mdwlist}
-\usepackage{paralist}
-\usepackage{amsfonts}
-\usepackage{textcomp} % Used for syntax highlighting.
-\usepackage{listings}
-\usepackage{subcaption}
+\title{PENCIL 1.0 Language Specification}
 
-\usepackage{todonotes}
-\usepackage{multicol}
-\usepackage[T1]{fontenc}
-
-% This gives syntax highlighting in the python environment
-\renewcommand{\lstlistlistingname}{Code Listings}
-\renewcommand{\lstlistingname}{Code Listing}
-
-\renewcommand{\todo}[1]{}
-
-\definecolor{gray}{gray}{0.5}
-\definecolor{key}{rgb}{0,0.5,0}
-
-% Document title
-\title{
-\ifthenelse{\PublicDocument}
-{PENCIL 1.0 Language Specification}
-{D3.5: Final PENCIL Language Specification}
-}
-
-% Document type (one of MD, TR, D, P)
-\ifthenelse{\PublicDocument}{\type{TR}}{\type{D}}
-% MD: management document
-% TR: technical report
-% D:  deliverable
-% P:  published paper
-
-% Document distribution (one of PU, PP, RE, CO)
-\ifthenelse{\PublicDocument}{\distribution{PU}}{\distribution{PP}}
-% PU: Public
-% PP: Restricted to other programme participants (including commission services);
-% RE: restricted to a group specified by the consortium (including the commission services);
-% CO: confidential, only for members of the consortium (including the commission services).
-
-% Name of editor
-\editor{Riyadh\ Baghdadi (ENS)}
-
-% Editing Partner, responsible for document (one of ICL, ENS, ARM, REAL, RWTHA, MONO, UT, RIGHT)
-\epartner{ENS}
-
-% Either a list of partners or a list of persons
-\contributors{ARM, ENS}
-
-% Local 3-digit number assigned by partner
-\localnumber{004}
-
-% Version number
-\ifthenelse{\PublicDocument}{\versionnumber{v0.9}}{\versionnumber{v1.0}}
+% Revision number, update after each important revision
 \newcommand{\RevisionNumber}{1}
-
-% Document code: one of
-%Contract Change Notice	CN
-%Contract	CO
-%Change Request	CR
-%Configuration Status List	CS
-%Critical Items List	CI
-%Design Document 	DD
-%Dispatch Note	DN
-%Data Package	DP
-%Drawing	DW
-%Interface Control Document	ID
-%List	LI
-%Minutes of Meeting	MM
-%Memorandum	MO
-%Non-Conformance Report	NC
-%Plan	PL
-%Progress Report	PR
-%Presentation	PT
-%Review Item Discrepancy	RD
-%Report	RP
-%Request for Waiver	RW
-%Software Requirements Document	SR
-%Statement of Work	SW
-%Technical Note	TN
-%Test Procedure	TP
-%Test Report	TR
-%Test Specification	TS
-%User Manual	UM
-\documentcode{RP}
-
-% Names of authors/contributors
 
 \author{Riyadh\ Baghdadi$^1$, Albert\ Cohen$^1$, Tobias\ Grosser$^1$, Sven\ Verdoolaege$^1$ \\
   Javed\ Absar$^2$, Sven\ Van\ Haastregt$^2$, Alexey\ Kravets$^2$, Anton\ Lokhmotov$^2$ \\
   Alastair\ Donaldson$^3$}
 
-% .... and their addresses (design this yourself)
 \address{$^1$\'Ecole Normale Sup\'erieure de Paris\\
          $^2$ARM\\
          $^3$Imperial College London}
 
-% Contributing workpackages (sublist of WP1, WP1, WP2, WP3, WP4, WP5, WP6, WP7, WP8)
-\workpackages{WP3}
-
-% Date of delivery to the EC
-\preparationdate{}
-\duedate{30 April 2014}
+% Release date
 \ecdate{1 May 2015}
 
-\reviewers{ICL}
-
-% Abstract (should not exceed 10 lines)
-%\abstract{
-%}
-
-% Revision History: each line should have the following format
-% Date & Version & Author & Modification \nl
-% Please separate line by the command \nl which adds the needed horizontal line
-
-\revhistory{
-2015-02-01 & 1.0 & ENS & First Public Version\nl
-}
-
-\approvals{
-Workpackage Leader & A.\ Lokhmotov & ARM & 2014-05-06 \nl
-Project Manager & A.F.\ Donaldson & ICL & 2013-05-06 \nl
-}
-
 % Actual document starts here %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\def\OPTL{\textrm{$[$}}
-\def\OPTR{\textrm{$]$}}
-
-\definecolor{lightbackground}{rgb}{.98,.98,.97}
-\definecolor{darkgray}{rgb}{.3,.3,.3}
-\definecolor{darkred}{rgb}{.6,0,0}
-\definecolor{darkgreen}{rgb}{0,.6,0}
-\definecolor{darkblue}{rgb}{0,0,.6}
-\usepackage{listings}
-\lstdefinelanguage{pencil}{%
-  %% Definition du langage
-  %% List of keywords
-  keywords={[1]},%for,do,while,if,else,break,continue,return
-  keywords={[2]struct,union,enum,typedef,volatile,%
-    signed,unsigned,sizeof,typeof,inline,noinline,%
-    void,char,short,long,int,float,double,boolean,size_t},
-  keywords={[3]pragma,pencil,independent,ivdep,reduction,access, region},
-  keywords={[4],__attribute__,%
-    pencil_access,__pencil_kill,KILL,__pencil_assume,ASSUME,__pencil_assert,%
-    __pencil_maybe,MAYBE,__pencil_use,USE,__pencil_def,DEF,MAY_DEF,%
-    PENCIL,__pencil_access,ACCESS,CONST,pencil_heap,HEAP,const,restrict,static, pencil_array},
-  %emph={main,producer,consumer,master,selector,compute,hscan,sync_av},
-  %% List of abbreviations
-  % literate={<=}{{$\leq$}}1 {>=}{{$\geq$}}1 {!=}{{$\neq$}}1 {*}{{$\times$}}1,
-  literate={[OPT[}{{\OPTL}}1 {]OPT]}{{\OPTR}}1,
-  %{\#}{{\textbf{\color{darkgreen}\#}}}1,
-  %% List of strings
-  string=[b]",
-  %% List of comment strings
-  comment=[l]//,
-  morecomment=[s]{/*}{*/},
-  %% Special character for LaTeX
-  mathescape=true,
-  %% Definition du style
-  flexiblecolumns=true,
-  tabsize=2,
-  %% numerotage des lignes
-  %firstnumber=1,
-  %stepnumber=1,
-  %numbers=left,
-  % numbersep=-6mm,
-  %% titre
-  captionpos=b,
-  % abovecaptionskip=3mm,
-  % belowcaptionskip=3mm,
-  %% La boite englobante
-  frame=single,
-  framerule=0pt,
-  aboveskip=1pt,
-  belowskip=1pt,
-  framesep=1pt,
-  %% Les styles
-  basicstyle=\ttfamily,%\small
-  keywordstyle={[1]\color{darkred}},
-  keywordstyle={[2]\color{blue}},
-  keywordstyle={[3]\color{darkgreen}\bfseries},
-  keywordstyle={[4]\color{darkblue}\bfseries},
-  %keywordstyle=\fontseries{bx}\fontfamily{cmss}\fontshape{n}\selectfont,
-  % numberstyle=\footnotesize,
-  % basicstyle=,
-  % keywordstyle=\sbf,
-  % numberstyle=,
-  emphstyle=\slshape,
-  identifierstyle=\color{black},
-  commentstyle=\color{darkgray},
-  stringstyle=\color{green}
-}
-
-\usepackage{nomencl}
-
-%\lstset{language=pencil,backgroundcolor=\color{lightbackground}}
-\lstset{language=pencil,backgroundcolor=\color{lightbackground},%
-  belowskip=.5em, aboveskip=.5em}
-
-% a few macros to avoid typo
-\newcommand\pencil{\textsc{Pencil}\xspace}
-\newcommand\carp{\textsc{Carp}}
 
 \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{3}
 \setcounter{chapter}{1}
-
-\usepackage{arm/carp}
-
 \renewcommand{\thesection}{\arabic{section}}
+
 
 \begin{document}
 
