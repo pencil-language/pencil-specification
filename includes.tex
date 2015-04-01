@@ -1,0 +1,96 @@
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{mdwlist}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{textcomp} % Used for syntax highlighting.
+\usepackage{listings}
+\usepackage{subcaption}
+
+\usepackage{todonotes}
+\usepackage{multicol}
+\usepackage[T1]{fontenc}
+
+\definecolor{gray}{gray}{0.5}
+\definecolor{key}{rgb}{0,0.5,0}
+
+\def\OPTL{\textrm{$[$}}
+\def\OPTR{\textrm{$]$}}
+
+\definecolor{lightbackground}{rgb}{.98,.98,.97}
+\definecolor{darkgray}{rgb}{.3,.3,.3}
+\definecolor{darkred}{rgb}{.6,0,0}
+\definecolor{darkgreen}{rgb}{0,.6,0}
+\definecolor{darkblue}{rgb}{0,0,.6}
+
+\usepackage{listings}
+
+\lstdefinelanguage{pencil}{%
+  %% Definition du langage
+  %% List of keywords
+  keywords={[1]},%for,do,while,if,else,break,continue,return
+  keywords={[2]struct,union,enum,typedef,volatile,%
+    signed,unsigned,sizeof,typeof,inline,noinline,%
+    void,char,short,long,int,float,double,boolean,size_t},
+  keywords={[3]pragma,pencil,independent,ivdep,reduction,access, region},
+  keywords={[4],__attribute__,%
+    pencil_access,__pencil_kill,KILL,__pencil_assume,ASSUME,__pencil_assert,%
+    __pencil_maybe,MAYBE,__pencil_use,USE,__pencil_def,DEF,MAY_DEF,%
+    PENCIL,__pencil_access,ACCESS,CONST,pencil_heap,HEAP,const,restrict,static, pencil_array},
+  %emph={main,producer,consumer,master,selector,compute,hscan,sync_av},
+  %% List of abbreviations
+  % literate={<=}{{$\leq$}}1 {>=}{{$\geq$}}1 {!=}{{$\neq$}}1 {*}{{$\times$}}1,
+  literate={[OPT[}{{\OPTL}}1 {]OPT]}{{\OPTR}}1,
+  %{\#}{{\textbf{\color{darkgreen}\#}}}1,
+  %% List of strings
+  string=[b]",
+  %% List of comment strings
+  comment=[l]//,
+  morecomment=[s]{/*}{*/},
+  %% Special character for LaTeX
+  mathescape=true,
+  %% Definition du style
+  flexiblecolumns=true,
+  tabsize=2,
+  %% numerotage des lignes
+  %firstnumber=1,
+  %stepnumber=1,
+  %numbers=left,
+  % numbersep=-6mm,
+  %% titre
+  captionpos=b,
+  % abovecaptionskip=3mm,
+  % belowcaptionskip=3mm,
+  %% La boite englobante
+  frame=single,
+  framerule=0pt,
+  aboveskip=1pt,
+  belowskip=1pt,
+  framesep=1pt,
+  %% Les styles
+  basicstyle=\ttfamily,%\small
+  keywordstyle={[1]\color{darkred}},
+  keywordstyle={[2]\color{blue}},
+  keywordstyle={[3]\color{darkgreen}\bfseries},
+  keywordstyle={[4]\color{darkblue}\bfseries},
+  %keywordstyle=\fontseries{bx}\fontfamily{cmss}\fontshape{n}\selectfont,
+  % numberstyle=\footnotesize,
+  % basicstyle=,
+  % keywordstyle=\sbf,
+  % numberstyle=,
+  emphstyle=\slshape,
+  identifierstyle=\color{black},
+  commentstyle=\color{darkgray},
+  stringstyle=\color{green}
+}
+
+\usepackage{nomencl}
+
+\lstset{language=pencil,backgroundcolor=\color{lightbackground},%
+  belowskip=.5em, aboveskip=.5em}
+
+% a few macros to avoid typo
+\newcommand\pencil{\textsc{Pencil}\xspace}
+\newcommand\carp{\textsc{Carp}}
+
+\usepackage{arm/carp}

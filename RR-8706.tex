@@ -1,0 +1,90 @@
+\documentclass[twoside]{article}
+\usepackage[a4paper]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{RR}
+\usepackage{hyperref}
+\include{includes}
+\RRNo{8706}
+
+%% date de publication du rapport
+\RRdate{May 2015}
+
+%% Cas d'une version deux
+% \RRversion{2}
+%% date de publication de la version 2
+% \RRdater{Septembre 2015}
+%%
+\RRauthor{
+    Riyadh Baghdadi
+    \thanks[ens]{\'Ecole Normale Sup\'erieure de Paris and Institut National de Recherche en Informatique et en Automatique}%
+  \and
+    Albert Cohen
+    \thanksref{ens}
+\and
+    Tobias Grosser
+    \thanksref{ens}
+\and    
+    Sven Verdoolaege
+    \thanks{Institut National de Recherche en Informatique et en Automatique and Katholieke Universiteit Leuven}%
+\and
+    Javed Absar
+    \thanks[arm]{ARM}
+\and    
+    Sven Van Haastregt
+    \thanksref{arm}
+\and    
+    Alexey Kravets
+    \thanksref{arm}
+\and    
+    Anton Lokhmotov
+    \thanksref{arm}
+\and    
+    Alastair Donaldson
+    \thanks[icl]{Imperial College London}
+}
+
+%% Ceci apparait sur chaque page paire.
+\authorhead{}
+
+%% titre francais long
+\RRtitle{}
+
+%% English title
+\RRetitle{PENCIL 1.0 Language Specification}
+\titlehead{PENCIL 1.0 Language Specification}
+
+\RRnote{This work was partly supported by the European
+FP7 project CARP id.\ 287767.}
+
+%% INRIA Projets-team names
+\RRprojets{}
+\RCParis % Paris Rocquencourt
+
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+\renewcommand{\thesection}{\arabic{section}}
+
+
+\begin{document}
+
+\makeRR
+
+\tableofcontents
+
+
+\include{PENCIL}
+
+\bibliographystyle{abbrv}
+\bibliography{CARP-ENS-RP-004}
+
+
+\end{document}
+\endinput
+
+% Possible Future PENCIL Extensions:
+% -----------------------------------
+% - Support for atomic operations:
+%   Currently we use a non portable way to implement atomic operations
+%   in PENCIL, it would be good to add atomic builtins in PENCIL
+%   (atomics are widely used).
