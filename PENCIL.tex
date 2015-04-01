@@ -3,7 +3,7 @@
 Many systems -- from supercomputer installations to embedded
 systems-on-chip -- benefit from using special-purpose
 {\em accelerators} which can significantly outperform general-purpose
-processors in terms of energy efficiency as well as in terms of
+processors in terms of energy efficiency as well as
 execution speed.
 Software for such systems, however, is currently written using
 low-level APIs \nomenclature{APIs}{Application Program Interface},
@@ -60,54 +60,66 @@ for DSL compilers would reduce considerably the development costs.
 % the code even for algorithms that are considered to be irregular
 % when expressed in languages like C (e.g., operations on lists, like map).
 % %
-% DSL compilers maintain a tight control over the generated code, eliminating
+% DSL compilers maintain tight control over the generated code, eliminating
 % many of the problems faced by general-purpose optimizing compilers.
 
-In this document, we present \pencil, a platform-neutral compute intermediate
-language intended as a target for DSL compilers and to be used by domain
-experts to write code for accelerators.
-\pencil relies on specific language constructs (many of
-them implemented as built-in functions and attributes) and on enforcing
-specific coding rules. Although the target platforms are highly parallel,
-\pencil has sequential semantics in order to simplify DSL
-compiler development and the work of a domain expert directly
-developing in \pencil, and more importantly, to avoid committing to
-any particular pattern(s) of parallelism.  To enable parallelization
-and loop nest optimizations, \pencil is carefully designed to
-incorporate a combination of analysis-friendly restrictions (on
-pointers and interprocedural data flow) and analysis-enhancing
-properties (assume predicates, side-effect summaries for functions).
+We present the design and implementation of \pencil, a plat\-form-neu\-tral 
+compute intermediate language.
+\pencil aims to serve both as a portable implementation language to facilitate 
+the acceleration of new and legacy applications on modern accelerators, and as 
+a tractable target language for DSL compilers.
 
 
 \section{\pencil Language}
 
 \subsection{Overview of PENCIL \label{pencil-overview}}
 
-\pencil is a carefully designed subset of the C99~\cite{c99} language
-\nomenclature{C99}{C Standard 1999}
-designed to capture static properties essential to the implementation
-of advanced loop nest transformations.
-It provides a set of language constructs that helps parallelizing
-compilers to perform more accurate static analyses and to generate
-efficient target-specific code.
+\pencil is a rigorously-defined subset of C99~\cite{c99}
+\nomenclature{C99}{C Standard 1999}, and enforces a set of
+coding rules principally related to restricting the manner in which pointers
+can be manipulated.  These restrictions make \pencil code
+``static analysis-friendly'': the rules are designed to enable a compiler
+to perform better optimization and parallelization when translating \pencil
+to a lower-level formalism such as OpenCL.
+\pencil is also equipped with specific language constructs, including
+\emph{assume predicates} and \emph{side effect summaries} for functions,
+that enable communication of domain-specific information and static properties
+to the \pencil compiler, to be used for parallelization and optimization.
 These specific constructs provide information that is difficult for a
-compiler to extract but that can be easily captured from a DSL, or
+compiler to extract from arbitrary code but that can be easily captured from a DSL, or
 expressed by an expert programmer.
-Our aim was for \pencil to have sequential semantics.
-The language is not designed for a particular type of
-parallelizing compiler, but it has been validated using a polyhedral
-compilation flow.
+Although the target platforms are highly parallel,
+\pencil deliberately has sequential C99 semantics in order to simplify DSL
+compiler development and the work of a domain expert directly
+developing in \pencil, and more importantly, to avoid committing to
+any particular pattern(s) of parallelism.
+
 Where necessary, \pencil exploits the flexibility of non-C99 GNU
-C extensions~\cite{gccguide} such as type attributes, and exploits pragmas when no alternative
-was available.
+C extensions~\cite{gccguide} such as type attributes, and exploits
+pragmas when no alternative was available.
 The latter have been inspired from standard pragmas used as annotations
 for vectorization and thread-level parallelism, but retain a strictly
 sequential semantics in \pencil.
 A design goal was to avoid pragma-based directives as directives are still
-not considered to be first class citizens in many compilers.
+not considered to be first class citizens by many compilers.
 However, in very few cases, \pencil relies on a directive to attach
 properties to a control flow region of the code, no better C-compatible
 alternative being available.
+
+Because it is based on C, the learning curve for \pencil is gentle.
+By design, \pencil interfaces with non-\pencil C code, so that legacy C 
+applications can be
+incrementally ported into \pencil.  From the point of view of DSL
+compilation, \pencil offers a tractable target because all a DSL-to-\pencil
+compiler must do is faithfully encode the semantics of the input DSL program
+into \pencil; auto-parallelization and optimization for multiple accelerator
+targets is then taken care of by the downstream compiler.
+Because DSL-to-\pencil compilers have tight control over the code they
+generate, such compilers can aid the effectiveness of the downstream
+\pencil compiler by careful generation of code, and by communicating
+domain-specific information via the language constructs \pencil provides
+for this purpose.
+
 
 \paragraph*{Design considerations}
 The design of \pencil is guided by the following considerations:
@@ -116,9 +128,12 @@ The design of \pencil is guided by the following considerations:
   design and implementation of domain-specific compilers targeting
   \pencil, to ease the work of \pencil programmers, and to avoid committing
   early on target-specific patterns of parallelism.
+  Besides that, this allows any C99 compiler that supports GNU C99 extensions
+  to provide a reference implementation for \pencil.
 
-\item \pencil should simplify static code analysis for the optimizing compiler.  For example, the
-  use of pointers is disallowed, except in specific cases.
+\item \pencil should simplify static code analysis for the optimizing compiler.
+  For example, the use of pointers is disallowed, except in specific cases,
+  relieving the compiler from issues related to aliasing.
 
 \item \pencil should provide facilities that allow a DSL-to-\pencil
   compiler to convey, in the \pencil code that it generates,
@@ -132,46 +147,56 @@ The design of \pencil is guided by the following considerations:
   GNU C attributes~\cite{gccguide} should be able to compile \pencil, this allows for
   greater portability and makes the debugging of \pencil code easier.
 
-\item The subset of C99 that constitutes \pencil should not be very
-  small.  A very small and restrictive subset will limit the reuse and
-  modularity of \pencil code, and will make
-  \pencil less attractive to programmers and DSL generators.
+\item The subset of C99 that constitutes \pencil should
+  be as large as the above design  considerations permit.
+  A very small and restrictive subset limits the reuse and
+  modularity of \pencil code, and makes
+  \pencil less attractive to programmers and
+  DSL compiler-writers.
 
 \item Language extensions (compared to C99) should be minimized.
-  Too many extensions will make it harder for compilers
+  Too many extensions make it harder for compilers
   to support \pencil.
 
-\item \pencil code should be able to inter-work with non-\pencil code
+\item \pencil code should be able to interface with non-\pencil code
   and external library functions.
 \end{itemize}
 
-Two possible scenarios of using \pencil are possible:
+Three possible scenarios of using \pencil are possible:
 \begin{enumerate}
 \item \pencil code is generated by a DSL compiler;
-\item \pencil code is written by an expert programmer.
+\item \pencil code is written by an expert programmer;
+\item a mixture of both scenarios.
 \end{enumerate}
 
 \begin{figure}[ht]
 {
  \centering
  \includegraphics[scale=0.65]{./figures/CARPHighLevelOverview.pdf}
- \caption{High level overview of how \pencil should be used}
+ \caption{High level overview of our vision for the use of PENCIL}
  \label{fig-pencil-high-level-picture}
 } 
 \end{figure}
 
 Figure \ref{fig-pencil-high-level-picture} shows a high level
-overview of how \pencil should be used.
+overview of how we envision PENCIL to be used.
 First, a program written in a domain
-specific language is translated into \pencil.  Domain specific
-optimizations are applied during this translation.  Domain specific
-information is also added, during this step, through specific \pencil language
+specific language is compiled into \pencil.  Domain specific
+optimizations are applied during this translation, and the DSL compiler may
+add domain specific information during this step through specific \pencil
+language
 constructs.  Second, the generated \pencil code is combined with
 hand-written \pencil code that implements specific library
 functions.  \pencil is used here as a standalone language.  The
 combination of the two pieces of code is then optimized and
-parallelized (using a polyhedral framework).  Finally, highly
-specialized OpenCL code is generated.
+parallelized.  Finally, 
+highly specialized low-level code is generated.
+In Figure~\ref{fig-pencil-high-level-picture} we 
+illustrate the case where the generated low-level code is OpenCL, 
+allowing the compiled code to run across a range of OpenCL-compliant 
+devices.  We hereafter assume that OpenCL is the target language for 
+PENCIL compilation, but in principle PENCIL can target any suitable 
+low-level representation.
 
 The design of the extensions to C99 that are a part of \pencil went
 through two steps.
@@ -214,7 +239,7 @@ presents the extensions to C99 that are a part of \pencil.
 
 \subsection{\pencil Definition as a Subset of C99}
 \label{pencil-c99-subset}
-The language syntax is defined in \figref{pencil-syntax} as an EBNF (Extended
+The language syntax is defined in Figure \ref{pencil-syntax} as an EBNF (Extended
 Backus-Naur Form) grammar~\cite{wirth1996EBNF}.
 \nomenclature{EBNF}{Extended Backus-Naur Form}
 The reserved words are in bold.
@@ -282,7 +307,7 @@ Only the following C99 types are allowed.
     \item Pointer manipulation (including pointer arithmetic and reading or
       writing to a pointer) is not allowed.  There is one exception to this
       restriction, reading an array reference is allowed when the reference is
-      passed in a function call (\eg \lstinline!mat_add(C, A, B)!).
+      passed in a function call (e.g., \lstinline!mat_add(C, A, B)!).
       
       The main motivation is to guarantee that the following property is
       preserved:
@@ -303,7 +328,7 @@ Only the following C99 types are allowed.
 
     \item Pointer dereferencing is not allowed.  The only exception to
       this is accessing arrays using array subscripts
-      (\eg \lstinline!A[i][j]!).
+      (e.g., \lstinline!A[i][j]!).
 
       Forbidding pointer arithmetic and forbidding pointer dereferencing
       (except dereferencing through array subscripts) makes the use of
@@ -362,7 +387,7 @@ The following C99 assignment statements are supported in \pencil:
   \item Compound assignment: \lstinline{+=, -=, *=, /=, %=, |=, &=, ^=, <<=, >>=}
 \end{itemize}
 
-Unlike in C99, the \pencil assignment does not return any value (\ie
+Unlike in C99, the \pencil assignment does not return any value (i.e.,
 it is a statement, not an operator).
 The motivation of this restriction is to simplify the development of
 \pencil tool chains.
@@ -423,7 +448,7 @@ The same as in C99.
 The same as in C99.
 \paragraph{Return Statement}
 The same as in C99 except that it can be used only at the end of a function
-(\ie as the last statement in a function body).
+(i.e., as the last statement in a function body).
 This allows \pencil compilers to assume that they work on SESE
 (Single-Entry Single-Exit) regions of the control flow which is easier.
 \nomenclature{SESE}{Single-Entry Single-Exit}
@@ -1254,7 +1279,7 @@ for (int i=0; i<N; i++) {
   scalar \lstinline!t! has to be declared in the loop body, this way each
   iteration will have its own copy of \lstinline!t! and thus the writes to
   \lstinline!t! by different iterations will not induce any loop carried
-  dependence.  This is possible because \lstinline!t! is privatizable (\ie
+  dependence.  This is possible because \lstinline!t! is privatizable (i.e.,
   can be made private).
   The following example is correct.
 
@@ -2133,3 +2158,5 @@ code are the following.
      return find(node->right);
  }
 \end{lstlisting}
+
+%TODO: add citations when necessary.
