@@ -14,13 +14,14 @@ its development and maintenance.
 A compelling alternative for developers is to work with higher-level
 programming languages, and to leverage compilation technology to automatically
 generate efficient low level code.
+
 For general-purpose languages in the C family, this approach is hindered
 by the difficulty of static analysis in the presence of pointer aliasing.
 The possibility of aliasing often forces a parallelizing compiler
 to assume that it is \emph{not} safe to parallelize a region of source
 code, even though aliasing might not actually
 occur at runtime.
-%
+
 Domain-specific languages (DSLs) can circumvent this problem: it is often
 clear how parallelism can be exploited given
 high-level knowledge about standard operations in a given domain, such as
@@ -31,10 +32,7 @@ The drawback of the DSL approach is the significant effort required to
 lower code all the way from the DSL level to highly optimized OpenCL or CUDA.
 The effort involved is even more significant if optimization is required
 for multiple platforms.
-
-For example, to target accelerated platforms effectively
-the DSL implementers must develop sophisticated code generation and
-optimization techniques.  Given typical budget constraints, they will
+Given typical budget constraints, the DSL implementers will
 likely limit their efforts to a set of techniques useful for a small
 number of target platforms, thus
 compromising on performance portability.  Moreover, the implementers
@@ -75,7 +73,7 @@ a tractable target language for DSL compilers.
 \subsection{Overview of PENCIL \label{pencil-overview}}
 
 \pencil is a rigorously-defined subset of C99~\cite{c99}
-\nomenclature{C99}{C Standard 1999}, and enforces a set of
+\nomenclature{C99}{C Standard 1999}.  It enforces a set of
 coding rules principally related to restricting the manner in which pointers
 can be manipulated.  These restrictions make \pencil code
 ``static analysis-friendly'': the rules are designed to enable a compiler
@@ -96,10 +94,11 @@ any particular pattern(s) of parallelism.
 
 Where necessary, \pencil exploits the flexibility of non-C99 GNU
 C extensions~\cite{gccguide} such as type attributes, and exploits
-pragmas when no alternative was available.
+pragmas when no alternative is available.
 The latter have been inspired from standard pragmas used as annotations
 for vectorization and thread-level parallelism, but retain a strictly
 sequential semantics in \pencil.
+
 A design goal was to avoid pragma-based directives as directives are still
 not considered to be first class citizens by many compilers.
 However, in very few cases, \pencil relies on a directive to attach
@@ -570,7 +569,7 @@ in Section~\ref{sec:Annotations-and-directives}.
   \item \lstinline!__attribute__((pencil))!
 \end{description}
 
-\subsubsection*{Built-in Functions}
+\subsubsection*{Builtin Functions}
 
 \begin{itemize}
 \item \lstinline!__pencil_kill!;
@@ -579,7 +578,7 @@ in Section~\ref{sec:Annotations-and-directives}.
 \item \lstinline!__pencil_maybe!;
 \item \lstinline!__pencil_assume!;
 \item \lstinline!__pencil_assert!;
-\item \pencil math, common and integer built-in functions.
+\item \pencil math, common and integer builtin functions.
 \end{itemize}
 
 \section{Detailed Description of the Extensions to C99}
@@ -838,7 +837,7 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
   the dependences between the function call, seen as one statement,
   and the rest of the call site code.
 
-  The polymorphic built-in functions \lstinline!__pencil_use!
+  The polymorphic builtin functions \lstinline!__pencil_use!
   and \lstinline!__pencil_def! must be used in summary
   functions to mark memory access information (and to protect them
   from aggressive, \pencil-agnostic upstream passes). The
@@ -859,11 +858,11 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
          It annotates (must-)write accesses.
   \end{itemize}
 
-  To express may-write accesses, the boolean built-in
+  To express may-write accesses, the boolean builtin
   \lstinline!__pencil_maybe! should be used to guard these accesses
   in an \lstinline!if (__pencil_maybe())!  conditional. We use the
   \lstinline!MAYBE! macro as an abbreviation. The
-  built-in may be combined with more (affine) conditions to refine
+  builtin may be combined with more (affine) conditions to refine
   the static may-execute information. One may also consider
   \lstinline!MAY_DEF(v)! as a short-cut for
   \lstinline!if (__pencil_maybe()) __pencil_def(v))!.
@@ -1444,14 +1443,14 @@ The \lstinline!ivdep! directive is used to annotate innermost loops that are can
 % section~\ref{sec:pencil-as-c-ext}.
 %\end{itemize}
 
-\subsection{Built-in Functions}
+\subsection{Builtin Functions}
 
 In this section, \lstinline!T! represents any valid \pencil type.
 
 \subsubsection{\texttt{\_\_pencil\_use} Function}
 
   The \lstinline!__pencil_use! function is
-  a polymorphic built-in function used to mark a use (read access) of
+  a polymorphic builtin function used to mark a use (read access) of
   its argument (a variable or an array element)
   (details in section~\ref{sec:summaries}).
 
@@ -1467,7 +1466,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
 \subsubsection{\texttt{\_\_pencil\_def} Function}
 
   The \lstinline!__pencil_def! function is a polymorphic
-  built-in function used to mark a definition (clobbering, must-execute write
+  builtin function used to mark a definition (clobbering, must-execute write
   access) of its argument (details in
   section~\ref{sec:summaries}).
   
@@ -1482,7 +1481,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
 \subsubsection{\texttt{\_\_pencil\_maybe} Function}
 
   The \lstinline!__pencil_maybe! function is
-  a built-in function used to capture statically unknown conditions
+  a builtin function used to capture statically unknown conditions
   (details in section~\ref{sec:summaries}).
 
   It can be used in summary functions.
@@ -1498,7 +1497,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
 % that information hopping that this information will help the compiler
 % optimize the code better.
   
-The \lstinline!__pencil_kill! built-in function has the following prototype
+The \lstinline!__pencil_kill! builtin function has the following prototype
 
   \lstinline!void __pencil_kill(T location);!
 
@@ -1555,7 +1554,7 @@ for (int i=0; i<n; i++) {
 \subsubsection{\texttt{\_\_pencil\_assume} Function}
 
 
-The \lstinline!__pencil_assume! built-in function has the following prototype
+The \lstinline!__pencil_assume! builtin function has the following prototype
 
   \lstinline!void __pencil_assume(int expression);!
 
@@ -1572,7 +1571,7 @@ The \lstinline!__pencil_assume! built-in function has the following prototype
   
 \paragraph{Example 1}
 The code in Figure~\ref{fig:2D-convolution} (a general 2D convolution)  is a
-good example where the assume built-in can be used.  It is an image
+good example where the assume builtin can be used.  It is an image
 processing kernel that calculates the weighted sum of the area around each
 pixel using a kernel matrix for weights.
 In this code, it is sufficient to consider that the size of the array
@@ -1650,7 +1649,7 @@ void foo(int n, int m, int S, int D[pencil_array S])
 
 \subsubsection{\texttt{\_\_pencil\_assert} Function}
 
-The \lstinline!__pencil_assert! built-in function has the following prototype
+The \lstinline!__pencil_assert! builtin function has the following prototype
 
 \lstinline!void __pencil_assert(int expression);!
 
@@ -1659,14 +1658,14 @@ The \lstinline!__pencil_assert! built-in function has the following prototype
   \lstinline!__pencil_assert! is inserted.
   \lstinline!__pencil_assert(exp)! does not automatically imply
   \lstinline!__pencil_assume(exp)!: static analyses in a \pencil compiler may
-  ignore the assert built-in while relying on
-  the assume built-in for enhanced analyses accuracy or speed.  If the
-  target architecture does not support the assert built-in (OpenCL for
+  ignore the assert builtin while relying on
+  the assume builtin for enhanced analyses accuracy or speed.  If the
+  target architecture does not support the assert builtin (OpenCL for
   example), the \pencil compiler should emit a warning message.
 
-\subsubsection{\pencil Math, Common and Integer Built-in Functions}
+\subsubsection{\pencil Math, Common and Integer Builtin Functions}
 
-\pencil supports a set of the OpenCL built-in functions:
+\pencil supports a set of the OpenCL builtin functions:
 \begin{itemize}
   \item all OpenCL integer functions (\lstinline!abs!, \lstinline!clz!,
         \lstinline!popcount!,  \dots);
@@ -1676,11 +1675,11 @@ The \lstinline!__pencil_assert! built-in function has the following prototype
         \lstinline!cos!, \lstinline!log!\dots).
 \end{itemize}
 
-The full list of OpenCL integer, common and math built-in functions is
+The full list of OpenCL integer, common and math builtin functions is
 available in \cite{opencl-1.2}.
 
 As \pencil does not support function overloading (to be consistent
-with C99), every OpenCL built-in integer, common or math function
+with C99), every OpenCL builtin integer, common or math function
 has multiple equivalent functions in \pencil with prefixes and
 suffixes for the different argument types.
 For example, the OpenCL \emph{max} function has the
@@ -1696,14 +1695,14 @@ following equivalent \pencil functions
  (\emph{ubmax}, \emph{usmax}, \emph{umax}, \emph{ulmax}).
 \end{itemize}
 
-\pencil includes scalar built-in functions, to help vectorize specific
+\pencil includes scalar builtin functions, to help vectorize specific
 idioms. In particular, saturated and clamped arithmetic, absolute
 value, min, max, etc.  Developers and DSL front-ends can use these
 functions and rely on the polyhedral tools to generate a vectorized
 version of these functions.
 
 Floating point operations are considered associative by default in \pencil.
-\pencil built-in functions do not have side-effects (on \texttt{errno}
+\pencil builtin functions do not have side-effects (on \texttt{errno}
 \footnote{\texttt{errno} is an integer variable set by system calls and
 some library functions in case of an error to indicate what went wrong.})
 and floating point operations do not trigger exceptions (note that these
@@ -1716,7 +1715,7 @@ assumptions match the effects of the \texttt{-fno-math-errno}
 \subsection{Header Files}
 \pencil code must always include
 the \texttt{pencil.h}~\footnote{https://github.com/carpproject/} header file
-which defines all the \pencil built-in functions and macros.
+which defines all the \pencil builtin functions and macros.
 Header files that contain non-\pencil code (including many standard C header
 files) are not supported in PENCIL.
 
