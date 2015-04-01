@@ -588,7 +588,7 @@ in Section~\ref{sec:Annotations-and-directives}.
 \subsection{Keywords, Type Qualifiers and Type Attributes for Array Declaration}
 \label{sec:array-type-qualifiers-section}
 
-\subsubsection{\lstinline!static! Keyword}
+\subsubsection{\texttt{static} Keyword}
 \label{sec:static}
 
 
@@ -605,7 +605,7 @@ by adding extra dimensions.  The mapping may depend on the statement
 instance and can be used to remove some memory reuse.}
 
 
-\subsubsection{\lstinline!const! Type Qualifier}
+\subsubsection{\texttt{const} Type Qualifier}
 \label{sec:const}
 
 The \lstinline!const! type qualifier is used when declaring an array argument of a \pencil function.
@@ -620,7 +620,7 @@ expression.  This rule eliminates the risk of inducing array aliasing
 through the assignment of an arbitrary base address to an array
 argument.
 
-\subsubsection{\lstinline!restrict! Type Qualifier}
+\subsubsection{\texttt{restrict} Type Qualifier}
 \label{sec:restrict}
 
 % A discussion about whether the restrict keyword should be kept in PENCIL
@@ -711,7 +711,7 @@ void foo_restricted(float a[static const restrict 42],
 %  \end{lstlisting}
 %\end{description}
 
-\subsubsection{\lstinline!pencil\_array! Macro}
+\subsubsection{\texttt{pencil\_array} Macro}
 
 \lstinline!pencil_array! is a macro that abbreviates
   \lstinline!static const restrict!.
@@ -730,7 +730,7 @@ region must be provided (Section~\ref{sec:summaries}),
 unless the function is a \pencil function
 or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 
-\subsubsection{\lstinline!const! Function Attribute}
+\subsubsection{\texttt{const} Function Attribute}
 \label{sec:const-attribute}
 
 
@@ -1129,7 +1129,7 @@ and commonly found in advanced vectorizing compilers.
 \nomenclature{OpenMP}{Open Multi-Processing}
 \nomenclature{OpenACC}{Open Accelerators}
 
-\subsubsection{\lstinline!pencil independent! Directive\label{sec:independent}}
+\subsubsection{\texttt{independent} Directive\label{sec:independent}}
 
 
 The \lstinline!independent! directive is used to annotate loops.
@@ -1323,7 +1323,7 @@ for (int i=0; i<N; i++) {
   }
   \end{lstlisting}
   
-  \paragraph{\lstinline!reduction! Clause}
+  \paragraph{\texttt{reduction} Clause}
   \label{reduction-clause}
 
   Adding the \lstinline!reduction! clause to the \lstinline!independent!
@@ -1382,7 +1382,7 @@ The following reduction operators are supported:
 % Does the benefit from the conditional clause deserve adding it.
 
 %--------------------------------------------------------------------------------
-\subsubsection{\lstinline!pencil ivdep! Directive\label{sec:ivdep}}
+\subsubsection{\texttt{ivdep} Directive\label{sec:ivdep}}
 
 The \lstinline!ivdep! directive is used to annotate innermost loops that are candidates
   for vectorization.  If applied on a loop nest, it is effective only on
@@ -1448,7 +1448,7 @@ The \lstinline!ivdep! directive is used to annotate innermost loops that are can
 
 In this section, \lstinline!T! represents any valid \pencil type.
 
-\subsubsection{\lstinline!\_\_pencil\_use! Function}
+\subsubsection{\texttt{\_\_pencil\_use} Function}
 
   The \lstinline!__pencil_use! function is
   a polymorphic built-in function used to mark a use (read access) of
@@ -1464,7 +1464,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   \lstinline!USE! macro.
 
 
-\subsubsection{\lstinline!\_\_pencil\_def! Function}
+\subsubsection{\texttt{\_\_pencil\_def} Function}
 
   The \lstinline!__pencil_def! function is a polymorphic
   built-in function used to mark a definition (clobbering, must-execute write
@@ -1479,7 +1479,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   and can be abbreviated with the
   \lstinline!DEF! macro.
 
-\subsubsection{\lstinline!\_\_pencil\_maybe! Function}
+\subsubsection{\texttt{\_\_pencil\_maybe} Function}
 
   The \lstinline!__pencil_maybe! function is
   a built-in function used to capture statically unknown conditions
@@ -1492,7 +1492,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   
   and can be abbreviated with the \lstinline!MAYBE! macro.
 
-\subsubsection{\label{sec:kill}\lstinline!\_\_pencil\_kill! Function}
+\subsubsection{\label{sec:kill}\texttt{\_\_pencil\_kill} Function}
 %Anton requested an example where this may be usefull: actually it's usefull
 % for GPU, and the idea is that when you know some information, you just add
 % that information hopping that this information will help the compiler
@@ -1552,7 +1552,7 @@ for (int i=0; i<n; i++) {
 }
 \end{lstlisting}
 
-\subsubsection{\lstinline!\_\_pencil\_assume! Function}
+\subsubsection{\texttt{\_\_pencil\_assume} Function}
 
 
 The \lstinline!__pencil_assume! built-in function has the following prototype
@@ -1648,7 +1648,7 @@ void foo(int n, int m, int S, int D[pencil_array S])
   \end{lstlisting}
 
 
-\subsubsection{\lstinline!\_\_pencil\_assert! Function}
+\subsubsection{\texttt{\_\_pencil\_assert} Function}
 
 The \lstinline!__pencil_assert! built-in function has the following prototype
 
