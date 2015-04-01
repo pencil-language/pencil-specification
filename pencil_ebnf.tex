@@ -1,21 +1,21 @@
 \newcommand{\pgrammar}[1]{\text{\sf\textless#1\textgreater}}
 \newcommand{\pkeyword}[1]{\mathbf{#1}}
-\newcommand{\plexer}[1]{\text{\bf'#1'}}
+\newcommand{\plexer}[1]{\text{\bf`#1'}}
 
 \begin{figure}
 \[
 \begin{array}{lcl}
   \pgrammar{pencil} & \gets &  \pgrammar{top level definition}*\\
   \pgrammar{top level definition} & \gets & \pgrammar{function}
-                                          | \pgrammar{type definition}
-                                          | \pgrammar{global constant}\\
+                                          ~|~\pgrammar{type definition}
+                                          ~|~\pgrammar{global constant}\\
 
   \pgrammar{global constant} & \gets & \pgrammar{variable declaration}
                                        \plexer{=}
                                        \pgrammar{init expression} \plexer{;}\\
 
   \pgrammar{type definition} & \gets & (\pgrammar{typedef}
-                                     | \pgrammar{struct definition}) \plexer{;}\\
+                                     ~|~ \pgrammar{struct definition}) \plexer{;}\\
 
   \pgrammar{typedef} & \gets & \pkeyword{typedef} \pgrammar{base type} \pgrammar{name} \pgrammar{array suffix}*\\
 
@@ -28,32 +28,32 @@
                                      (\pgrammar{array attribute}*) \pgrammar{expression}
                                     \plexer{]}\\
 
-  \pgrammar{array attribute} & \gets & \pkeyword{const} | \pkeyword{restrict} | \pkeyword{static}\\
+  \pgrammar{array attribute} & \gets & \pkeyword{const} ~|~ \pkeyword{restrict} ~|~ \pkeyword{static}\\
 
   \pgrammar{pointer} & \gets &  \plexer{*}\\
 
   \pgrammar{declarator} & \gets & (\pgrammar{pointer}*) \pgrammar{direct declarator}\\
 
   \pgrammar{direct declarator} & \gets & \pgrammar{name} (\pgrammar{array suffix}*)
-                                       | \plexer{(} \pgrammar{declarator} \plexer{)} \pgrammar{array suffix}*\\
+                                       ~|~ \plexer{(} \pgrammar{declarator} \plexer{)} \pgrammar{array suffix}*\\
 
   \pgrammar{base type} & \gets & \pgrammar{scalar type fragment}+
-                               | \pgrammar{type attribute}* \pkeyword{struct}? \pgrammar{name}\\
+                               ~|~ \pgrammar{type attribute}* \pkeyword{struct}? \pgrammar{name}\\
 
 
-  \pgrammar{scalar type fragment} & \gets & \pgrammar{type specifier} | \pgrammar{type attribute} \\
+  \pgrammar{scalar type fragment} & \gets & \pgrammar{type specifier} ~|~ \pgrammar{type attribute} \\
 
   \pgrammar{type attribute} & \gets & \pkeyword{const} \\
 
   \pgrammar{type specifier} & \gets & \pkeyword{bool}
-                                    | \pkeyword{\_Bool}
-                                    | \pkeyword{char}
-                                    | \pkeyword{short}
-                                    | \pkeyword{int}
-                                    | \pkeyword{long}
-                                    | \pkeyword{float}
-                                    | \pkeyword{half}
-                                    | \pkeyword{double}
+                                    ~|~ \pkeyword{\_Bool}
+                                    ~|~ \pkeyword{char}
+                                    ~|~ \pkeyword{short}
+                                    ~|~ \pkeyword{int}
+                                    ~|~ \pkeyword{long}
+                                    ~|~ \pkeyword{float}
+                                    ~|~ \pkeyword{half}
+                                    ~|~ \pkeyword{double}
                                     | \pkeyword{signed}
                                     | \pkeyword{unsigned}
   \\
@@ -61,62 +61,60 @@
   \pgrammar{variable declaration} & \gets & \pgrammar{base type} \pgrammar{declarator}
   \\
 
-  \pgrammar{init expression} & \gets & \pgrammar{expression} | \pgrammar{array init expression} \\
+  \pgrammar{init expression} & \gets & \pgrammar{expression} ~|~ \pgrammar{array init expression} \\
 
-  \pgrammar{array init expression} & \gets & \plexer{[}\plexer{]}
-                                           |\pgrammar{constant}\\
-  & &                                      | \plexer{[} \pgrammar{array init expression}
-                                                        (\plexer{,} \pgrammar{array init expression})*
-                                             \plexer{]}
+  \pgrammar{array init expression} & \gets & \plexer{\{} \pgrammar{constant}
+                                                        (\plexer{,} \pgrammar{constant})*
+                                             \plexer{\}}
   \\
   \pgrammar{function} & \gets & \pkeyword{static}? \pgrammar{function type} \\
                                 & & \pgrammar{name}
                                 \plexer{(} \pgrammar{function args} \plexer{)} \pgrammar{attribute}*\\
                                 & & \pgrammar{function body}
   \\
-  \pgrammar{function type} & \gets & \pgrammar{base type} | \pkeyword{void} \\
+  \pgrammar{function type} & \gets & \pgrammar{base type} ~|~ \pkeyword{void} \\
 
-  \pgrammar{function body} & \gets & \pgrammar{block} | \plexer{;}\\
+  \pgrammar{function body} & \gets & \pgrammar{block} ~|~ \plexer{;}\\
 
   \pgrammar{attribute} & \gets & \pkeyword{\_\_attribute\_\_} \plexer{(}\plexer{(} \pgrammar{attr} \plexer{)}\plexer{)}\\
 
   \pgrammar{attr} & \gets & \pkeyword{const} 
-                          | \pkeyword{pencil} 
-                          |\pkeyword{pencil\_access} \plexer{(} \pgrammar{name} \plexer{)}
+                          ~|~ \pkeyword{pencil} 
+                          ~|~\pkeyword{pencil\_access} \plexer{(} \pgrammar{name} \plexer{)}
 \\
 
-  \pgrammar{function args} & \gets & | \pgrammar{variable declaration} (\plexer{,} \pgrammar{variable declaration})*\\
+  \pgrammar{function args} & \gets & ~|~ \pgrammar{variable declaration} (\plexer{,} \pgrammar{variable declaration})*\\
 
   \pgrammar{block} & \gets & \plexer{\{} \pgrammar{statement} * \plexer{\}}\\
 
   \pgrammar{statement} & \gets & \pgrammar{assignment} \plexer{;}
-                               | \pgrammar{for}
-                               | \pgrammar{while}
-                               | \pgrammar{if}
-                               | \pgrammar{block}
-                               | \pgrammar{return}\\ & &
-                               | \pgrammar{block variable declaration}
-                               | \pgrammar{call statement}\\ & &
-                               | \pkeyword{break} \plexer{;}
-                               | \pkeyword{continue} \plexer{;}
+                               ~|~ \pgrammar{for}
+                               ~|~ \pgrammar{while}
+                               ~|~ \pgrammar{if}
+                               ~|~ \pgrammar{block}
+                               ~|~ \pgrammar{return}\\ & &
+                               ~|~ \pgrammar{block variable declaration}
+                               ~|~ \pgrammar{call statement}\\ & &
+                               ~|~ \pkeyword{break} \plexer{;}
+                               ~|~ \pkeyword{continue} \plexer{;}
   \\
 
   \pgrammar{assignment} & \gets & \pgrammar{lvalue}\\&& (\plexer{=}
-                                                        | \plexer{+=}
-                                                        | \plexer{-=}
-                                                        | \plexer{\%=}
-                                                        | \plexer{*=}
-                                                        | \plexer{/=}
-                                                        | \plexer{\textasciicircum=}
-                                                        | \plexer{\&=}
-                                                        | \plexer{$|$=}
-                                                        | \plexer{\textgreater\textgreater=}
-                                                        | \plexer{\textless\textless=})\\&&
+                                                        ~|~ \plexer{+=}
+                                                        ~|~ \plexer{-=}
+                                                        ~|~ \plexer{\%=}
+                                                        ~|~ \plexer{*=}
+                                                        ~|~ \plexer{/=}
+                                                        ~|~ \plexer{\textasciicircum=}
+                                                        ~|~ \plexer{\&=}
+                                                        ~|~ \plexer{$|$=}
+                                                        ~|~ \plexer{\textgreater\textgreater=}
+                                                        ~|~ \plexer{\textless\textless=})\\&&
                                                          \pgrammar{expression}\\ & &
-                                                      | \pgrammar{lvalue} \plexer{++}
-                                                      | \pgrammar{lvalue} \plexer{{-}{-}}\\&&
-                                  |\plexer{++} \pgrammar{lvalue}
-                                  |\plexer{{-}{-}} \pgrammar{lvalue}\\
+                                                      ~|~ \pgrammar{lvalue} \plexer{++}
+                                                      ~|~ \pgrammar{lvalue} \plexer{{-}{-}}\\&&
+                                  ~|~\plexer{++} \pgrammar{lvalue}
+                                  ~|~\plexer{{-}{-}} \pgrammar{lvalue}\\
 
   \pgrammar{while} & \gets & \pkeyword{while} \plexer{(} \pgrammar{expression} \plexer{)} \pgrammar{block}\\
 
@@ -156,7 +154,7 @@
 
   \pgrammar{for} & \gets & \pgrammar{for directive}*\\&& \pkeyword{for} \plexer{(}
   \pgrammar{base type}? \pgrammar{name} \plexer{=} \pgrammar{expression} \plexer{;}\\&&
-    ~ ~ ~ ~\pgrammar{name} (\text{\textgreater}|\text{\textless}|\text{\textgreater=}|\text{\textless=}) \pgrammar{expression}\plexer{;}\\&&
+    ~ ~ ~ ~\pgrammar{name} (\text{\plexer{\textgreater}}|\text{\plexer{\textless}}|\text{\plexer{\textgreater=}}|\text{\plexer{\textless=}}) \pgrammar{expression}\plexer{;}\\&&
     ~ ~ ~ ~\pgrammar{for step} \plexer{)}\\&&\pgrammar{block}\\
 
   \pgrammar{expression} & \gets & \pgrammar{ternary expression}\\
@@ -216,5 +214,5 @@
   | \pgrammar{Floating point number}\\
 \end{array}
 \]
-  \caption {\pencil{} syntax as an EBNF continued.}
+  \caption {\pencil{} syntax as an EBNF continued overleaf.}
 \end{figure}
