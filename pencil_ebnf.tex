@@ -50,12 +50,12 @@
                                     ~|~ \pkeyword{char}
                                     ~|~ \pkeyword{short}
                                     ~|~ \pkeyword{int}
-                                    ~|~ \pkeyword{long}
-                                    ~|~ \pkeyword{float}
+                                    ~|~ \pkeyword{long} ~|~\\&&
+                                         \pkeyword{float}
                                     ~|~ \pkeyword{half}
                                     ~|~ \pkeyword{double}
-                                    | \pkeyword{signed}
-                                    | \pkeyword{unsigned}
+                                    ~|~ \pkeyword{signed}
+                                    ~|~ \pkeyword{unsigned}
   \\
 
   \pgrammar{variable declaration} & \gets & \pgrammar{base type} \pgrammar{declarator}
@@ -138,23 +138,23 @@
   \ContinuedFloat
 \[
 \begin{array}{lcl}
-  \pgrammar{for directive} & \gets & \plexer{\#} \pkeyword{pragma} ~ \pkeyword{pencil} (\pkeyword{ivdep} | \pgrammar{independent})\\
+  \pgrammar{for directive} & \gets & \plexer{\#} \pkeyword{pragma} ~ \pkeyword{pencil} (\pkeyword{ivdep} ~|~ \pgrammar{independent})\\
 
   \pgrammar{independent} & \gets & \pkeyword{independent} (\pgrammar{reduction})*\\
 
   \pgrammar{name list} & \gets & \pgrammar{name} (\plexer{,} \pgrammar{name})*\\
-  \pgrammar{reduction} & \gets & \pkeyword{reduction} \plexer{(} (\plexer{+}|\plexer{-}|\plexer{*}|\pkeyword{min}|\pkeyword{max}) \plexer{:} \pgrammar{name list}\plexer{)}\\
+  \pgrammar{reduction} & \gets & \pkeyword{reduction} \plexer{(} (\plexer{+}~|~\plexer{-}~|~\plexer{*}~|~\pkeyword{min}~|~\pkeyword{max}) \plexer{:} \pgrammar{name list}\plexer{)}\\
 
   \pgrammar{for step} & \gets & \plexer{++} \pgrammar{name}
-  | \plexer{{-}{-}} \pgrammar{name}
-  | \pgrammar{name} \plexer{++}
-  | \pgrammar{name} \plexer{{-}{-}}\\&&
-  | \pgrammar{name} \plexer{{+}=} \pgrammar{constant}
-  | \pgrammar{name} \plexer{{-}=} \pgrammar{constant}\\
+  ~|~ \plexer{{-}{-}} \pgrammar{name}
+  ~|~ \pgrammar{name} \plexer{++}
+  ~|~ \pgrammar{name} \plexer{{-}{-}}\\&&
+  ~|~ \pgrammar{name} \plexer{{+}=} \pgrammar{constant}
+  ~|~ \pgrammar{name} \plexer{{-}=} \pgrammar{constant}\\
 
   \pgrammar{for} & \gets & \pgrammar{for directive}*\\&& \pkeyword{for} \plexer{(}
   \pgrammar{base type}? \pgrammar{name} \plexer{=} \pgrammar{expression} \plexer{;}\\&&
-    ~ ~ ~ ~\pgrammar{name} (\text{\plexer{\textgreater}}|\text{\plexer{\textless}}|\text{\plexer{\textgreater=}}|\text{\plexer{\textless=}}) \pgrammar{expression}\plexer{;}\\&&
+    ~ ~ ~ ~\pgrammar{name} (\text{\plexer{\textgreater}}~|~\text{\plexer{\textless}}~|~\text{\plexer{\textgreater=}}~|~\text{\plexer{\textless=}}) \pgrammar{expression}\plexer{;}\\&&
     ~ ~ ~ ~\pgrammar{for step} \plexer{)}\\&&\pgrammar{block}\\
 
   \pgrammar{expression} & \gets & \pgrammar{ternary expression}\\
@@ -172,46 +172,46 @@
 
   \pgrammar{BitAND expression} & \gets & \pgrammar{EQ expression} (\plexer{\&} \pgrammar{EQ expression})*\\
 
-  \pgrammar{EQ expression} & \gets & \pgrammar{CMP expression} ((\plexer{=}|\plexer{!=}) \pgrammar{CMP expression})*\\
+  \pgrammar{EQ expression} & \gets & \pgrammar{CMP expression} ((\plexer{=}~|~\plexer{!=}) \pgrammar{CMP expression})*\\
 
   \pgrammar{CMP expression} & \gets & \pgrammar{shift expression} (
                (\plexer{\textgreater}
-               |\plexer{\textless}
-               |\plexer{\textgreater=}
-               |\plexer{\textless=})
+               ~|~\plexer{\textless}
+               ~|~\plexer{\textgreater=}
+               ~|~\plexer{\textless=})
                \pgrammar{shift expression})*\\
 
   \pgrammar{shift expression} & \gets & \pgrammar{plus expression} (
-       (\plexer{\textless\textless}|\plexer{\textgreater\textgreater}) \pgrammar{plus expression})*\\
+       (\plexer{\textless\textless}~|~\plexer{\textgreater\textgreater}) \pgrammar{plus expression})*\\
 
-  \pgrammar{plus expression} & \gets & \pgrammar{mult expression} ((\plexer{+}|\plexer{-}) \pgrammar{mult expression})*\\
+  \pgrammar{plus expression} & \gets & \pgrammar{mult expression} ((\plexer{+}~|~\plexer{-}) \pgrammar{mult expression})*\\
 
-  \pgrammar{mult expression} & \gets & \pgrammar{cast expression} ((\plexer{*}|\plexer{/}|\plexer{\%}) \pgrammar{cast expression})*\\
+  \pgrammar{mult expression} & \gets & \pgrammar{cast expression} ((\plexer{*}~|~\plexer{/}~|~\plexer{\%}) \pgrammar{cast expression})*\\
 
   \pgrammar{cast expression} & \gets & (\plexer{(} \pgrammar{scalar type fragment}+ \plexer{)})* \pgrammar{unary expression}\\
 
   \pgrammar{unary expression} & \gets & \plexer{~} \pgrammar{cast expression}
-                              | \plexer{-} \pgrammar{cast expression}\\&&
-                              | \plexer{+} \pgrammar{cast expression}
-                              | \plexer{!} \pgrammar{cast expression}\\&&
-                              | \pgrammar{sizeof expression}
-                              | \pgrammar{postfix expression}\\
+                              ~|~ \plexer{-} \pgrammar{cast expression}\\&&
+                              ~|~ \plexer{+} \pgrammar{cast expression}
+                              ~|~ \plexer{!} \pgrammar{cast expression}\\&&
+                              ~|~ \pgrammar{sizeof expression}
+                              ~|~ \pgrammar{postfix expression}\\
 
   \pgrammar{lvalue} & \gets & \pgrammar{subscription}\\
 
-  \pgrammar{postfix expression} & \gets & \pgrammar{call expression} | \pgrammar{subscription}\\
+  \pgrammar{postfix expression} & \gets & \pgrammar{call expression} ~|~ \pgrammar{subscription}\\
 
   \pgrammar{call expression} & \gets & \pgrammar{name} \plexer{(}
   (\pgrammar{expression} (\plexer{,} \pgrammar{expression})*)?
   \plexer{)}\\
 
-  \pgrammar{subscription} & \gets & \pgrammar{term} (\plexer{[} \pgrammar{expression} \plexer{]} |
+  \pgrammar{subscription} & \gets & \pgrammar{term} (\plexer{[} \pgrammar{expression} \plexer{]} ~|~
                                                      \plexer{.} \pgrammar{name})*\\
 
-  \pgrammar{term} & \gets & \pgrammar{name} | \pgrammar{constant} | \plexer{(} \pgrammar{expression} \plexer{)}\\
+  \pgrammar{term} & \gets & \pgrammar{name} ~|~ \pgrammar{constant} ~|~ \plexer{(} \pgrammar{expression} \plexer{)}\\
 
-  \pgrammar{constant} & \gets & \pgrammar{HEX humber} | \pgrammar{DEC number} | \pgrammar{OCT number}\\&&
-  | \pgrammar{Floating point number}\\
+  \pgrammar{constant} & \gets & \pgrammar{HEX humber} ~|~ \pgrammar{DEC number} ~|~ \pgrammar{OCT number}\\&&
+  ~|~ \pgrammar{Floating point number}\\
 \end{array}
 \]
   \caption {\pencil{} syntax as an EBNF continued overleaf.}
