@@ -394,6 +394,8 @@ A \pencil for loop must have a single iterator, an invariant start
 value, an invariant stop value and a literal constant increment (step).
 Invariant in this context means that the value does not change within
 the loop body.
+The iteration variable is not visible (not defined) outside the loop and cannot be modified
+inside the loop body.
 
 \begin{lstlisting}[language=pencil]
   for (type iter = init; iter [<|<=|>|>=] bound; iter[+|-]=step)
@@ -401,9 +403,6 @@ the loop body.
     //Body
   }
 \end{lstlisting}
-The iteration variable is not visible (not defined) outside the loop and cannot be modified
-inside the loop body.
-
 By precisely specifying the loop format, we avoid the need for
 a sophisticated induction variable analysis.
 Such an analysis is not only complex to implement, but more
@@ -414,8 +413,6 @@ In order to have a precise dependence analysis, it is recommended
 to use quasi-affine loop bounds (Section~\ref{sec:quasi-affine})
 whenever this is possible.
 
-A for loop can be annotated with additional directives
-(see Section~\ref{sec:for-directives}).
 \paragraph{While Loop}
 The same as in C99.
 \paragraph{If Statement}
