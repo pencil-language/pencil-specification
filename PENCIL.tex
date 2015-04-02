@@ -456,25 +456,6 @@ The same as in C99 except that
   \item C function call (when the summary function is provided).
 \end{itemize}
 
-Unlike C99, where any expression can be used as a statement, in
-order to simplify the development of \pencil tool chains, \pencil
-restricts the set of expressions that can be used as statements
-to the following list:
-\begin{itemize}
-    \item Function calls:
-        \begin{lstlisting}
-            foo(bar(1),2);
-        \end{lstlisting}
-    \item Compound assignments
-        \begin{lstlisting}
-            i += 2;
-        \end{lstlisting}
-    \item pre-/post- increment/decrement operations.
-        \begin{lstlisting}
-            i++;
-        \end{lstlisting}
-\end{itemize}
-
 
 \subsubsection{Quasi-affine Expressions}
 \label{sec:quasi-affine}
