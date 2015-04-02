@@ -375,8 +375,8 @@ The motivation of this restriction is to simplify the development of
 \pencil tool chains.
 Example:
 \begin{lstlisting}[language=pencil]
-  int i = 2; //OK.
-  int j = i += 2; //OK in C99, illegal in PENCIL.
+  int i = 2; //Legal in C99 and in PENCIL.
+  int j = i += 2; //Legal in C99, illegal in PENCIL.
 \end{lstlisting}
 
 As a special case \lstinline!i += 1! can be written as \lstinline!i++!
@@ -385,7 +385,7 @@ above these constructions are statements without any return value:
 
 \begin{lstlisting}[language=pencil]
   int j = i++; //Legal in C99, illegal in PENCIL.
-  i++; // Legal in C99 and in PENCIL.
+  i++; //Legal in C99 and in PENCIL.
 \end{lstlisting}
 
 \paragraph{For Loop}
