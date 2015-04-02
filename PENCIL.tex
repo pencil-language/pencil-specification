@@ -337,13 +337,13 @@ also supported in \pencil.
 \subsubsection{Functions}
 Function definition and declaration in \pencil follow the same
 rules as in C99.
-\pencil defines additional function attributes covered
-in Section~\ref{sec:const-attribute}.
-
+A function defined in \pencil can be called from a \pencil
+or from a C99 code.
 Function recursion is not allowed in \pencil since OpenCL does
-not support recursion.  Following the C99 standard, function overloading
-is also not allowed.
-\pencil functions can be called from a C99 program.
+not support recursion.
+Function overloading is also not allowed as the C99 standard
+does not allow it.
+
 
 \subsubsection{Statements}
 The following C99 statements are allowed inside a \pencil function definition:
