@@ -607,15 +607,19 @@ The \lstinline!restrict! type qualifier is used when declaring an array argument
 Here is a correct \pencil function declaration and call.
 
 \begin{lstlisting}[language=pencil]
-/* PENCIL code.  */
-void foo(int n, float a[static const restrict n]);
+/* PENCIL code.
+ * a and b are restricted arrays (analogous to restricted pointers in C99).
+ */
+void foo(int n, float a[static const restrict n]
+                  float b[static const restrict n]);
+
 
 void bar()
 {
   int n = 42;
-  float pa[n];
+  float pa[n], dc[n];
 
-  foo(n, pa);
+  foo(n, pa, dc);
 }
 
 /* C code.  */
@@ -625,20 +629,12 @@ void baz ()
   it is not a PENCIL code.  */
 
   int n = 42;
-  float *buf = malloc (sizeof (*buf) * n);
-  foo (n, buf);
+  float *buf1 = malloc (sizeof (float) * n);
+  float *buf2 = malloc (sizeof (float) * n);
+
+  foo (n, buf1, buf2);
 }
 \end{lstlisting}
-
-Another example.
-
-  \begin{lstlisting}[language=pencil]
-// a and b are restricted arrays (analogous to restricted
-// pointers in C99)
-void foo_restricted(float a[static const restrict 42],
-                     float b[static const restrict 42]);
-  \end{lstlisting}
-
 
 %\todo{Perhaps we should make an exception for
 %   dynamic memory allocation.  In that case, the allocated address
@@ -654,7 +650,7 @@ void foo_restricted(float a[static const restrict 42],
 
   \begin{lstlisting}[language=pencil]
 void foo(float a[pencil_array 42],
-            float b[pencil_array 42]);
+          float b[pencil_array 42]);
   \end{lstlisting}
 
 \subsection{Function Attributes}
