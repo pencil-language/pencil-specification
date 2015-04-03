@@ -1395,11 +1395,9 @@ void foo(int n, int m, int S, int D[pencil_array S])
 The loop above can not be parallelized since it might have loop
 carried dependences (if the step \lstinline!m! is less than the
 number of iterations \lstinline!n!).
-
-\lstinline!__pencil_assume! can be used to inform the compiler that
+The \lstinline!__pencil_assume! builtin can be used to inform the compiler that
 \lstinline!m! is greater than \lstinline!n!, which allows the compiler
 to parallelize the loop.
-
 An alternative solution in this particular case is to explicitly
 mark the loop as independent.
 
@@ -1499,13 +1497,13 @@ In that case all the \pencil extensions will be ignored by the C99
 compiler.  Such a behavior is totally safe.
 
 Note that \pencil compilers define the \lstinline!__PENCIL__! macro
-which can be used when compiling \pencil code using a C99 compiler.
+for convenience.
 
 
 \subsection{Embedding \pencil Code in C}
 \label{sec:pencil-as-c-ext}
 
-\pencil code can be embedded in C code.
+For convenience, it is possible to embed \pencil code in C code.
 Embedded \pencil code obeys the same rules as standalone \pencil code.
 
 \begin{itemize}
@@ -1577,7 +1575,7 @@ void set_zero(int * a)
 }
 \end{lstlisting}  
 
-\subsection{Memory Allocation for Arrays in \pencil}
+\subsection{Array Memory Allocation in \pencil}
 
 It is possible to allocate a local array dynamically in \pencil code
 by declaring the array using the the C99 VLA syntax (C99 Variable Length
@@ -1591,10 +1589,11 @@ outside that \pencil region.
 
 \begin{lstlisting}[language=pencil]
 /* C code.  fact[] is allocated here.  */
-void foo(int N)
+int *foo(int N)
 {
     int *fact = malloc(sizeof(int) * N);
     set_array(N, fact, -1);
+    return fact;
 }
 
 /* PENCIL code.  */
