@@ -683,25 +683,22 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 %   no side effect, it is pure;
 % - calls to other summaries are allowed.
 
+  The effect of a function call on its array arguments is derived
+  from an analysis of the called function.
+  In some cases, the results of this analysis may be too inaccurate.
+  In the extreme case, no code may be available for the function and the
+  compiler can then only assume that every element of the passed arrays
+  is accessed.
+  In order to obtain more accurate information on memory accesses, the user
+  may tell the compiler to derive the memory accesses not from the actual
+  function body, but from some other function with the same signature.
+  Such a function is called a \emph{summary function}.
 
-  The name of a summary function is indicated through
-  the \lstinline!pencil_access! function attribute.
-  The goal is to describe how the arguments of a given
-  function are accessed.
-  For each array (or scalar) passed to the function,
-  a description of the memory accesses to that array is provided.
-  This information is important for performing a precise dependence
-  analysis.
-  It can be provided through a summary function.
-  
   Summary functions are used to:
     \begin{itemize}
      \item Describe the memory accesses of library functions
      called from \pencil code --- as library functions cannot be analyzed at
      compile time.
-     If the memory access of a function is not provided, a \pencil
-     compiler assumes that every argument of the function is fully accessed
-     for read and write.
      
      \item Describe the memory accesses of non-\pencil
      functions called from \pencil code --- as they are difficult
@@ -717,91 +714,41 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
 
   The use of summary functions in these cases enables more
   precise static analysis.
+  To indicate the summary function of a function \lstinline!foo()!,
+  one uses the attribute
+  \lstinline!pencil_access(summary)!, where
+  \lstinline!summary! is the name of the summary function
+  that describes the memory accesses in \lstinline!foo()!.
 
-  To indicate the summary function of a function \lstinline!foo!,
-  one should use the attribute
-  
-  \begin{lstlisting}[language=pencil]
-    pencil_access(summary) 
-  \end{lstlisting}
-
-  where
-  \lstinline!summary! is the name of the summary function  that describes
-  the memory accesses in \lstinline!foo!.
-  
-  Example:
-  \begin{lstlisting}[language=pencil]
-    /* This is the summary function of foo().  */
-    void foo_summary(int N, int A[pencil_array N])
-    {
-      /* The contents of summary functions will be presented
-      later in this section.  */
-    }
-
-    void foo(int N, int A[pencil_array N])
-      __attribute__((pencil_access(foo_summary)))
-      {
-        for (int i = 0; i < N; i ++)
-        {
-          A[i] = A[i] + 1;
-        }
-      }
-  \end{lstlisting}
-  
-  The summary function has the same arguments as the
-  qualified function.  Each array that is passed as an argument to the
-  function must be described.
-  However, it is not meant to be executed: it is only
-  useful for the dependence analyzer.
-  
-  The semantics of
-  memory access information are equivalent to the semantics
+  A summary function is not meant to be executed, and is instead only used
+  for the analysis of memory footprints.
+  It has the same arguments as the qualified function.
+  Each and every array element accessed in a function should be accessed
+  in its summary. Yet a summary is generally simpler than the function
+  it summarizes: it only captures sets of accesses, not their ordering
+  and number of occurrences.
+  The semantics of memory access information are equivalent to the semantics
   of interprocedural function summaries.  A simple way to integrate
   it in an existing intraprocedural framework is to inline all
   summaries.
 
-  Note that summaries should always appear in source form,
-  preferably in headers, and that the summary function itself
-  should be \pencil compliant so that \pencil tools can
-  analyze it.
-  
-  A summary function does not describe the dependences between the
-  different statements of the function.  It is intended to describe
-  the dependences between the function call, seen as one statement,
-  and the rest of the call site code.
-
   The polymorphic builtin functions \lstinline!__pencil_use!
   and \lstinline!__pencil_def! must be used in summary
   functions to mark memory access information (and to protect them
-  from aggressive, \pencil-agnostic upstream passes). The
-  polymorphic argument may be a scalar,
+  from aggressive, \pencil-agnostic upstream passes).
+  The builtin function \lstinline!__pencil_use!, abbreviated with
+  \lstinline!USE()!, annotates read accesses, while \lstinline!__pencil_def!,
+  abbreviated with \lstinline!DEF()!, annotates (must-)write accesses.
+  The polymorphic argument for these builtin functions may be a scalar,
   dereferenced pointer argument, or array element. It may also be a
   complete array when the dimension and size of the array are
   statically known (use the \lstinline!static! keyword for
   arguments): e.g., \lstinline!__pencil_use(A)! marks the use of the
   complete array A, alleviating the need to list every
   element.
-
-  In this document we use the following abbreviating macros:
-  \lstinline!USE()! and \lstinline!DEF()!
-  \begin{itemize}
-   \item \lstinline!USE()! is used to abbreviate \lstinline!__pencil_use!.
-         It annotates read accesses.
-   \item \lstinline!DEF()! is used to is used to abbreviate \lstinline!__pencil_def!.
-         It annotates (must-)write accesses.
-  \end{itemize}
-
-  To express may-write accesses, the boolean builtin
-  \lstinline!__pencil_maybe! should be used to guard these accesses
-  in an \lstinline!if (__pencil_maybe())!  conditional. We use the
-  \lstinline!MAYBE! macro as an abbreviation. The
-  builtin may be combined with more (affine) conditions to refine
-  the static may-execute information. One may also consider
-  \lstinline!MAY_DEF(v)! as a short-cut for
-  \lstinline!if (__pencil_maybe()) __pencil_def(v))!.
-
+  
   A summary function can contain calls to other functions, indicating,
-  that corresponding calls are present on the original function:
+  that corresponding calls are present on the original function.  Example:
 
   \begin{lstlisting}[language=pencil]
     void foo(int N, int A[pencil_array N]);
@@ -809,28 +756,37 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
     void bar_summary(int N, int A[pencil_array N])
     {
       foo(N, A);
-      USE(A);
-      DEF(A);
+
+      for (int i = 0; i < N; i ++)
+      {
+        USE(A[i]);
+        DEF(A[i]);
+      }
     }
 
     void bar(int N, int A[pencil_array N])
       __attribute__((pencil_access(bar_summary)))
       {
         foo(N, A);
+
         for (int i = 0; i < N; i ++)
         {
-          A[i]++;
+          int t = A[i];
+          t = t + 1;
+          A[i] = t;
         }
       }
   \end{lstlisting}
-
-  The attribute \lstinline!pencil_access! is
-  abbreviated with the \lstinline!ACCESS! macro.
   
-  The summary function does not need to preserve information about
-  the dependences between the different statements of the function.
-  If an argument is read (resp. written) multiple times, it is enough
-  to indicate this only once in the summary function.
+  To express may-write accesses, the boolean builtin
+  \lstinline!__pencil_maybe! should be used to guard these accesses
+  in an \lstinline!if (__pencil_maybe())!  conditional. We use the
+  \lstinline!MAYBE! macro as an abbreviation. The
+  builtin may be combined with more (affine) conditions to refine
+  the static may-execute information. One may also consider
+  \lstinline!MAY_DEF(v)! as a short-cut for
+
+  \lstinline!if (__pencil_maybe()) __pencil_def(v))!.
 
   The main criteria for choosing a given formalism instead of another
   formalism to express the memory accesses of a function are:
@@ -841,15 +797,31 @@ or is annotated with \lstinline!const! (see Section~\ref{sec:const-attribute}).
          and analyze the formalism.
   \end{itemize}
 
-  Summary functions were chosen over other formalisms because they are based
-  on the C syntax and thus can be parsed and analyzed easily using existing C
-  compiler APIs.
+  Summary functions were chosen over other formalisms (C++11 lambda
+  functions~\cite{cpp11}, the use of directives, etc.) because summary
+  fcuntions are based on the C syntax and thus can be parsed and analyzed
+  easily using existing C compiler APIs.
   Moreover, summary functions are expressive and allow fine grain
   specification of memory accesses.
   And more importantly, summary functions are easy to understand unlike other
-  formalisms like lambda expressions (not all C programers are familiar with
-  the concept of lambda expressions).
+  formalisms like lambda functions (not all C programers are familiar with
+  the concept of lambda functions).
   
+  A summary function should be \pencil compliant so that \pencil tools can
+  analyze it.
+  Writing the summaries of library functions is the library developer's 
+  responsibility.
+  Such summary functions should be provided in the library's header
+  files and are used directly by the DSL compilers or \pencil programmers.
+  This is the most common case.
+  In other less common cases, summary functions are either written by the
+  \pencil programmer himself or generated automatically by the DSL compiler
+  (only the sets of read and written elements for each function argument need to 
+  be provided in this case).
+  
+  The attribute \lstinline!pencil_access! is
+  abbreviated with the \lstinline!ACCESS! macro.
+
 \paragraph{Example 1}
   \begin{lstlisting}[language=pencil]
   __attribute__((pencil_access(summary_fft32)))
