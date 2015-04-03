@@ -965,12 +965,12 @@ typical example. Low-level atomics in C11~\cite{c11} or OpenCL 2.0 are another o
 (e.g., to give semantics to benign races).
 \nomenclature{C11}{C Standard 2011}
 
-Indeed, external non-PENCIL functions called from the annotated loops
+External non-PENCIL functions called from the annotated loops
 may employ target-dependent constructs to protect the atomicity of
 their data access sequences, or to refine their parallel semantics
 regarding relaxed memory ordering, sound implementation of benign
-races, etc. These functions must have well-formed summaries, capturing
-the side effects of all their array arguments.  Such an approach is
+races, etc.
+Such an approach is
 currently necessary to allow benign races (when the same value is
 written by multiple threads), to parallelize associative and commutative
 operations, and more generally for any parallel algorithm tolerating
