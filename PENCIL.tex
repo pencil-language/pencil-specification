@@ -16,8 +16,9 @@ programming languages, and to leverage compilation technology to automatically
 generate efficient low level code.
 
 For general-purpose languages in the C family, this approach is hindered
-by the difficulty of static analysis in the presence of pointer aliasing.
-The possibility of aliasing often forces a parallelizing compiler
+by the difficulty of static analysis in the presence of pointer aliasing,
+data-dependent array accesses and dynamic control.
+For example, the possibility of aliasing often forces a parallelizing compiler
 to assume that it is \emph{not} safe to parallelize a region of source
 code, even though aliasing might not actually
 occur at runtime.
