@@ -976,7 +976,9 @@ written by multiple threads), to parallelize associative and commutative
 operations, and more generally for any parallel algorithm tolerating
 the unordered execution of intermediate steps.
 
-The \lstinline!independent! directive is typically used to indicate
+The \lstinline!independent! directive has an effect only on the marked loop
+and does not have an effect on any other loop in the loop nest.
+It is typically used to indicate
 that the annotated loop does not carry any dependence.  It allows the
 compiler to ignore all loop carried dependences of the annotated loop,
 including those that may be introduced by the compiler due to
@@ -990,17 +992,54 @@ This may sound overly restrictive, but it ensures the portability of
 PENCIL when targeting languages and architectures where races have
 undefined semantics (C11, OpenCL 2.0).
 
-The \lstinline!independent! directive has an effect only on the marked loop
-and does not have an effect on any other loop in the loop nest.
-
 \paragraph{Note}
 The independent directive currently has informal semantics only. There
 are plans for more formal versions, or for the complete deprecation of
 the directive, in future revisions of PENCIL.
 
 \paragraph{Example 1}
+  The following example shows a code fragment of a \pencil
+  implementation of the breadth-first search algorithm.
+  This algorithm computes the minimal distance from a given source node to
+  each node of the input graph.
+  The algorithm maintains a frontier and computes the next frontier by examining
+  all unvisited nodes adjacent to the nodes of the current frontier.
+  All nodes in a frontier have the same distance from the source node.
 
-  The following example illustrates the usage of the directive in a
+  The \lstinline|for| loop shown in the example can be
+  parallelized since each node of the current frontier can be processed
+  independently.
+  This creates a possible race condition on the \lstinline|cost| and
+  \lstinline|next_frontier| arrays.
+  The race condition can be ignored, however, because each conflicting thread
+  will write the same values to the arrays.
+  By specifying the \lstinline|independent| pragma, the programmer guarantees
+  that the race condition is benign, which enables a \pencil compiler to
+  parallelize the loop.
+
+  \begin{lstlisting}[language=pencil]
+  /* Examine nodes adjacent to current frontier */
+  #pragma pencil independent
+  for (int i = 0; i < n_nodes; i++) {
+    if (frontier[i] == 1) {
+      frontier[i] = 0;
+      /* For each adjacent edge j */
+      for (int j = edge_idx[i];
+                j < edge_idx[i] + edge_cnt[i]; j++) {
+        int dst_node = dst_node_index[j];
+        if (visited[dst_node] == 0) {
+          /* benign race: threads write same values */
+          cost[dst_node] = cost[i] + 1;
+          next_frontier[dst_node] = 1;
+        }
+      }
+    }
+  }
+  \end{lstlisting}
+
+\paragraph{Example 2}
+
+  The following example illustrates the use of the directive in a
   typical context where the code executed in the loop body executes
   target-dependent, non-PENCIL code. E.g., code with atomic execution
   constraints that are currently not expressible in PENCIL.
@@ -1049,7 +1088,7 @@ void inc(float A[256], int c)
   parallelize the loop, but also provide valuable
   information for other loop transformations.
 
-\paragraph{Example 2}
+\paragraph{Example 3}
   In the following example, the writes to \lstinline!t! induce loop carried
   dependences and thus the use of \lstinline!independent! is incorrect because
   there are at least two iterations that may write different values to
@@ -1083,46 +1122,6 @@ for (int i=0; i<N; i++) {
   In general, all the variables declared inside the loop body (whether the loop
   is marked as independent or not) can be assumed to be free of loop-carried
   dependences (i.e., these variables do not induce any loop carried dependence).
-
-\paragraph{Example 3}
-  The following example shows a code fragment of a \pencil
-  implementation of the breadth-first search algorithm.
-  This algorithm computes the minimal distance from a given source node to
-  each node of the input graph.
-  The algorithm maintains a frontier and computes the next frontier by examining
-  all unvisited nodes adjacent to the nodes of the current frontier.
-  All nodes in a frontier have the same distance from the source node.
-
-  The \lstinline|for| loop shown in the example can be
-  parallelized since each node of the current frontier can be processed
-  independently.
-  This creates a possible race condition on the \lstinline|cost| and
-  \lstinline|next_frontier| arrays.
-  The race condition can be ignored, however, because each conflicting thread
-  will write the same values to the arrays.
-  By specifying the \lstinline|independent| pragma, the programmer guarantees
-  that the race condition is benign, which enables a \pencil compiler to
-  parallelize the loop.
-
-  \begin{lstlisting}[language=pencil]
-  /* Examine nodes adjacent to current frontier */
-  #pragma pencil independent
-  for (int i = 0; i < n_nodes; i++) {
-    if (frontier[i] == 1) {
-      frontier[i] = 0;
-      /* For each adjacent edge j */
-      for (int j = edge_idx[i];
-                j < edge_idx[i] + edge_cnt[i]; j++) {
-        int dst_node = dst_node_index[j];
-        if (visited[dst_node] == 0) {
-          /* benign race: threads write same values */
-          cost[dst_node] = cost[i] + 1;
-          next_frontier[dst_node] = 1;
-        }
-      }
-    }
-  }
-  \end{lstlisting}
   
   \paragraph{\texttt{reduction} Clause}
   \label{reduction-clause}
