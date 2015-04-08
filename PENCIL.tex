@@ -289,17 +289,16 @@ constants and $c$ is either a constant or a loop parameter.
 
 \begin{lstlisting}[language=pencil]
 for (int i=1; i<n; i++) {
-  A[10*i+20] = 0;	// The subscript of A[] is quasi-affine
-  A[i*n] = 0;		// The subscript of A[] is not quasi-affine
-  B[i*i] = 0;		// The subscript of A[] is not quasi-affine
-  C[t[i]] = 0;		// The subscript of C[] is not quasi-affine
-  D[foo(i)] = 0;	// The subscript of A[] is not quasi-affine
+  A[10*i+20] = 0;       // The subscript of A[] is quasi-affine
+  A[i*n] = 0;           // The subscript of A[] is not quasi-affine
+  B[i*i] = 0;           // The subscript of B[] is not quasi-affine
+  C[t[i]] = 0;          // The subscript of C[] is not quasi-affine
+  D[foo(i)] = 0;        // The subscript of D[] is not quasi-affine
 }
 \end{lstlisting}
 
 It is recommended to use quasi-affine expressions for array subscripts,
 loop bounds and conditional expressions whenever this is possible.
-
 In presence of non quasi-affine subscripts, it is highly recommended
 to use the \lstinline!independent! or \lstinline!ivdep! directives 
 (described in Section~\ref{sec:directives})
