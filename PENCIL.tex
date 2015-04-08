@@ -6,7 +6,7 @@ systems-on-chip -- benefit from using special-purpose
 processors in terms of energy efficiency as well as
 execution speed.
 Software for such systems, however, is currently written using
-low-level APIs \nomenclature{APIs}{Application Program Interface},
+low-level APIs\nomenclature{APIs}{Application Program Interface},
 such as OpenCL (Open Computing Language)\nomenclature{OpenCL}{Open Computing Language}~\cite{stoneopencl} and
 CUDA (Compute Unified Device Architecture)\nomenclature{CUDA}{Compute Unified Device Architecture}~\cite{cudaref},
 which increases the cost of
@@ -23,7 +23,8 @@ to assume that it is \emph{not} safe to parallelize a region of source
 code, even though aliasing might not actually
 occur at runtime.
 
-Domain-specific languages (DSLs) can circumvent this problem: it is often
+Domain-specific languages (DSLs\nomenclature{DSL}{Domain-Specific Languages})
+can circumvent this problem: it is often
 clear how parallelism can be exploited given
 high-level knowledge about standard operations in a given domain, such as
 linear algebra~\cite{vobla2014},
@@ -41,8 +42,8 @@ of different DSLs will likely spend their efforts on implementing an
 overlapping set of techniques.
 The existence of a common intermediate language serving as a target
 for DSL compilers would reduce considerably the development costs.
-In addition, if this language is a high level language that can also
-be used directly by domain experts to target accelerators, the
+In addition, if this language is a high level language, it can also
+be used directly by domain experts to target accelerators and the
 advantage is doubled.
 
 % To some extent, the design of such an intermediate
