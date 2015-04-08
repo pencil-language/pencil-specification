@@ -782,10 +782,12 @@ or is annotated with \lstinline!const!.
   in an \lstinline!if (__pencil_maybe())!  conditional. We use the
   \lstinline!MAYBE! macro as an abbreviation. The
   builtin may be combined with more (affine) conditions to refine
-  the static may-execute information. One may also consider
-  \lstinline!MAY_DEF(v)! as a short-cut for
+  the static may-execute information. Example:
 
-  \lstinline!if (__pencil_maybe()) __pencil_def(v))!.
+  \lstinline!if (__pencil_maybe()) __pencil_def(v))!
+
+  One may also consider \lstinline!MAY_DEF(v)! as a short-cut that
+  can replace the above example.
 
   The main criteria for choosing a given formalism instead of another
   formalism to express the memory accesses of a function are:
