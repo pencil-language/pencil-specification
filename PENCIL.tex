@@ -301,7 +301,7 @@ loop bounds and conditional expressions whenever this is possible.
 
 In presence of non quasi-affine subscripts, it is highly recommended
 to use the \lstinline!independent! or \lstinline!ivdep! directives 
-(described in Sections~\ref{sec:independent} and~\ref{sec:ivdep})
+(described in Section~\ref{sec:directives})
 in order to enable parallelization and loop optimizations, or to hide these
 accesses in functions annotated with summary functions
 (Section~\ref{sec:summaries}).
@@ -921,7 +921,7 @@ void foo(int n, int A[pencil_array n],
   \lstinline!foo! may write to \lstinline!d[i].real! for $i$
   from $10$ to $n-1$. 
 
-\subsection{Pragma Directives}
+\subsection{Pragma Directives\label{sec:directives}}
 
 \pencil defines several directives inspired by OpenMP~\cite{openmp08} and OpenACC~\cite{openacc11}
 and commonly found in advanced vectorizing compilers.
