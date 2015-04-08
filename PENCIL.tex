@@ -596,7 +596,9 @@ The \lstinline!restrict! type qualifier is used when declaring an array argument
   perform more precise dependence analysis.
   
   Note that making the use of \lstinline!restrict! mandatory in \pencil requires
-  upstream versioning of functions.
+  upstream versioning of functions: if two arguments of a function are known
+  to alias, then the two arguments must be transformed into one argument to
+  avoid the aliasing problem.
 
 \subsubsection*{Examples}
 
