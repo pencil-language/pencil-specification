@@ -361,9 +361,9 @@ Only the following C99 types are allowed.
       Passing an array reference to a function is allowed in \pencil as it does not violate the previous
       property.  The property is not violated because function arguments in \pencil are required to be
       qualified with \lstinline!restrict! and \lstinline!const!:
-      if two separate arrays are passed to a function and if the two
-      function arguments (for those arrays) are qualified with the
-      \lstinline!restrict! type qualifier then the two arrays are guaranteed
+      if two separate arrays are passed to a function and if they
+      are qualified with the
+      \lstinline!restrict! type qualifier then they are guaranteed
       not to alias withing that function.
       Moreover, the \lstinline!const! type qualifier guarantees
       that those array reference remain constant within that function.
