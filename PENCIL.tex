@@ -254,6 +254,59 @@ The following C99~\cite{c99} global definitions and declarations are allowed ins
 The naming and the scope of identifiers in \pencil follow the same rules as
 in C99.
 
+\subsubsection{Expressions (and Quasi-affine Expressions)}
+\pencil supports a strict subset of C99 expressions:
+\begin{itemize}
+  \item Arithmetical operations: \lstinline!+,-,*,/,%!
+  \item Logical operations: \lstinline{||,&&,!}
+  \item Bit operations: \lstinline{|,&,~,^,>>,<<}
+  \item Comparison operations: \lstinline{>,>=,<,<=,==,!=}
+  \item Array and member operators: \lstinline{[],.}
+  \item Ternary conditional: \lstinline!cond?op1:op2!
+  \item Size-of: \lstinline!sizeof(arg)!
+  \item Scalar conversion: \lstinline!(type)arg!
+  \item \pencil function call: \lstinline!func(arg1,..,argN)!
+  \item C function call (when the summary function is provided).
+\end{itemize}
+
+
+\paragraph{Quasi-affine Expressions}
+\label{sec:quasi-affine}
+
+A quasi-affine expression is any expression over integer values and
+integer variables involving only the operators \lstinline{+},
+\lstinline{-} (both unary and binary), \lstinline{*}, \lstinline{/},
+\lstinline{%}, \lstinline{&&}, \lstinline{||}, \lstinline{<}, \lstinline{<=},
+\lstinline{>}, \lstinline{>=}, \lstinline{==}, \lstinline{!=} or the
+ternary \lstinline{?:} operator.  The second argument of the
+\lstinline{/} and the \lstinline{%}
+operators is required to be a (positive) integer literal, while at
+least one of the arguments of the \lstinline{*} operator is
+required to be piece-wise constant expression. An example of a
+quasi-affine expression is: $a*i+b*j+c$, where $a$ and $b$ are
+constants and $c$ is either a constant or a loop parameter.
+
+\begin{lstlisting}[language=pencil]
+for (int i=1; i<n; i++) {
+  A[10*i+20] = 0;	// Quasi-affine
+  A[i*n] = 0;		// Not quasi-affine
+  B[i*i] = 0;		// Not quasi-affine
+  C[t[i]] = 0;		// The subscript of C[] is not quasi-affine
+  D[foo(i)] = 0;	// Not quasi-affine
+}
+\end{lstlisting}
+
+It is recommended to use quasi-affine expressions for array subscripts,
+loop bounds and conditional expressions whenever this is possible.
+
+In presence of non quasi-affine subscripts, it is highly recommended
+to use the \lstinline!independent! or \lstinline!ivdep! directives 
+(described in Sections~\ref{sec:independent} and~\ref{sec:ivdep})
+in order to enable parallelization and loop optimizations, or to hide these
+accesses in functions annotated with summary functions
+(Section~\ref{sec:summaries}).
+
+
 \subsubsection{Types \label{penciltypes}}
 
 Unlike C99, unions and bitfields are not supported in \pencil.
@@ -441,58 +494,6 @@ The same as in C99 except that
     Section~\ref{sec:summaries}).
  \item Recursive function calls are not allowed.
 \end{itemize}
-
-\subsubsection{Expressions (and Quasi-affine Expressions)}
-\pencil supports a strict subset of C99 expressions:
-\begin{itemize}
-  \item Arithmetical operations: \lstinline!+,-,*,/,%!
-  \item Logical operations: \lstinline{||,&&,!}
-  \item Bit operations: \lstinline{|,&,~,^,>>,<<}
-  \item Comparison operations: \lstinline{>,>=,<,<=,==,!=}
-  \item Array and member operators: \lstinline{[],.}
-  \item Ternary conditional: \lstinline!cond?op1:op2!
-  \item Size-of: \lstinline!sizeof(arg)!
-  \item Scalar conversion: \lstinline!(type)arg!
-  \item \pencil function call: \lstinline!func(arg1,..,argN)!
-  \item C function call (when the summary function is provided).
-\end{itemize}
-
-
-\paragraph{Quasi-affine Expressions}
-\label{sec:quasi-affine}
-
-A quasi-affine expression is any expression over integer values and
-integer variables involving only the operators \lstinline{+},
-\lstinline{-} (both unary and binary), \lstinline{*}, \lstinline{/},
-\lstinline{%}, \lstinline{&&}, \lstinline{||}, \lstinline{<}, \lstinline{<=},
-\lstinline{>}, \lstinline{>=}, \lstinline{==}, \lstinline{!=} or the
-ternary \lstinline{?:} operator.  The second argument of the
-\lstinline{/} and the \lstinline{%}
-operators is required to be a (positive) integer literal, while at
-least one of the arguments of the \lstinline{*} operator is
-required to be piece-wise constant expression. An example of a
-quasi-affine expression is: $a*i+b*j+c$, where $a$ and $b$ are
-constants and $c$ is either a constant or a loop parameter.
-
-\begin{lstlisting}[language=pencil]
-for (int i=1; i<n; i++) {
-  A[10*i+20] = 0;	// Quasi-affine
-  A[i*n] = 0;		// Not quasi-affine
-  B[i*i] = 0;		// Not quasi-affine
-  C[t[i]] = 0;		// The subscript of C[] is not quasi-affine
-  D[foo(i)] = 0;	// Not quasi-affine
-}
-\end{lstlisting}
-
-It is recommended to use quasi-affine expressions for array subscripts,
-loop bounds and conditional expressions whenever this is possible.
-
-In presence of non quasi-affine subscripts, it is highly recommended
-to use the \lstinline!independent! or \lstinline!ivdep! directives 
-(described in Sections~\ref{sec:independent} and~\ref{sec:ivdep})
-in order to enable parallelization and loop optimizations, or to hide these
-accesses in functions annotated with summary functions
-(Section~\ref{sec:summaries}).
 
 \subsubsection{Declaration and Initialization}
 Identifier declaration and initialization in \pencil follows the same
