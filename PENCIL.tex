@@ -266,7 +266,8 @@ in C99.
   \item Size-of: \lstinline!sizeof(arg)!
   \item Scalar conversion: \lstinline!(type)arg!
   \item \pencil function call: \lstinline!func(arg1,..,argN)!
-  \item C function call (when the summary function is provided).
+  \item C function call (when the summary function is provided,
+  details in Section~\ref{sec:summaries}).
 \end{itemize}
 
 
@@ -288,11 +289,11 @@ constants and $c$ is either a constant or a loop parameter.
 
 \begin{lstlisting}[language=pencil]
 for (int i=1; i<n; i++) {
-  A[10*i+20] = 0;	// Quasi-affine
-  A[i*n] = 0;		// Not quasi-affine
-  B[i*i] = 0;		// Not quasi-affine
+  A[10*i+20] = 0;	// The subscript of A[] is quasi-affine
+  A[i*n] = 0;		// The subscript of A[] is not quasi-affine
+  B[i*i] = 0;		// The subscript of A[] is not quasi-affine
   C[t[i]] = 0;		// The subscript of C[] is not quasi-affine
-  D[foo(i)] = 0;	// Not quasi-affine
+  D[foo(i)] = 0;	// The subscript of A[] is not quasi-affine
 }
 \end{lstlisting}
 
