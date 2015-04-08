@@ -260,7 +260,7 @@ Unlike C99, unions and bitfields are not supported in \pencil.
 Only the following C99 types are allowed.
 
  \begin{itemize}
-  \item Scalar types: scalar data types are the same as in C99, with the
+  \item Scalar types: scalar data types in \pencil are the same as in C99, with the
       addition of the optional \lstinline!half! float type
       (\pencil compilers are not required to support the \lstinline!half!
       float type).
@@ -271,9 +271,8 @@ Only the following C99 types are allowed.
       variable-length array syntax~\cite{c99}.
     \item Array function arguments
       must be declared using the \lstinline!static! keyword and
-      the \lstinline!const! and \lstinline!restrict! type qualifiers,
-      described in sections~\ref{sec:static},~\ref{sec:const},
-      and~\ref{sec:restrict}
+      the \lstinline!const! and \lstinline!restrict! type qualifiers
+      described later
       (the macro \lstinline!pencil_array! can be used to
       abbreviate \lstinline!static! \lstinline!const! \lstinline!restrict!).
     \item Array accesses should not be linearized, as this tends to
