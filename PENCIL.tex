@@ -75,7 +75,7 @@ a tractable target language for DSL compilers.
 
 \section{\pencil Language}
 
-\subsection{Overview of PENCIL \label{pencil-overview}}
+\subsection{Overview of \pencil \label{pencil-overview}}
 
 \pencil is a rigorously-defined subset of C99~\cite{c99}%
 \nomenclature{C99}{C Standard 1999}.  It enforces a set of
@@ -208,13 +208,13 @@ Platform-Neutral Compute\\Intermediate Language};
 {Direct \pencil\\programming\\(hand written\\\pencil code)};
 \draw[link] (direct2) -- (pencil);
 \end{tikzpicture}
- \caption{High level overview of our vision for the use of PENCIL}
+ \caption{High level overview of our vision for the use of \pencil}
  \label{fig-pencil-high-level-picture}
 } 
 \end{figure}
 
 Figure \ref{fig-pencil-high-level-picture} shows a high level
-overview of how we envision PENCIL to be used.
+overview of how we envision \pencil to be used.
 First, a program written in a domain
 specific language is compiled into \pencil.  Domain specific
 optimizations are applied during this translation, and the DSL compiler may
@@ -230,7 +230,7 @@ In Figure~\ref{fig-pencil-high-level-picture} we
 illustrate the case where the generated low-level code is OpenCL, 
 allowing the compiled code to run across a range of OpenCL-compliant 
 devices.  We hereafter assume that OpenCL is the target language for 
-PENCIL compilation, but in principle PENCIL can target any suitable 
+\pencil compilation, but in principle \pencil can target any suitable 
 low-level representation.
 
 The design of the extensions to C99 that are a part of \pencil went
@@ -460,8 +460,8 @@ The motivation of this restriction is to simplify the development of
 \pencil tool chains.
 Example:
 \begin{lstlisting}[language=pencil]
-  int i = 2; //Legal in C99 and in PENCIL.
-  int j = i += 2; //Legal in C99, illegal in PENCIL.
+  int i = 2; //Legal in C99 and in \pencil.
+  int j = i += 2; //Legal in C99, illegal in \pencil.
 \end{lstlisting}
 
 As a special case \lstinline!i += 1! can be written as \lstinline!i++!
@@ -469,8 +469,8 @@ and \lstinline!i -= 1! can be written as \lstinline!i--!, but as mentioned
 above these constructions are statements without any return value:
 
 \begin{lstlisting}[language=pencil]
-  int j = i++; //Legal in C99, illegal in PENCIL.
-  i++; //Legal in C99 and in PENCIL.
+  int j = i++; //Legal in C99, illegal in \pencil.
+  i++; //Legal in C99 and in \pencil.
 \end{lstlisting}
 
 \paragraph{For Loop}
@@ -983,13 +983,13 @@ The directive indicates that the desired result of the annotated
 loop does not depend upon the execution order of data accesses
 from different iterations.  The definition of data accesses
 encompasses all memory accesses enclosed by the loop, either directly
-or indirectly through calls to PENCIL or non-PENCIL functions. In
+or indirectly through calls to \pencil or non-\pencil functions. In
 particular, data accesses from different iterations may be executed
 simultaneously. The definition of desired result is algorithm- and
 application-dependent.
 
 The execution order of data accesses may be entirely defined by
-the dependences of the PENCIL program, in which case the semantics of
+the dependences of the \pencil program, in which case the semantics of
 the pragma is portable. Or some dependences may exist and nonetheless
 ignored through the usage of the \lstinline!independent! directive,
 in which case the correct execution order may have to be guaranteed
@@ -999,7 +999,7 @@ typical example. Low-level atomics in C11~\cite{c11} or OpenCL 2.0 are another o
 (e.g., to give semantics to benign races).
 \nomenclature{C11}{C Standard 2011}
 
-External non-PENCIL functions called from the annotated loops
+External non-\pencil functions called from the annotated loops
 may employ target-dependent constructs to protect the atomicity of
 their data access sequences, or to refine their parallel semantics
 regarding relaxed memory ordering, sound implementation of benign
@@ -1023,13 +1023,13 @@ the \lstinline!independent! directive is used.  Instead, scalars and
 arrays that are privatizable should be declared as local variables
 within the scope of the annotated loop.
 This may sound overly restrictive, but it ensures the portability of
-PENCIL when targeting languages and architectures where races have
+\pencil when targeting languages and architectures where races have
 undefined semantics (C11, OpenCL 2.0).
 
 \paragraph{Note}
 The independent directive currently has informal semantics only. There
 are plans for more formal versions, or for the complete deprecation of
-the directive, in future revisions of PENCIL.
+the directive, in future revisions of \pencil.
 
 \paragraph{Example 1}
   The following example shows a code fragment of a \pencil
@@ -1075,8 +1075,8 @@ the directive, in future revisions of PENCIL.
 
   The following example illustrates the use of the directive in a
   typical context where the code executed in the loop body executes
-  target-dependent, non-PENCIL code. E.g., code with atomic execution
-  constraints that are currently not expressible in PENCIL.
+  target-dependent, non-\pencil code. E.g., code with atomic execution
+  constraints that are currently not expressible in \pencil.
   \begin{lstlisting}[language=pencil]
 void inc_summary(float A[256], int c)
 {
@@ -1097,7 +1097,7 @@ void foo(int N, float A[pencil_array 256], int t[pencil_array N])
 }  
   \end{lstlisting}
 
-  With the following non-PENCIL C code implementing \lstinline!inc!,
+  With the following non-\pencil C code implementing \lstinline!inc!,
   provided in a different file and compiled separately.
   \begin{lstlisting}[language=pencil]
 void inc(float A[256], int c)
@@ -1167,11 +1167,11 @@ for (int i=0; i<N; i++) {
 
   In order to simplify code generation for \pencil compilers, only scalar
   variables can be used as reduction variables.
-  % Additional reason: we also prefer to keep PENCIL in sync with PPCG.
+  % Additional reason: we also prefer to keep \pencil in sync with PPCG.
   % Support for scalar variables is relatively easier to add in PPCG than
   % support for array elements.
   % Thus we prefer not to claim that we can support reductions on array
-  % elements to avoid making the gap between the PENCIL spec and PPCG
+  % elements to avoid making the gap between the \pencil spec and PPCG
   % smaller.  In practice, reductions on array elements are rare.
   Multiple reduction clauses can be used for different reduction operators.
   The syntax of this clause is equivalent to the syntax of the reduction clause
@@ -1503,7 +1503,7 @@ assumptions match the effects of the \texttt{-fno-math-errno}
 the \texttt{pencil.h}~\footnote{https://github.com/carpproject/} header file
 which defines all the \pencil builtin functions and macros.
 Header files that contain non-\pencil code (including many standard C header
-files) are not supported in PENCIL.
+files) are not supported in \pencil.
 
 
 \subsection{Compiling \pencil with C99 Compilers}
