@@ -826,7 +826,7 @@ or is annotated with \lstinline!const!.
   The main criteria for choosing a given formalism instead of another
   formalism to express the memory accesses of a function are:
   \begin{itemize}
-   \item the expressivness of the formalism;
+   \item the expressiveness of the formalism;
    \item the ease of expressing memory accesses in the formalism;
    \item the ability to use existing compilation frameworks to parse
          and analyze the formalism.
@@ -834,12 +834,12 @@ or is annotated with \lstinline!const!.
 
   Summary functions were chosen over other formalisms (e.g., C++11 lambda
   functions~\cite{cpp11}, the use of directives, etc.) because summary
-  fcuntions are based on the C syntax and thus can be parsed and analyzed
+  functions are based on the C syntax and thus can be parsed and analyzed
   easily using existing C compiler APIs.
   Moreover, summary functions are expressive and allow a fine-grained
   specification of memory accesses.
   More importantly, summary functions are easy to understand unlike other
-  formalisms such as lambda functions (not all C programers are familiar with
+  formalisms such as lambda functions (not all C programmers are familiar with
   the concept of lambda functions).
   
   A summary function should be \pencil compliant so that \pencil tools can
@@ -1109,7 +1109,7 @@ void inc(float A[256], int c)
   \end{lstlisting}
 
   In this case, the user needs to provide an OpenCL implementation for
-  \lstinline!inc! (an implmentation that performs atomic incrementations).
+  \lstinline!inc! (an implementation that performs atomic increments).
 
 \paragraph{Example 3}
   In the following example, the writes to \lstinline!t! induce loop carried
@@ -1511,7 +1511,7 @@ files) are not supported in \pencil.
 \subsection{Compiling \pencil with C99 Compilers}
 
 To map a \pencil code to OpenCL and to take benefit of all the features
-of the \pencil langage, a \pencil compiler needs to be used.
+of the \pencil language, a \pencil compiler needs to be used.
 But it is still possible to compile a \pencil code with a standard C99
 compiler (gcc, icc, \dots) as if it was a C99 code (useful mainly for
 debugging).
@@ -1659,12 +1659,12 @@ visited (BFS order) is stored in the array \lstinline!cost!.  The algorithm has
 two steps which repeat one after the other until all nodes have been explored.
 
 In the first step, each node \emph{n} which is on the frontier (array \lstinline!front!
-in the code) inspects its neighbours.  The neighbour of \emph{n}, if not visited previously,
+in the code) inspects its neighbors.  The neighbor of \emph{n}, if not visited previously,
 is put on \lstinline!updating_front!, which is the set of nodes that will be on
-the next front.  The cost of the neigbour is the cost of the node \emph{n} plus one.
+the next front.  The cost of the neighbor is the cost of the node \emph{n} plus one.
 Each node can perform this operation independently.  It is possible
-that two nodes, on the frontier, have an edge to the same neighbour \emph{m}.  In that
-case, both update the cost of this neighbour \emph{m} (Line \ref{l:inc} in the example).
+that two nodes, on the frontier, have an edge to the same neighbor \emph{m}.  In that
+case, both update the cost of this neighbor \emph{m} (Line \ref{l:inc} in the example).
 This is a race (hazard) but is a benign one since both will attempt to
 write the same value.
 
