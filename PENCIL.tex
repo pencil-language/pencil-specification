@@ -1669,7 +1669,7 @@ Each node can perform this operation independently.  It is possible
 that two nodes, both on the frontier,
 have an edge to the same neighbor \emph{m}.  In that
 case, both update the cost of this neighbor \emph{m} (Line \ref{l:inc} in the example).
-This is a race (hazard) but is a benign one since both will attempt to
+This is a race (hazard) but it is a benign one since both will attempt to
 write the same value.
 
 In the second step, the nodes which have been put on \lstinline!updating_front!
