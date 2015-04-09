@@ -1229,7 +1229,7 @@ The \lstinline!ivdep! directive is used to annotate innermost loops that are can
   \end{lstlisting}
   In this example, vectorization would be invalid if $k < 0$.  The
   \lstinline!ivdep! directive allows the compiler to ignore the assumed
-  loop carried dependences that may exist if $k < 0$. \footnote{Ignore
+  loop carried dependences that may exist if $k < 0$.\footnote{Ignore
   possible out-of-bound errors in this example.}
   
   \paragraph{Example 2}
