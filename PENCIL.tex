@@ -655,16 +655,16 @@ void bar()
 }
 
 /* C code.  */
-void baz ()
+void baz()
 {
   /* Note: this is a piece of C code that calls a PENCIL function,
   it is not PENCIL code.  */
 
   int n = 42;
-  float *buf1 = malloc (sizeof (float) * n);
-  float *buf2 = malloc (sizeof (float) * n);
+  float *buf1 = malloc(sizeof (float) * n);
+  float *buf2 = malloc(sizeof (float) * n);
 
-  foo (n, buf1, buf2);
+  foo(n, buf1, buf2);
 }
 \end{lstlisting}
 
