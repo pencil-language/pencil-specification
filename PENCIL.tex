@@ -1666,7 +1666,8 @@ in the code) inspects its neighbors.  The neighbor of \emph{n}, if not visited p
 is put on \lstinline!updating_front!, which is the set of nodes that will be on
 the next front.  The cost of the neighbor is the cost of the node \emph{n} plus one.
 Each node can perform this operation independently.  It is possible
-that two nodes, on the frontier, have an edge to the same neighbor \emph{m}.  In that
+that two nodes, both on the frontier,
+have an edge to the same neighbor \emph{m}.  In that
 case, both update the cost of this neighbor \emph{m} (Line \ref{l:inc} in the example).
 This is a race (hazard) but is a benign one since both will attempt to
 write the same value.
