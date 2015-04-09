@@ -1695,7 +1695,7 @@ void parallel_version(int no_of_nodes,
 {
   unsigned int carry_on = 1;
 
-  for(int i = 0; i < no_of_nodes; i++)
+  for (int i = 0; i < no_of_nodes; i++)
   {
     front[i]= 0;
     updating_front[i] = 0;
@@ -1709,18 +1709,18 @@ void parallel_version(int no_of_nodes,
 
   #pragma pencil region
   {
-    while(carry_on == 1)
+    while (carry_on == 1)
     {
       carry_on = 0;
 
       #pragma pencil independent
-      for( int i = 0; i < no_of_nodes; i++) {
+      for (int i = 0; i < no_of_nodes; i++) {
         if(front[i] == 1) {
           front[i] = 0; 
-          for(int j = edge_start_no[i]; 
+          for (int j = edge_start_no[i]; 
               j < (edge_start_no[i] + edge_count[i]); j++) {
             int dst_node = dst_node_index[j];
-            if(visited[dst_node] == 0) {
+            if (visited[dst_node] == 0) {
               cost[dst_node] = cost[i] + 1;@\label{l:inc}@
               updating_front[dst_node] = 1;
             }
@@ -1728,8 +1728,8 @@ void parallel_version(int no_of_nodes,
         }
       }
 
-      for(int i = 0; i < no_of_nodes; i++) {
-        if(updating_front[i] == 1) {
+      for (int i = 0; i < no_of_nodes; i++) {
+        if (updating_front[i] == 1) {
           front[i] = 1;
           visited[i] = 1;
           carry_on = 1;
