@@ -1215,7 +1215,7 @@ The \lstinline!ivdep! directive is used to annotate innermost loops that are can
 
 In this section, \lstinline!T! represents any valid \pencil type.
 
-\subsubsection{\texttt{\_\_pencil\_use} Function}
+\subsubsection{\texttt{\_\_pencil\_use} Builtin}
 
   The \lstinline!__pencil_use! function is
   a polymorphic builtin function used to mark a read access to
@@ -1228,7 +1228,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
 
 
 
-\subsubsection{\texttt{\_\_pencil\_def} Function}
+\subsubsection{\texttt{\_\_pencil\_def} Builtin}
 
   The \lstinline!__pencil_def! function is a polymorphic
   builtin function used to mark a definition (must-write
@@ -1240,7 +1240,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   \lstinline!void __pencil_def(T location);!
 
 
-\subsubsection{\texttt{\_\_pencil\_maybe} Function}
+\subsubsection{\texttt{\_\_pencil\_maybe} Builtin}
 
   The \lstinline!__pencil_maybe! function is
   a builtin function used to capture statically unknown conditions
@@ -1250,7 +1250,7 @@ In this section, \lstinline!T! represents any valid \pencil type.
   
   \lstinline!int __pencil_maybe();!
 
-\subsubsection{\label{sec:kill}\texttt{\_\_pencil\_kill} Function}
+\subsubsection{\label{sec:kill}\texttt{\_\_pencil\_kill} Builtin}
   
 The \lstinline!__pencil_kill! builtin function has the following prototype
 
@@ -1306,7 +1306,7 @@ for (int i=0; i<n; i++) {
 }
 \end{lstlisting}
 
-\subsubsection{\texttt{\_\_pencil\_assume} Function}
+\subsubsection{\texttt{\_\_pencil\_assume} Builtin}
 
 
 The \lstinline!__pencil_assume! builtin function has the following prototype
@@ -1400,7 +1400,7 @@ void foo(int n, int m, int S, int D[pencil_array S])
   \end{lstlisting}
 
 
-\subsubsection{\texttt{\_\_pencil\_assert} Function}
+\subsubsection{\texttt{\_\_pencil\_assert} Builtin}
 
 The \lstinline!__pencil_assert! builtin function has the following prototype
 
