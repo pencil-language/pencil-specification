@@ -898,7 +898,7 @@ or is annotated with \lstinline!const!.
   array passed to \lstinline!fft32! is accessed for read and for write.
   Such a conservative assumption prevents the parallelization of the code.
   The use of a summary function in this case indicates to the compiler that
-  each iteration of the loop nest reads and writes to a 32 elements
+  each iteration of the loop nest reads and writes 32 elements
   of the input array.
   This information allows the compiler to parallelize and optimize the loop
   nest.
