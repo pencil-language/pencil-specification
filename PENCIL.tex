@@ -1127,7 +1127,7 @@ for (int i = 0; i < N; i++) {
   \end{lstlisting}  
   
   To be able to use \lstinline!independent! in the previous example, the
-  scalar \lstinline!t! has to be declared in the loop body, this way each
+  scalar \lstinline!t! has to be declared in the loop body. This way each
   iteration will have its own copy of \lstinline!t! and thus the writes to
   \lstinline!t! by different iterations will not induce any loop carried
   dependence.  This is possible because \lstinline!t! is privatizable (i.e.,
