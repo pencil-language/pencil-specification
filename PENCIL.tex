@@ -1416,7 +1416,7 @@ void foo(int n, int m, int S, int D[pencil_array S])
         }
 }
   \end{lstlisting}
-The loop above can not be parallelized since it might have loop
+The loop above cannot be parallelized since it might have loop
 carried dependences (if the step \lstinline!m! is less than the
 number of iterations \lstinline!n!).
 The \lstinline!__pencil_assume! builtin can be used to inform the compiler that
