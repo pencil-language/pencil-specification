@@ -479,7 +479,8 @@ A \pencil for loop must have a single iterator, an invariant start
 value, an invariant stop value and a literal constant increment (step).
 Invariant in this context means that the value does not change within
 the loop body.
-The iteration variable is not visible (not defined) outside the loop and cannot be modified
+The iteration variable must not be visible (defined) outside
+the loop and cannot be modified
 inside the loop body.
 
 \begin{lstlisting}[language=pencil]
