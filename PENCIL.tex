@@ -1378,7 +1378,7 @@ memory, or must generate multiple variants of the kernel --- one to handle large
 kernel matrix sizes and another optimized for smaller kernel matrix
 sizes --- selecting between variants at runtime.
 The use of \lstinline!__pencil_assume! in this case tells the compiler
-about the limits on the size of the array allowing it to store
+about the limits on the size of the array, allowing it to store
 the whole array in shared memory.
 
 \begin{figure}[t]
