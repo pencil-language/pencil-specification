@@ -460,8 +460,8 @@ The motivation for this restriction is to simplify the development of
 \pencil tool chains.
 Example:
 \begin{lstlisting}[language=pencil]
-  int i = 2; //Legal in C99 and in \pencil.
-  int j = i += 2; //Legal in C99, illegal in \pencil.
+  int i = 2; //Valid in C99 and in \pencil.
+  int j = i += 2; //Valid in C99, invalid in \pencil.
 \end{lstlisting}
 
 As a special case \lstinline!i += 1! can be written as \lstinline!i++!
@@ -469,8 +469,8 @@ and \lstinline!i -= 1! can be written as \lstinline!i--!, but as mentioned
 above these constructions are statements without any return value:
 
 \begin{lstlisting}[language=pencil]
-  int j = i++; //Legal in C99, illegal in \pencil.
-  i++; //Legal in C99 and in \pencil.
+  int j = i++; //Valid in C99, invalid in \pencil.
+  i++; //Valid in C99 and in \pencil.
 \end{lstlisting}
 
 \paragraph{For Loop}
@@ -1225,7 +1225,7 @@ The \lstinline!ivdep! directive is used to annotate innermost loops that are can
     a[i] = t;
   }
   \end{lstlisting}
-  In this example, vectorization would be illegal if $k < 0$.  The
+  In this example, vectorization would be invalid if $k < 0$.  The
   \lstinline!ivdep! directive allows the compiler to ignore the assumed
   loop carried dependences that may exist if $k < 0$. \footnote{Ignore
   possible out-of-bound errors in this example.}
