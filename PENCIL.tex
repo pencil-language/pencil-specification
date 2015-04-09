@@ -891,7 +891,7 @@ or is annotated with \lstinline!const!.
   systems.
   The code calls the function \lstinline!fft32! (Fast Fourier Transform)
   which only reads and modifies (in place) 32 elements of its input
-  array \lstinline!in!, it does not modify the whole input array.
+  array \lstinline!in!, rather than modifying the whole input array.
   Such a function is not analyzed by the \pencil compiler as it is not a \pencil
   function.
   Without a summary function, the compiler assumes conservatively that the whole
