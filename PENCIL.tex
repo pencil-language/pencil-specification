@@ -930,12 +930,12 @@ void foo(int n, int A[pencil_array n],
             Cplx d[pencil_array n])
             ACCESS(foo_summary(n,A,Cplx))
 {
-  int i, t;
+  int t;
 
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     printf("Value=%d", A[i]);
 
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
   {
     if (A[i])
       printf("%d", i);
@@ -943,7 +943,7 @@ void foo(int n, int A[pencil_array n],
     t += A[i];
   }
 
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     if (A[i] && i>10)
       d[i].real = t;
 
@@ -1180,7 +1180,7 @@ for (int i = 0; i < N; i++) {
   be used anywhere outside the reduction statement.  Example:
   \begin{lstlisting}[language=pencil]
 #pragma pencil independent reduction(+: result)
-for (i = 0; i < n; i++) {
+for (int i = 0; i < n; i++) {
   B[T[i]] = foo(i);
   result += A[i];
 }
