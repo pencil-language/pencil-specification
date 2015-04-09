@@ -1056,11 +1056,11 @@ void inc_summary(float A[256], int c)
 
 void inc(float A[pencil_array 256], int c) ACCESS(inc_summary);
 
-void foo(int N, float A[pencil_array N], int c)
+void foo(int N, float A[pencil_array 256], int t[pencil_array N])
 {
   #pragma pencil independent
   for (int i=0; i<N; i++)
-    inc(a, t[i]);
+    inc(A, t[i]);
 }  
   \end{lstlisting}
 
@@ -1073,20 +1073,8 @@ void inc(float A[256], int c)
 }
   \end{lstlisting}
 
-  Different iterations of the loop in \lstinline!foo! may write to the
-  same array location (as the locations written depend on the values of
-  \lstinline!t[i]!, which may not be unique).
-  To parallelize the loop, the compiler
-  needs to make sure that there is no loop-carried dependence, but
-  proving this property is generally not possible at compile time.  Thus, the
-  compiler must assume conservatively that there may be a dependence
-  between different iterations and not parallelize the loop.
-  If, for example, the \pencil programmer knows that all values of
-  \lstinline!t[i]! are different, she
-  should insert an \lstinline!independent! directive to indicate that different
-  iterations of the loop are independent. This will allow the compiler to
-  parallelize the loop, but also provide valuable
-  information for other loop transformations.
+  In this case, the user needs to provide an OpenCL implementation for the
+  \lstinline!inc! function to perform atomic incrementations.
 
 \paragraph{Example 3}
   In the following example, the writes to \lstinline!t! induce loop carried
