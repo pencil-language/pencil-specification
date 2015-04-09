@@ -321,7 +321,7 @@ quasi-affine expression is: $a*i+b*j+c$, where $a$ and $b$ are
 constants and $c$ is either a constant or a loop parameter.
 
 \begin{lstlisting}[language=pencil]
-for (int i=1; i<n; i++) {
+for (int i = 1; i < n; i++) {
   A[10*i+20] = 0;       // The subscript of A[] is quasi-affine
   A[i*n] = 0;           // The subscript of A[] is not quasi-affine
   B[i*i] = 0;           // The subscript of B[] is not quasi-affine
@@ -878,9 +878,9 @@ or is annotated with \lstinline!const!.
   void summary_fft32(int i, int j, int n,
               float in[pencil_attributes n][n][n]);
   {
-    for (int k=0; k<32; k++)
+    for (int k = 0; k < 32; k++)
       __pencil_use(in[i][j][k]);
-    for (int k=0; k<32; k++)
+    for (int k = 0; k < 32; k++)
       __pencil_def(in[i][j][k]);
   }
   \end{lstlisting}
@@ -916,11 +916,11 @@ typedef struct complex Cplx;
 void foo_summary(int n, int A[pencil_array n],
                        Cplx d[pencil_array n])
 {
-  for (int i=0; i<n; i++)
+  for (int i = 0; i < n; i++)
     USE(A[i]);
 
   /* Note that i starts from 10. */
-  for (int i=10; i<n; i++)
+  for (int i = 10; i < n; i++)
     MAY_DEF(d[i].real);
 
   DEF(A[15]);
@@ -932,10 +932,10 @@ void foo(int n, int A[pencil_array n],
 {
   int i, t;
 
-  for (i=0; i<n; i++)
+  for (i = 0; i < n; i++)
     printf("Value=%d", A[i]);
 
-  for (i=0; i<n; i++)
+  for (i = 0; i < n; i++)
   {
     if (A[i])
       printf("%d", i);
@@ -943,7 +943,7 @@ void foo(int n, int A[pencil_array n],
     t += A[i];
   }
 
-  for (i=0; i<n; i++)
+  for (i = 0; i < n; i++)
     if (A[i] && i>10)
       d[i].real = t;
 
@@ -1093,7 +1093,7 @@ void inc(float A[pencil_array 256], int c) ACCESS(inc_summary);
 void foo(int N, float A[pencil_array 256], int t[pencil_array N])
 {
   #pragma pencil independent
-  for (int i=0; i<N; i++)
+  for (int i = 0; i < N; i++)
     inc(A, t[i]);
 }  
   \end{lstlisting}
@@ -1119,7 +1119,7 @@ void inc(float A[256], int c)
   \begin{lstlisting}[language=pencil]
 int t;
 #pragma pencil independent
-for (int i=0; i<N; i++) {
+for (int i = 0; i < N; i++) {
   t = foo(i);
   A[B[i]] = t;
 }
@@ -1135,7 +1135,7 @@ for (int i=0; i<N; i++) {
 
   \begin{lstlisting}[language=pencil]
 #pragma pencil independent
-for (int i=0; i<N; i++) {
+for (int i = 0; i < N; i++) {
   int t = foo(i);
   A[B[i]] = t;
 }
@@ -1180,7 +1180,7 @@ for (int i=0; i<N; i++) {
   be used anywhere outside the reduction statement.  Example:
   \begin{lstlisting}[language=pencil]
 #pragma pencil independent reduction(+: result)
-for (i=0; i<n; i++) {
+for (i = 0; i < n; i++) {
   B[T[i]] = foo(i);
   result += A[i];
 }
@@ -1334,7 +1334,7 @@ The \lstinline!__pencil_kill! builtin function has the following prototype
 
 \begin{lstlisting}[language=pencil]
 __pencil_kill(A);
-for (int i=0; i<n; i++) {
+for (int i = 0; i < n; i++) {
   if (B[i] > 0)
     A[i] = B[i];
 }
@@ -1690,7 +1690,7 @@ void parallel_version(int no_of_nodes,
 {
   unsigned int carry_on = 1;
 
-  for(int i=0; i<no_of_nodes; i++)
+  for(int i = 0; i < no_of_nodes; i++)
   {
     front[i]= 0;
     updating_front[i] = 0;
@@ -1709,7 +1709,7 @@ void parallel_version(int no_of_nodes,
       carry_on = 0;
 
       #pragma pencil independent
-      for( int i=0; i<no_of_nodes; i++) {
+      for( int i = 0; i < no_of_nodes; i++) {
         if(front[i] == 1) {
           front[i] = 0; 
           for(int j = edge_start_no[i]; 
@@ -1723,7 +1723,7 @@ void parallel_version(int no_of_nodes,
         }
       }
 
-      for(int i=0; i<no_of_nodes; i++) {
+      for(int i = 0; i < no_of_nodes; i++) {
         if(updating_front[i] == 1) {
           front[i] = 1;
           visited[i] = 1;
