@@ -174,7 +174,40 @@ Three possible scenarios of using \pencil are possible:
 \begin{figure}[ht]
 {
  \centering
- \includegraphics[scale=0.65]{./figures/CARPHighLevelOverview.pdf}
+\begin{tikzpicture}[auto,node distance=2.7cm,
+block/.style={thick,draw,fill=gray!20,text centered,rounded corners,%
+align=center,minimum height=4em},
+empty/.style={minimum height=4em},
+link/.style={->,line width=3pt,>=stealth}]
+\matrix[column sep=4mm]{
+\node[block](GPU) {GPUs\\(Nvidia, AMD,\\ARM, \ldots)};
+&
+\node[block](CPU) {CPUs\\(Intel, AMD, \ldots)};
+&
+\node[block](FPGA) {FPGAs\\(Altera, Xilinx, \ldots)};
+&
+\node[block](other) {Other\\accelerators};
+\\
+};
+\node (center) [fit=(CPU.east)(FPGA.west)] {};
+\node[block,above of=center,text width=11em] (OpenCL) {OpenCL};
+\node[block,above of=OpenCL] (pencil) {\pencil \\
+Platform-Neutral Compute\\Intermediate Language};
+\node[block,above of=pencil] (DSL) {Domain Specific Languages};
+\draw[link] (OpenCL.south west) -- (GPU);
+\draw[link] (OpenCL) -- (CPU);
+\draw[link] (OpenCL) -- (FPGA);
+\draw[link] (OpenCL.south east) -- (other);
+\draw[link] (pencil) to node[pos=0.5,left,align=center]
+{Optimizing, auto-parallelizing\\\pencil $\to$ OpenCL compiler} (OpenCL);
+\draw[link] (DSL) to node[pos=0.5] {DSL $\to$ \pencil compilers} (pencil);
+\node[left=1cm of OpenCL,align=center,anchor=east] (direct)
+{Direct OpenCL\\programming};
+\draw[link] (direct) -- (OpenCL);
+\node[right=1cm of pencil,align=left,anchor=west] (direct2)
+{Direct \pencil\\programming\\(hand written\\\pencil code)};
+\draw[link] (direct2) -- (pencil);
+\end{tikzpicture}
  \caption{High level overview of our vision for the use of PENCIL}
  \label{fig-pencil-high-level-picture}
 } 
