@@ -425,7 +425,7 @@ does not allow it.
 
 
 \subsubsection{Statements}
-The following C99 statements are allowed inside a \pencil function definition:
+The following C99 statements are allowed inside a \pencil function definition.
 \begin{itemize}
   \item Assignment;
   \item For loop;
@@ -489,17 +489,11 @@ Such an analysis is not only complex to implement, but more
 importantly results in compiler analyses succeeding or failing under
 conditions unpredictable to the user.
 
-In order to have a precise dependence analysis, it is recommended
-to use quasi-affine loop bounds
-whenever this is possible.
 
 \paragraph{While Loop}
 The same as in C99.
 \paragraph{If Statement}
 The same as in C99.
-In order to have a precise dependence analysis, it is recommended
-to use quasi-affine conditional expressions
-whenever this is possible.
 \paragraph{Break Statement}
 The same as in C99.
 \paragraph{Continue Statement}
