@@ -252,15 +252,12 @@ semantically sequential and lightweight.
 Section~\ref{pencil-c99-subset} presents the subset of C99 that
 defines the core of \pencil, while Section~\ref{pencil-extension-short}
 presents the extensions to C99 that are a part of \pencil.
+The language syntax is defined in detaile in \autoref{pencil-ebnf} as an EBNF (Extended
+Backus-Naur Form) grammar~\cite{wirth1996EBNF}.
+\nomenclature{EBNF}{Extended Backus-Naur Form}
 
 \subsection{\pencil Definition as a Subset of C99}
 \label{pencil-c99-subset}
-The language syntax is defined in Figure \ref{fig:pencil-syntax} as an EBNF (Extended
-Backus-Naur Form) grammar~\cite{wirth1996EBNF}.
-\nomenclature{EBNF}{Extended Backus-Naur Form}
-The reserved words are in bold.
-
-\input{pencil_ebnf.tex}
 
 \subsubsection{Program Scope}
 The following C99~\cite{c99} global definitions and declarations are allowed inside a
@@ -279,15 +276,12 @@ The following C99~\cite{c99} global definitions and declarations are allowed ins
 \subsubsection{Expressions (and Quasi-affine Expressions)}
 \pencil supports a strict subset of C99 expressions:
 \begin{itemize}
-  \item Arithmetic operations: \lstinline!+,-,*,/,%!
-  \item Logical operations: \lstinline{||,&&,!}
-  \item Bit operations: \lstinline{|,&,~,^,>>,<<}
-  \item Comparison operations: \lstinline{>,>=,<,<=,==,!=}
+  \item Arithmetic, logical, bit and comparison operations.
   \item Array and member operators: \lstinline{[],.}
   \item Ternary conditional: \lstinline!cond?op1:op2!
   \item Size-of: \lstinline!sizeof(arg)!
   \item Scalar conversion: \lstinline!(type)arg!
-  \item \pencil function call: \lstinline!func(arg1,..,argN)!
+  \item \pencil function calls.
   \item C function call (when a summary function is provided,
   details in Section~\ref{sec:summaries}).
 \end{itemize}
@@ -1859,3 +1853,4 @@ code are the following.
 \end{lstlisting}
 
 %TODO: add citations when necessary.
+

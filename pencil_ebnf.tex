@@ -1,8 +1,15 @@
+\newpage
+
+\section{EBNF Grammar for \pencil}
+\label{pencil-ebnf}
+
+The reserved words are in bold.
+
 \newcommand{\pgrammar}[1]{\text{\sf\textless#1\textgreater}}
 \newcommand{\pkeyword}[1]{\mathbf{#1}}
 \newcommand{\plexer}[1]{\text{\bf`#1'}}
 
-\begin{figure}
+\begin{figure}[h!]
 \[
 \begin{array}{lcl}
   \pgrammar{pencil} & \gets &  \pgrammar{top level definition}*\\
@@ -134,7 +141,7 @@
   \label{fig:pencil-syntax}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h!]
   \ContinuedFloat
 \[
 \begin{array}{lcl}
