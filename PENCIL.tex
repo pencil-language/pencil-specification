@@ -661,7 +661,14 @@ void foo(float a[pencil_array 42],
           float b[pencil_array 42]);
   \end{lstlisting}
 
-\subsection{Function Attributes}
+\subsection{\texttt{const} Function Attribute}
+\label{sec:const-attribute}
+
+\nomenclature{GCC}{GNU Compiler Collection}
+The \lstinline!const! attribute used in the GCC compiler is allowed in
+\pencil for compatibility with existing \lstinline!const!-annotated
+library functions (e.g., \lstinline!cos!, \lstinline!sin!, \lstinline!min!,
+\lstinline!max!, etc.).
 
 A \pencil compiler is not required to perform interprocedural analysis or to
 apply transformations across function definitions.
@@ -669,17 +676,7 @@ A description of the memory accesses of a function called from a \pencil
 region must be provided (Section~\ref{sec:summaries}),
 unless the function is a \pencil function
 or is annotated with \lstinline!const!.
-
-\subsubsection{\texttt{const} Function Attribute}
-\label{sec:const-attribute}
-
-
-  \nomenclature{GCC}{GNU Compiler Collection}
-  The \lstinline!const! attribute used in the GCC compiler is allowed in
-  \pencil for compatibility with existing \lstinline!const!-annotated
-  library functions (e.g., \lstinline!cos!, \lstinline!sin!, \lstinline!min!,
-  \lstinline!max!, etc.).
-
+  
   The macro \lstinline!__attribute__((const))! is abbreviated with \lstinline!CONST!.
   
 \subsection{Description of the Memory Accesses of Functions}
