@@ -1206,39 +1206,16 @@ The \lstinline!ivdep! directive is used to annotate innermost loops that are can
 
 In this section, \lstinline!T! represents any valid \pencil type.
 
-\subsubsection{\texttt{\_\_pencil\_use} Builtin}
+\subsubsection{\texttt{\_\_pencil\_use}, \texttt{\_\_pencil\_def} and \texttt{\_\_pencil\_maybe} Builtins}
 
-  The \lstinline!__pencil_use! function is
-  a polymorphic builtin function used to mark a read access to
-  its argument
-  (details in section~\ref{sec:summaries}).
-  It can be used in summary functions.
-  It has the following prototype:
+  These builtins should be used in summary functions
+  (a detailed description is provided in Section~\ref{sec:summaries}).
+  They have the following prototypes:
   
   \lstinline!void __pencil_use(T location);!
 
-
-
-\subsubsection{\texttt{\_\_pencil\_def} Builtin}
-
-  The \lstinline!__pencil_def! function is a polymorphic
-  builtin function used to mark a definition (must-write
-  access) of its argument (details in
-  section~\ref{sec:summaries}).
-  It can be used in summary functions.
-  It has the following prototype:
-  
   \lstinline!void __pencil_def(T location);!
 
-
-\subsubsection{\texttt{\_\_pencil\_maybe} Builtin}
-
-  The \lstinline!__pencil_maybe! function is
-  a builtin function used to capture statically unknown conditions
-  (details in section~\ref{sec:summaries}).
-  It can be used in summary functions.
-  It has the following prototype:
-  
   \lstinline!int __pencil_maybe();!
 
 \subsubsection{\label{sec:kill}\texttt{\_\_pencil\_kill} Builtin}
