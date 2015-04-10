@@ -1368,7 +1368,7 @@ In fact, most convolutions do not exceed a kernel matrix size of $5\times5$
 While this information is well known for an image processing expert, the
 compiler does not have this knowledge and must assume that the kernel matrix
 can be arbitrarily large.  When compiling for a GPU
-\nomenclature{GPU}{graphics processing unit} target, the compiler must
+\nomenclature{GPU}{Graphics Processing Unit} target, the compiler must
 thus allocate the kernel matrix in GPU global memory, rather than fast shared
 memory, or must generate multiple variants of the kernel --- one to handle large
 kernel matrix sizes and another optimized for smaller kernel matrix
@@ -1493,7 +1493,6 @@ some library functions in case of an error to indicate what went wrong.})
 and floating point operations do not trigger exceptions (note that these
 assumptions match the effects of the \texttt{-fno-math-errno}
 \texttt{-fno-signaling-nans} GCC flags~\cite{gccguide}).
-\nomenclature{GCC}{GNU Compiler Collection}
 
 \section{Practical \pencil Programming}
 
