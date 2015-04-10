@@ -70,7 +70,7 @@ We present the design and implementation of \pencil, a plat\-form-neu\-tral
 compute intermediate language.
 \pencil aims to serve both as a portable implementation language to facilitate 
 the acceleration of new and legacy applications on modern accelerators, and as 
-a tractable target language for DSL compilers.
+a intermediate language for DSL compilers.
 
 
 \section{\pencil Language}
@@ -239,8 +239,6 @@ First numerous DSLs (and benchmarks) were analyzed, and based on this
 analysis,  a list of the properties that are expressed in these DSLs
 was created.
 This list was then filtered and only few properties were kept.
-The subset of C99 that constituted \pencil was then enriched with
-extensions that can express these properties.
 Deciding which properties were supposed to be expressed in \pencil
 was guided by the following design choice:
 all domain-specific optimizations should be performed at the DSL compiler
@@ -250,10 +248,6 @@ This separation meant that, in \pencil, only the properties that are necessary
 to enhance static-analysis and enable mapping to accelerator platforms are needed.
 This choice has the advantage of keeping \pencil general-purpose,
 semantically sequential and lightweight.
-Moreover, the evaluation of \pencil showed that this choice and that the
-current set of extensions is sufficient for achieving our main goal:
-enabling automatic parallelization, loop nest transformations
-and mapping to OpenCL.
 
 Section~\ref{pencil-c99-subset} presents the subset of C99 that
 defines the core of \pencil, while Section~\ref{pencil-extension-short}
@@ -625,7 +619,8 @@ The \lstinline!restrict! type qualifier is used when declaring an array argument
   All array arguments of a \pencil function
   must be declared using this type qualifier.
   The use of \lstinline!restrict! guarantees that the array
-  arguments of the function do not alias.
+  arguments of the function may only alias if they are
+  being used for read only.
   This allows \pencil compilers to
   perform more precise dependence analysis.
   
@@ -687,7 +682,7 @@ void foo(float a[pencil_array 42],
 
 \subsection{Function Attributes}
 
-A \pencil compiler is not supposed to perform interprocedural analysis or to
+A \pencil compiler is not required to perform interprocedural analysis or to
 apply transformations across function definitions.
 A description of the memory accesses of a function called from a \pencil
 region must be provided (Section~\ref{sec:summaries}),
@@ -1132,7 +1127,8 @@ for (int i = 0; i < N; i++) {
   \lstinline!t! by different iterations will not induce any loop carried
   dependence.  This is possible because \lstinline!t! is privatizable (i.e.,
   can be made private).
-  The following example is correct.
+  The following example is correct (supposing that the the elements of
+  \lstinline!B! are all different).
 
   \begin{lstlisting}[language=pencil]
 #pragma pencil independent
@@ -1160,7 +1156,7 @@ for (int i = 0; i < N; i++) {
   \lstinline!independent! alone.
   The reduction operator (\lstinline!op!) itself is only useful to
   indicate how partial results on a reduction variable resulting from
-  any interleaving should be consolidated.
+  any interleaving should be combined.
 
   Aside from extending the applicability of the independent directive, one
   motivation for introducing the \lstinline!reduction!
