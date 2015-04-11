@@ -627,22 +627,6 @@ void bar()
 \lstinline!pencil_array! is a macro that abbreviates
   \lstinline!static const restrict!.
 
-
-\subsection{\texttt{const} Function Attribute}
-\label{sec:const-attribute}
-
-\nomenclature{GCC}{GNU Compiler Collection}
-The \lstinline!const! attribute used in the GCC compiler is allowed in
-\pencil for compatibility with existing \lstinline!const!-annotated
-library functions (e.g., \lstinline!cos!, \lstinline!sin!, \lstinline!min!,
-\lstinline!max!, etc.).
-Non-\pencil functions annotated with the \lstinline!const! attribute,
-do not need any summary for their side effects as
-the \lstinline!const! attribute indicates that the function does
-not read any value except its arguments, and does not have any
-effects except its return value~\cite{gccguide}.
-The \lstinline!CONST! macro can be used to abbreviate
-\lstinline!__attribute__((const))!.
   
 \subsection{Description of the Memory Accesses of Functions}
 \label{sec:summaries}
@@ -896,6 +880,22 @@ void foo(int n, int A[pencil_array n],
   \lstinline!foo! may write to \lstinline!d[i].real! for $i$
   from $10$ to $n-1$. 
 
+\subsection{\texttt{const} Function Attribute}
+\label{sec:const-attribute}
+
+\nomenclature{GCC}{GNU Compiler Collection}
+The \lstinline!const! attribute used in the GCC compiler is allowed in
+\pencil for compatibility with existing \lstinline!const!-annotated
+library functions (e.g., \lstinline!cos!, \lstinline!sin!, \lstinline!min!,
+\lstinline!max!, etc.).
+Non-\pencil functions annotated with the \lstinline!const! attribute,
+do not need any summary for their side effects as
+the \lstinline!const! attribute indicates that the function does
+not read any value except its arguments, and does not have any
+effects except its return value~\cite{gccguide}.
+The \lstinline!CONST! macro can be used to abbreviate
+\lstinline!__attribute__((const))!.
+  
 \subsection{Pragma Directives\label{sec:directives}}
 
 \pencil defines several directives inspired by OpenMP~\cite{openmp08} and OpenACC~\cite{openacc11}
