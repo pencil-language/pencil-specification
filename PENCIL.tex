@@ -1482,22 +1482,6 @@ Embedded \pencil code obeys the same rules as standalone \pencil code.
     \end{lstlisting}
 \end{itemize}
 
-
-\subsection{Recommendations for Writing Efficient \pencil Code}
-
-\begin{itemize}
-\item \pencil is not restricted to static (affine) control flow, but
-  the programmer or code generator should always prefer affine
-  conditionals, affine array subscripts and affine loop bounds
-  whenever possible.
-\item The use of \lstinline!for! loops instead of \lstinline!while!
-  loops whenever possible is also encouraged.
-\item If you have a choice between different algorithms, choose the
-  one that minimizes the use of data-dependent control and
-  data-dependent array accesses as they reduce the data-dependence
-  accuracy.
-\end{itemize}
-
 \subsection{Passing a Scalar by Reference to a Function}
 
 A scalar argument that may be modified by a function (an output argument)
