@@ -430,13 +430,14 @@ Unlike in C99, the \pencil assignment does not return any value (i.e.,
 it is a statement, not an operator).
 The motivation for this restriction is to simplify the development of
 \pencil tool chains.
-As a special case \lstinline!i += 1! can be written as \lstinline!i++!
-and \lstinline!i -= 1! can be written as \lstinline!i--!.
 Example:
 \begin{lstlisting}[language=pencil]
   int i = 2;          //Valid in C99 and in \pencil.
   int j = i += 2;     //Valid in C99, invalid in \pencil.
 \end{lstlisting}
+
+For convenience, \lstinline!i += 1! can be written as \lstinline!i++!
+and \lstinline!i -= 1! can be written as \lstinline!i--!.
 
 \paragraph{For Loop}
 
