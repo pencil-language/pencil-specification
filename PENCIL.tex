@@ -636,15 +636,13 @@ The \lstinline!const! attribute used in the GCC compiler is allowed in
 \pencil for compatibility with existing \lstinline!const!-annotated
 library functions (e.g., \lstinline!cos!, \lstinline!sin!, \lstinline!min!,
 \lstinline!max!, etc.).
-
-A \pencil compiler is not required to perform interprocedural analysis or to
-apply transformations across function definitions.
-A description of the memory accesses of a function called from a \pencil
-region must be provided (Section~\ref{sec:summaries}),
-unless the function is a \pencil function
-or is annotated with \lstinline!const!.
-  
-  The macro \lstinline!__attribute__((const))! is abbreviated with \lstinline!CONST!.
+Non-\pencil functions annotated with the \lstinline!const! attribute,
+do not need any summary for their side effects as
+the \lstinline!const! attribute indicates that the function does
+not read any value except its arguments, and does not have any
+effects except its return value~\cite{gccguide}.
+The \lstinline!CONST! macro can be used to abbreviate
+\lstinline!__attribute__((const))!.
   
 \subsection{Description of the Memory Accesses of Functions}
 \label{sec:summaries}
