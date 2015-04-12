@@ -888,9 +888,7 @@ The \lstinline!const! attribute used in the GCC compiler is allowed in
 \pencil for compatibility with existing \lstinline!const!-annotated
 library functions (e.g., \lstinline!cos!, \lstinline!sin!, \lstinline!min!,
 \lstinline!max!, etc.).
-Non-\pencil functions annotated with the \lstinline!const! attribute,
-do not need any summary for their side effects as
-the \lstinline!const! attribute indicates that the function does
+It indicates that the function does
 not read any value except its arguments, and does not have any
 effects except its return value~\cite{gccguide}.
 The \lstinline!CONST! macro can be used to abbreviate
