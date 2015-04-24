@@ -682,10 +682,6 @@ void bar()
   in its summary. Yet a summary is generally simpler than the function
   it summarizes: it only captures sets of accesses, not their ordering
   and number of occurrences.
-%   The semantics of memory access information are equivalent to the semantics
-%   of interprocedural function summaries.  A simple way to integrate
-%   it in an existing intraprocedural framework is to inline all
-%   summaries.
 
   The polymorphic builtin functions \lstinline!__pencil_use!
   and \lstinline!__pencil_def! must be used in summary
@@ -742,8 +738,12 @@ void bar()
 
   \lstinline!if (__pencil_maybe()) __pencil_def(v))!
 
-  One may also consider \lstinline!MAY_DEF(v)! as a short-cut that
-  can replace the above example.
+  One may also consider \lstinline!MAY_DEF(v)! as a short-cut that can
+  replace the above example. Note that \lstinline!MAYBE! improves
+  modularity, compared to explicit
+  \lstinline!MAY_DEF(v)!/\lstinline!MUST_DEF(v)!, as it lets a single
+  summary be reused in different calling contexts and may/must
+  analyses (in particular in the context of nested summaries).
 
   The main criteria for choosing a given formalism instead of another
   formalism to express the memory accesses of a function are:
@@ -760,9 +760,8 @@ void bar()
   easily using existing C compiler APIs.
   Moreover, summary functions are expressive and allow a fine-grained
   specification of memory accesses.
-  More importantly, summary functions are easy to understand unlike other
-  formalisms such as lambda functions (not all C programmers are familiar with
-  the concept of lambda functions).
+  In addition, summary functions are intuitive to C programmers, who do not have
+  to learn a dedicated specification syntax or sub-language.
   
   A summary function should be \pencil compliant so that \pencil tools can
   analyze it.
@@ -773,9 +772,17 @@ void bar()
   This is the most common case.
   In other less common cases, summary functions are either written by the
   \pencil programmer himself or generated automatically by the DSL compiler
-  (only the sets of read and written elements for each function argument need to 
-  be provided in this case).
+  (only the sets of read and written elements for each function argument
+  need to be provided in this case).
   
+  Summaries were also designed to facilitate the adaptation of
+  existing intraprocedural analyses. As an illustration (actual
+  implementation may differ), it is possible to preprocess a function
+  by virtually inlining the summaries of all functions it calls, prior
+  to running the (unmodified) intraprocedural analysis. Additional
+  marking and tracking may be needed to report the analyzed properties
+  to the original instructions of the function.
+
   The attribute \lstinline!pencil_access! is
   abbreviated with the \lstinline!ACCESS! macro.
 
