@@ -13,6 +13,13 @@
 %% date de publication du rapport
 \RRdate{May 2015}
 
+% Version Number
+% Change this for any language change
+\newcommand{\VersionNumber}{1.0}
+
+% Change this after fixing typos, minor things
+\newcommand{\RevisionNumber}{3}
+
 %% Cas d'une version deux
 % \RRversion{2}
 %% date de publication de la version 2
@@ -27,10 +34,13 @@
 \and
     Tobias Grosser%
     \thanksref{ens}
-\and    
+\and
     Sven Verdoolaege%
     \thanksref{ens}\thanks{Katholieke Universiteit Leuven}
-\and
+\and    
+    Anton Lokhmotov%
+    \thanks[dividiti]{dividiti}
+\and    
     Javed Absar%
     \thanks[arm]{ARM}
 \and    
@@ -38,9 +48,6 @@
     \thanksref{arm}
 \and    
     Alexey Kravets%
-    \thanksref{arm}
-\and    
-    Anton Lokhmotov%
     \thanksref{arm}
 \and    
     Alastair Donaldson%
@@ -54,11 +61,33 @@
 \RRtitle{}
 
 %% English title
-\RRetitle{PENCIL 1.0 Language Specification}
-\titlehead{PENCIL 1.0 Language Specification}
+\RRetitle{PENCIL Language Specification}
+\titlehead{PENCIL Language Specification}
 
 \RRnote{This work was partly supported by the European
 FP7 project CARP id.\ 287767.}
+
+
+%\RRresume{}
+\RRabstract{Programming accelerators such as GPUs with 
+low-level APIs and languages such as OpenCL and CUDA is difficult,
+error prone, and not performance-portable.
+Automatic parallelization and domain specific languages (DSLs)
+have been proposed to hide this complexity and to regain some
+performance portability.
+We present PENCIL, a rigorously-defined subset of GNU C99 with
+specific programming rules and few extensions.
+Adherence to this subset and the use of these extensions enable
+compilers to exploit parallelism and to better optimize code when
+targeting accelerators.
+We intend PENCIL both as a portable implementation language to
+facilitate the acceleration of applications, and as a tractable
+target language for DSL compilers.}
+%%
+%\RRmotcle{}
+\RRkeyword{Intermediate language, domain specific language,
+code optimization, PENCIL, OpenCL}
+
 
 %% INRIA Projets-team names
 \RRprojets{}
@@ -72,6 +101,23 @@ FP7 project CARP id.\ 287767.}
 \begin{document}
 
 \makeRR
+
+\section*{Revision history}
+
+\begin{center}
+ \begin{tabular}{ | l | l | l |}
+  \hline
+  Version/Revision & Date & Comments \\
+  \hline
+  \pencil 1.0 --- revision 1 & 24-May-2015 & First public version \\
+  \pencil 1.0 --- revision 2 & 25-May-2015 & Add an abstract \\
+  \pencil 1.0 --- revision 3 & 29-May-2015 & Add a revision history \\
+  \hline
+\end{tabular}
+\end{center}
+
+
+\newpage
 
 \tableofcontents
 
