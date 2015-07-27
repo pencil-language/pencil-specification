@@ -42,13 +42,13 @@ In \pencil, two consistency memory models exist:
   	of execution).
 \end{itemize}
 
-\pencil defines the enumerated type the \lstlisting!pencil_memory_order!
-which defines these two memory models.
-\lstinline!memory_order_relaxed! stands for the relaxed memory model and
-\lstinline!memory_order_seq_cst! stands for the sequential consistency memory
-model.
+\pencil defines the enumerated type \lstlisting!memory_order!
+which defines these two memory models:
+\lstinline!memory_order_relaxed! stands for the relaxed consistency memory
+model and \lstinline!memory_order_seq_cst! stands for the sequential
+consistency memory model.
 
-\lstinline!enum pencil_memory_order {
+\lstinline!enum memory_order {
     memory_order_relaxed,
     memory_order_seq_cst
 };!
@@ -79,6 +79,9 @@ Atomic builtins are:
 - atomic_flag_test_and_set.
 - atomic_flag_clear.
 
+% List of OpenCL atomic functions:
+% https://www.khronos.org/registry/cl/sdk/2.0/docs/man/xhtml/atomicFunctions.html
+% https://www.khronos.org/registry/cl/specs/opencl-2.0-openclc.pdf#page=103
 
 \subsubsection{Memory Fences}
 A memory fence is an atomic operation that is not associated to a memory
