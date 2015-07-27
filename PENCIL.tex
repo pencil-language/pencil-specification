@@ -145,9 +145,12 @@ The design of \pencil is guided by the following considerations:
   exceed a specific size to enable the compiler to place
   that array in the shared memory of a GPU (Graphics Processing Unit).
 
-\item For compatibility reasons, a standard C99 compiler that supports
+\item For compatibility reasons, a standard C11~\ref{c11} compiler that supports
   GNU C attributes~\cite{gccguide} should be able to compile \pencil, this allows for
-  greater portability and makes the debugging of \pencil code easier.
+  greater portability and makes the debugging of \pencil code easier
+  (we need a C11 compiler rather than a C99 compiler because the memory model defined
+  in \pencil is based on the memory model of C11 and relies on the use of atomic
+  functions that are a part of C11).
 
 \item The subset of C99 that constitutes \pencil should
   be as large as the above design  considerations permit.
