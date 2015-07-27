@@ -1,0 +1,97 @@
+\section{Memory Consistency Model}
+
+The \pencil memory model tells programmers what they can expect from an OpenCL
+implementation; which memory operations are guaranteed to happen in which order
+and which memory values each read operation will return.
+The memory model also tells compiler writers which restrictions they must follow
+when implementing compiler optimizations.
+
+The memory consistency model in \pencil is inspired from the memory model of
+the ISO C11~\ref{c11} and the OpenCL 2.0~\ref{opencl2} programming languages.
+The main difference between the \pencil memory model and the C11/OpenCL 2.0
+memory models is that \pencil has sequential semantics whereas C11 and OpenCL
+2.0 do not.
+
+Let us assume that R(a) means a read to the memory location a and W(a) means
+a write to a location a.
+In a given program, for any two statements that access two different memory
+locations a and b, there are four possible reorderings:
+- Reordering an R(a) followed by an R(b);
+- Reordering an R(a) followed by a  W(b);
+- Reordering a  W(a) followed by an R(b);
+- Reordering a  W(a) followed by a  W(b);
+
+In \pencil, two consistency memory models exist:
+\begin{itemize}
+  \item Relaxed consistency: assuming that two statements that access two
+  different memory locations a and b are marked to have relaxed consistency,
+  then the compiler is allowed do any reordering between these
+  two statements.
+  \item Sequential consistency: assuming that two statements that access two
+  different memory locations a and b are marked to have \eph{sequential
+  consistency}, if the code generated from \pencil is a parallel code
+  (i.e. the code is split to be executed by multiple threads), then:
+ 	- if the two statements are executed by the same thread,
+ 	no reordering of the two statements is possible.
+  	- if the two statements are executed by different threads, then this
+  	execution is required to appear as if one of the statements is executed
+  	first and then the second statement is executed (interleaving
+  	of execution).
+\end{itemize}
+
+\pencil defines the enumerated type the \lstlisting!pencil_memory_order!
+which defines these two memory models.
+\lstinline!memory_order_relaxed! stands for the relaxed memory model and
+\lstinline!memory_order_seq_cst! stands for the sequential consistency memory
+model.
+
+\lstinline!enum pencil_memory_order {
+    memory_order_relaxed,
+    memory_order_seq_cst
+};!
+
+\subsection{Atomic Operations and Memory Fences}
+
+There are two types of synchronization operations: \emph{atomic operations} and
+\emph{fences}.
+
+\subsubsection{Atomic Operations}
+Atomic operations are indivisible. They either occure completely or not at all.
+These operations are used to order memory operations between units of execution
+and hence they are parameterized by the \pencil memory consistency model
+(they can follow either the relaxed consistency model or the seuential
+consistency model).
+The atomic operations for \pencil are similar to the corresponding operations
+defined by the C11 standard~\ref{c11}.
+The \pencil atomic operations apply to variables of an atomic type.
+
+Atomic builtins are:
+// define each one of the following operations.
+
+- atomic_load_explicit.
+- atomic_store_explicit.
+- atomic_exchange_explicit.
+- atomic_compare_exchange.
+- atomic_fetch_*.
+- atomic_flag_test_and_set.
+- atomic_flag_clear.
+
+
+\subsubsection{Memory Fences}
+A memory fence is an atomic operation that is not associated to a memory
+location.
+% Explain the semantics of a fence
+% Provide an example.
+
+
+\subsection{Atomic Types and Initialization}
+\pencil supports the following atomic types defined by C11: atomic_flag,
+atomic_bool, atomic_char, atomic_schar, atomic_uchar, atomic_short,
+atomic_ushort, atomic_int, atomic_uint, atomic_long, atomic_ulong, atomic_llong,
+atomic_ullong, atomic_char16_t, atomic_char32_t, atomic_wchar_t and
+atomic_size_t.
+% (cf p273, p274 and p281 in the C11 draft standard).
+
+In a way similar to C11, \pencil defines a macro to initialize atomic variables
+(ATOMIC_VAR_INIT) which ....
+
