@@ -1,6 +1,6 @@
 \section{Memory Consistency Model}
 
-%TODO by Riyadh: modify the PENCIL spec to say that it requires a C11 compiler
+%TODO (Riyadh): modify the PENCIL spec to say that it requires a C11 compiler
 % instead of a C99 compiler.
 
 The \pencil memory model tells programmers what they can expect from an OpenCL
@@ -25,6 +25,7 @@ locations a and b, there are four possible reorderings:
 - Reordering a  W(a) followed by a  W(b);
 
 In \pencil, two consistency memory models exist:
+%TODO (ulysse): provide a correct definition.
 \begin{itemize}
   \item Relaxed consistency: assuming that two statements that access two
   different memory locations a and b are marked to have relaxed consistency,
@@ -68,36 +69,37 @@ The atomic operations for \pencil are similar to the corresponding operations
 defined by the C11 standard~\ref{c11}.
 The \pencil atomic operations apply to variables of an atomic type.
 
-Atomic builtins are:
-// define each one of the following operations.
+The following C11 atomic builtins are defined in \pencil:
+atomic_init, atomic_store, atomic_store_explicit, atomic_load,
+atomic_load_explicit, atomic_exchange, 	atomic_exchange_explicit,
+atomic_compare_exchange_strong, atomic_compare_exchange_strong_explicit,
+atomic_compare_exchange_weak, atomic_compare_exchange_weak_explicit,
+atomic_fetch_key, atomic_fetch_key_explicit (where key can be either
+add, sub, or, xor, and, min, max),
+atomic_flag_test_and_set, atomic_flag_test_and_set_explicit,
+atomic_flag_clear, atomic_flag_clear_explicit.
 
-- atomic_load_explicit.
-- atomic_store_explicit.
-- atomic_exchange_explicit.
-- atomic_compare_exchange.
-- atomic_fetch_*.
-- atomic_flag_test_and_set.
-- atomic_flag_clear.
-
-% List of OpenCL atomic functions:
-% https://www.khronos.org/registry/cl/sdk/2.0/docs/man/xhtml/atomicFunctions.html
-% https://www.khronos.org/registry/cl/specs/opencl-2.0-openclc.pdf#page=103
+They have exactly the same semantics as their equivalent C11 functions.
+The other C11 atomic functions are not defined in \pencil as they do not have
+an equivalent in OpenCL.
 
 \subsubsection{Memory Fences}
 A memory fence is an atomic operation that is not associated to a memory
 location.
-% Explain the semantics of a fence
-% Provide an example.
+
+\lstinline!void pencil_fence();!
+
+%TODO (ulysse): Explain the semantics of a fence
+%TODO (ulysse): Provide an example.
 
 
 \subsection{Atomic Types and Initialization}
-\pencil supports the following atomic types defined by C11: atomic_flag,
-atomic_bool, atomic_char, atomic_schar, atomic_uchar, atomic_short,
-atomic_ushort, atomic_int, atomic_uint, atomic_long, atomic_ulong, atomic_llong,
+\pencil supports the following atomic types defined by C11 (since these are
+also supported by OpenCL 2.0):
+atomic_flag, atomic_int, atomic_uint, atomic_long, atomic_ulong, atomic_llong,
 atomic_ullong, atomic_char16_t, atomic_char32_t, atomic_wchar_t and
 atomic_size_t.
-% (cf p273, p274 and p281 in the C11 draft standard).
 
-In a way similar to C11, \pencil defines a macro to initialize atomic variables
-(ATOMIC_VAR_INIT) which ....
+The C11 ATOMIC_VAR_INIT and ATOMIC_FLAG_INIT macros are also both defined
+in \pencil.
 
