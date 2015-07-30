@@ -1376,6 +1376,57 @@ The \lstinline!__pencil_assert! builtin function has the following prototype:
   target architecture does not support the assert builtin (OpenCL for
   example), the \pencil compiler should emit a warning message.
 
+\subsubsection{\texttt{\_\_pencil\_npr\_mem\_tag} Builtin}
+
+The \lstinline!__pencil_npr_mem_tag!\footnote{\lstinline!__pencil_npr_mem_tag!
+stands for \emph{Non \pencil Region Memory Tag}.} builtin function has the
+following prototype:
+
+\begin{lstlisting}[language=pencil]
+void __pencil_npr_mem_tag(void *location, enum npr_mem_tags mode);
+\end{lstlisting}
+
+\noindent where \lstinline!mode! can be either \lstinline!r!,
+\lstinline!w!, \lstinline!rw! or \lstinline!n!.
+
+If mode is \lstinline!r!, the intrinsic allows the optimizer to assume that
+the memory pointed by \lstinline!location! is used for read only in all the
+non-\pencil regions that are reachable by the intrinsic (this is
+valid until this intrinsic is called once again).
+The mode \lstinline!w! indicates that the memory pointed by \lstinline!location!
+is used for write only, the mode \lstinline!rw! indicates that it is used for
+read and write, and the mode \lstinline!n! indicates that it is not used at
+all.
+If the assumption is violated during execution, the behavior
+is undefined.
+
+\paragraph{Example}
+
+\begin{lstlisting}[language=pencil]
+__pencil_npr_mem_tag(A, n);
+
+#pragma pencil region
+{
+	  for (int i = 0; i < N; i++)
+		        A[i] = 0;
+}
+
+int *B = (int *) malloc (sizeof(int)*N);
+
+#pragma pencil region
+{
+	  for (int i = 0; i < N; i++)
+		        B[i] = A[i];
+}
+\end{lstlisting}
+
+The use of \lstinline!__pencil_npr_mem_tag! indicates that the array \lstinline!A!
+is not used in the non-\pencil regions of the program that follow the call to
+\lstinline!__pencil_npr_mem_tag!.
+In this case, if the \pencil compiler generates OpenCL code, it will avoid
+copying the array A back from the GPU device memory into the host memory after
+the first \pencil region.
+
 \subsubsection{\pencil Math, Common and Integer Builtin Functions}
 
 \pencil supports a set of the OpenCL builtin functions:
