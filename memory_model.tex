@@ -77,8 +77,25 @@ atomic_flag_test_and_set, atomic_flag_test_and_set_explicit,
 atomic_flag_clear, atomic_flag_clear_explicit.
 
 They have exactly the same semantics as their equivalent C11 functions.
-The other C11 atomic functions are not defined in \pencil as they do not have
-an equivalent in OpenCL.
+As \pencil does not support function overloading (to be consistent
+with C99), every one of the atomic builtin functions has multiple equivalent
+functions in \pencil with prefixes for the different argument types.
+For example, the \emph{atomic_load} function has the following equivalent
+\pencil functions
+\begin{itemize}
+ \item \emph{atomic_load}: used for \emph{atomic_int} arguments;
+ \item \emph{satomic_load}: used for \emph{atomic_short} arguments;
+ \item \emph{latomic_load}: used for \emph{atomic_long} arguments;
+ \item \emph{llatomic_load}: used for \emph{atomic_llong} arguments;
+ \item \emph{oatomic_load}: used for \emph{atomic_bool} arguments;
+ \item \emph{tatomic_load}: used for \emph{atomic_size_t} arguments;
+ \item unsigned versions have a \emph{u} prefix
+ (\emph{usatomic_load}, \emph{uatomic_load}, \emph{ulatomic_load},
+ \emph{ullatomic_load}).
+\end{itemize}
+
+The other atomic functions defined in the  C11 standard are not defined in
+\pencil as they do not have an equivalent in OpenCL.
 
 \subsubsection{Memory Fences}
 A memory fence is an atomic operation that is not associated to a memory
@@ -95,8 +112,7 @@ also supported by OpenCL 2.0):
 atomic_flag, atomic_int, atomic_uint, atomic_long, atomic_ulong, atomic_llong,
 atomic_ullong, and atomic_size_t.
 
-The C11 ATOMIC_VAR_INIT and ATOMIC_FLAG_INIT macros are also both defined
-in \pencil.
+The C11 ATOMIC_FLAG_INIT macro is also defined in \pencil.
 
 %TODO (ulysse): envoyer ce fichier sur pencil-discussion [AT] inria.fr pour que
 % les autres donnent leurs avis et faire des petites modifications s'ils
