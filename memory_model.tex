@@ -12,15 +12,6 @@ The main difference between the \pencil memory model and the C11/OpenCL 2.0
 memory models is that \pencil has sequential semantics whereas C11 and OpenCL
 2.0 do not.
 
-Let us assume that R(a) means a read to the memory location a and W(a) means
-a write to a location a.
-In a given program, for any two statements that access two different memory
-locations a and b, there are four possible reorderings:
-- Reordering an R(a) followed by an R(b);
-- Reordering an R(a) followed by a  W(b);
-- Reordering a  W(a) followed by an R(b);
-- Reordering a  W(a) followed by a  W(b);
-
 In \pencil, two consistency memory models exist:
 %TODO (ulysse): provide a correct definition.
 \begin{itemize}
