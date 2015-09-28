@@ -1448,16 +1448,22 @@ has multiple equivalent functions in \pencil with prefixes and
 suffixes for the different argument types.
 For example, the OpenCL \emph{max} function has the
 following equivalent \pencil functions
+% They are not equivalent, but typed (i.e. max(1,256) != bmax(1,256)).
 \begin{itemize}
+% MK: "max" is also a prepocessor symbol that ppcg emits into every output file and therefore directly clashes with this specification. (That defintion might match the intended effect in most cases, but not always, like if the arguments are not ints or have side-effects)
+% MK: pencil_headers_generator emits "imax" for int arguments.
  \item \emph{max}: used for int arguments;
  \item \emph{smax}: used for short arguments;
  \item \emph{bmax}: used for char arguments;
+% MK: pencil_headers_generator emits "fmaxd" for double arguments and omits the the "f" prefix for functions that have no integer variant.
  \item \emph{fmax}: used for double arguments;
  \item \emph{lmax}: used for long arguments;
+% MK: This clashes for "fmod" - C99's math.h already has a declaration of "fmodf".
  \item \emph{fmaxf}: used for float arguments;
  \item unsigned versions have a \emph{u} prefix
  (\emph{ubmax}, \emph{usmax}, \emph{umax}, \emph{ulmax}).
 \end{itemize}
+% MK: It is unclear whether float-only functions (sin, cos, log, ...) should get "f"-prefixes as well.
 
 \pencil includes scalar builtin functions to help vectorize specific
 idioms. In particular, saturated and clamped arithmetic, absolute
